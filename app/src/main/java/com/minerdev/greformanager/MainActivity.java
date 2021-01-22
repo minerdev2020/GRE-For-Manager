@@ -2,15 +2,18 @@ package com.minerdev.greformanager;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -75,6 +78,11 @@ public class MainActivity extends AppCompatActivity {
             public void onTabSelected(TabLayout.Tab tab) {
                 LinearLayout linearLayout = findViewById(R.id.main_hidden_layout);
                 linearLayout.setVisibility(View.VISIBLE);
+
+                FlowLayout layout = findViewById(R.id.main_layout_toggleButtons);
+                ToggleButton toggleButton = new ToggleButton(MainActivity.this);
+                toggleButton.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                layout.addView(toggleButton);
             }
 
             @Override
