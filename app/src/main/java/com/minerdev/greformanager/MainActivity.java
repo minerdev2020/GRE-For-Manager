@@ -105,6 +105,8 @@ public class MainActivity extends AppCompatActivity {
         button_apply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+
                 LinearLayout linearLayout = findViewById(R.id.main_hidden_layout);
                 linearLayout.setVisibility(View.GONE);
             }
@@ -115,7 +117,6 @@ public class MainActivity extends AppCompatActivity {
 
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(tab_menu_ids[0], layout, true);
-
     }
 
     @Override

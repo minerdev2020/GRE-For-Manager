@@ -7,6 +7,7 @@ public class House {
     private State state;
     private House_Type houseType;
     private Payment_Type paymentType;
+    private Filter filter;
 
     public House(SerializedData serializedData) {
         this.uid = serializedData.uid;
@@ -110,5 +111,17 @@ public class House {
         public int state;
         public int houseType;
         public int paymentType;
+    }
+
+    public static class Filter {
+        public int oneOrTwoRoom;
+        public int houseType;
+        public int saleType;
+        public int deposit;
+        public int monthlyRentFee;
+        public int roomCount;
+        public int stair;
+        public int area;
+        public int extra;
     }
 }
