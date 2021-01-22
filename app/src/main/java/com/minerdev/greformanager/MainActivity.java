@@ -7,6 +7,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.Toast;
@@ -52,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         recyclerView.setAdapter(adapter);
+
         items.clear();
 
         House.SerializedData serializedData = new House.SerializedData();
@@ -85,6 +87,15 @@ public class MainActivity extends AppCompatActivity {
                 LinearLayout linearLayout = findViewById(R.id.main_hidden_layout);
                 int visibility = linearLayout.getVisibility();
                 linearLayout.setVisibility(visibility == View.VISIBLE ? View.GONE : View.VISIBLE);
+            }
+        });
+
+        Button button_apply = findViewById(R.id.main_button_apply);
+        button_apply.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LinearLayout linearLayout = findViewById(R.id.main_hidden_layout);
+                linearLayout.setVisibility(View.GONE);
             }
         });
     }
@@ -124,7 +135,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         Intent intent;
-
         switch (item.getItemId()) {
             case R.id.main_menu_add:
                 intent = new Intent(this, HouseModifyActivity.class);

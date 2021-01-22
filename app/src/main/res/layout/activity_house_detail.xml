@@ -14,7 +14,7 @@
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
-        app:menu="@menu/house_detail_toolbar"></androidx.appcompat.widget.Toolbar>
+        app:menu="@menu/house_detail_toolbar" />
 
     <include
         layout="@layout/detail"
