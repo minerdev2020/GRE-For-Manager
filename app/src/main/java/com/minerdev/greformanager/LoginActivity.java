@@ -73,7 +73,7 @@ public class LoginActivity extends AppCompatActivity {
             }
 
         } else {
-            Snackbar.make(view, "账号或密码有误！", Snackbar.LENGTH_LONG).show();
+            Snackbar.make(view, "아이디나 패스워드가 비어있습니다!", Snackbar.LENGTH_LONG).show();
         }
     }
 
