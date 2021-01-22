@@ -63,6 +63,12 @@ public class LoginActivity extends AppCompatActivity {
     private void tryLogin(View view, String id, String pw) {
         if (!id.isEmpty() && !pw.isEmpty()) {
             if (id.equals("root") && pw.equals("admin")) {
+                SharedPreferences sharedPreferences = getSharedPreferences("login", Activity.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+
+                editor.putString("id", id);
+                editor.commit();
+
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(intent);
                 finish();
