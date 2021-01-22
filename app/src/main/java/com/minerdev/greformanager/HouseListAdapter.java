@@ -67,11 +67,11 @@ public class HouseListAdapter extends RecyclerView.Adapter<HouseListAdapter.View
         public ViewHolder(@NonNull View itemView, final OnHouseItemClickListener clickListener) {
             super(itemView);
 
-            textView_payment = itemView.findViewById(R.id.houseItem_payment_type);
-            textView_price = itemView.findViewById(R.id.houseItem_price);
-            textView_house_info = itemView.findViewById(R.id.houseItem_house_info);
-            textView_description = itemView.findViewById(R.id.houseItem_description);
-            imageView_profile = itemView.findViewById(R.id.houseItem_profile_image);
+            textView_payment = itemView.findViewById(R.id.houseItem_textView_payment_type);
+            textView_price = itemView.findViewById(R.id.houseItem_textView_price);
+            textView_house_info = itemView.findViewById(R.id.houseItem_textView_house_info);
+            textView_description = itemView.findViewById(R.id.houseItem_textView_description);
+            imageView_profile = itemView.findViewById(R.id.houseItem_imageView_profile);
 
             LinearLayout linearLayout = itemView.findViewById(R.id.houseItem_layout);
             linearLayout.setOnClickListener(new View.OnClickListener() {

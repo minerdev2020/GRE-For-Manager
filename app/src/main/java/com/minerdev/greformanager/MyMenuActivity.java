@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
@@ -25,6 +26,10 @@ public class MyMenuActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
+        ImageView imageView = findViewById(R.id.my_menu_imageView_profile);
+        imageView.setBackgroundResource(R.drawable.ic_launcher_background);
+        imageView.setImageResource(R.drawable.ic_launcher_foreground);
+        
         ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, LIST_MENU);
         ListView listView = findViewById(R.id.my_menu_listView);
         listView.setAdapter(arrayAdapter);
