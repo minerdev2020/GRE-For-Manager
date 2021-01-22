@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.minerdev.greformanager.FlowLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tab_menu_flowLayout_3"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ToggleButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="월세"
+        android:textOff="월세"
+        android:textOn="월세" />
+
+    <ToggleButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="전세"
+        android:textOff="전세"
+        android:textOn="전세" />
+
+    <ToggleButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="매매"
+        android:textOff="매매"
+        android:textOn="매매" />
+
+    <ToggleButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="단기임대"
+        android:textOff="단기임대"
+        android:textOn="단기임대" />
+</com.minerdev.greformanager.FlowLayout>

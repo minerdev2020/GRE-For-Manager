@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.minerdev.greformanager.FlowLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tab_menu_flowLayout_2"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ToggleButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="빌라/주택"
+        android:textOff="빌라/주택"
+        android:textOn="빌라/주택" />
+
+    <ToggleButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="오피스텔"
+        android:textOff="오피스텔"
+        android:textOn="오피스텔" />
+
+    <ToggleButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="아파트"
+        android:textOff="아파트"
+        android:textOn="아파트" />
+
+    <ToggleButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="상가/사무실"
+        android:textOff="상가/사무실"
+        android:textOn="상가/사무실" />
+</com.minerdev.greformanager.FlowLayout>

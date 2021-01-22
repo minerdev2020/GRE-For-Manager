@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.minerdev.greformanager.FlowLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tab_menu_flowLayout_7"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ToggleButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1층~5층"
+        android:textOff="1층~5층"
+        android:textOn="1층~5층" />
+
+    <ToggleButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="6층 이상"
+        android:textOff="6층 이상"
+        android:textOn="6층 이상" />
+
+    <ToggleButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="반지하"
+        android:textOff="반지하"
+        android:textOn="반지하" />
+
+    <ToggleButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="옥탑"
+        android:textOff="옥탑"
+        android:textOn="옥탑" />
+
+    <ToggleButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="복층"
+        android:textOff="복층"
+        android:textOn="복층" />
+</com.minerdev.greformanager.FlowLayout>

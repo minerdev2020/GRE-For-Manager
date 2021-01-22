@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.minerdev.greformanager.FlowLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tab_menu_flowLayout_6"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ToggleButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="원룸"
+        android:textOff="원룸"
+        android:textOn="원룸" />
+
+    <ToggleButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="투룸"
+        android:textOff="투룸"
+        android:textOn="투룸" />
+
+    <ToggleButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="쓰리룸 이상"
+        android:textOff="쓰리룸 이상"
+        android:textOn="쓰리룸 이상" />
+</com.minerdev.greformanager.FlowLayout>
