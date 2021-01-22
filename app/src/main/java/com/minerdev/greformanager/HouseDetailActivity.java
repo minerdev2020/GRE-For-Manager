@@ -1,6 +1,7 @@
 package com.minerdev.greformanager;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -22,6 +23,7 @@ public class HouseDetailActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.house_detail_toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
@@ -36,6 +38,10 @@ public class HouseDetailActivity extends AppCompatActivity {
         Intent intent;
 
         switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                break;
+
             case R.id.house_detail_menu_modify:
                 intent = new Intent(this, HouseModifyActivity.class);
                 startActivity(intent);
