@@ -8,7 +8,7 @@
     tools:context=".HouseDetailActivity">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/house_detail__toolbar"
+        android:id="@+id/house_detail_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
