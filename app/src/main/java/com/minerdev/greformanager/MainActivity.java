@@ -7,6 +7,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.Toast;
 
@@ -16,13 +17,14 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.tabs.TabLayout;
+
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     private static final long FINISH_INTERVAL_TIME = 2000;
-    private long backPressedTime = 0;
-
     private static final ArrayList<House> items = new ArrayList<>();
+    private long backPressedTime = 0;
     private HouseListAdapter adapter;
 
     @Override
@@ -51,6 +53,40 @@ public class MainActivity extends AppCompatActivity {
         });
         recyclerView.setAdapter(adapter);
         items.clear();
+
+        House.SerializedData serializedData = new House.SerializedData();
+        serializedData.uid = 0;
+        serializedData.address = "대구시 달성군 다사읍 달구벌대로000길 00-00";
+        serializedData.houseType = 1;
+        serializedData.paymentType = 2;
+        serializedData.state = 0;
+        serializedData.price = "5억 4000";
+
+        for (int i = 0; i < 12; i++) {
+            items.add(new House(serializedData));
+        }
+        adapter.setItems(items);
+
+        TabLayout tabLayout = findViewById(R.id.main_tabLayout);
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                LinearLayout linearLayout = findViewById(R.id.main_hidden_layout);
+                linearLayout.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                LinearLayout linearLayout = findViewById(R.id.main_hidden_layout);
+                int visibility = linearLayout.getVisibility();
+                linearLayout.setVisibility(visibility == View.VISIBLE ? View.GONE : View.VISIBLE);
+            }
+        });
     }
 
     @Override

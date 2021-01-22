@@ -103,7 +103,7 @@ public class House {
         }
     }
 
-    public class SerializedData {
+    public static class SerializedData {
         public int uid;
         public String price;
         public String address;
