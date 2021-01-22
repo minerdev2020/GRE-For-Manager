@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".HouseDetailActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/house_detail__toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:menu="@menu/house_detail_toolbar"></androidx.appcompat.widget.Toolbar>
+
+    <include
+        layout="@layout/detail"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <Switch
+        android:id="@+id/house_detail_switch1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFAAAAAA"
+        android:switchMinWidth="70dp"
+        android:text="판매 완료"
+        android:textSize="30dp" />
+</LinearLayout>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/main_menu_add"
+        android:icon="@drawable/round_add_24"
+        android:title="추가"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/main_menu_my_menu"
+        android:icon="@drawable/round_menu_24"
+        android:title="마이 메뉴"
+        app:showAsAction="always" />
+</menu>

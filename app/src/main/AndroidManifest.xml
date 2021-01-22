@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.minerdev.greformanager">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -9,7 +11,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.GREForManager">
-        <activity android:name=".MainActivity">
+        <activity android:name=".MyMenuActivity"></activity>
+        <activity android:name=".HouseModifyActivity" />
+        <activity
+            android:name=".HouseDetailActivity"
+            android:theme="@style/Theme.GREForManager.NoActionBar" />
+        <activity
+            android:name=".MainActivity"
+            android:theme="@style/Theme.GREForManager.NoActionBar" />
+        <activity
+            android:name=".LoginActivity"
+            android:theme="@style/Theme.GREForManager.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
