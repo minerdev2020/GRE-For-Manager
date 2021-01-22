@@ -29,7 +29,7 @@ public class MyMenuActivity extends AppCompatActivity {
         ImageView imageView = findViewById(R.id.my_menu_imageView_profile);
         imageView.setBackgroundResource(R.drawable.ic_launcher_background);
         imageView.setImageResource(R.drawable.ic_launcher_foreground);
-        
+
         ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, LIST_MENU);
         ListView listView = findViewById(R.id.my_menu_listView);
         listView.setAdapter(arrayAdapter);
@@ -63,7 +63,15 @@ public class MyMenuActivity extends AppCompatActivity {
                 break;
         }
 
+        overridePendingTransition(R.anim.horizon_enter_right, R.anim.none);
+
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.none, R.anim.horizon_exit_right);
     }
 
     private void logout() {
