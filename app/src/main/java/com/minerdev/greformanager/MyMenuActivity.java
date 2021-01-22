@@ -50,6 +50,8 @@ public class MyMenuActivity extends AppCompatActivity {
                 }
             }
         });
+
+        overridePendingTransition(R.anim.horizon_enter_right, R.anim.none);
     }
 
     @Override
@@ -62,8 +64,6 @@ public class MyMenuActivity extends AppCompatActivity {
             default:
                 break;
         }
-
-        overridePendingTransition(R.anim.horizon_enter_right, R.anim.none);
 
         return super.onOptionsItemSelected(item);
     }
