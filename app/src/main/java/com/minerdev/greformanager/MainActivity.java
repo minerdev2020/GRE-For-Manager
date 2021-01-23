@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,9 +30,9 @@ public class MainActivity extends AppCompatActivity {
     private static final ArrayList<House> items = new ArrayList<>();
     private long backPressedTime = 0;
     private HouseListAdapter adapter;
-    private ArrayList<TabMenu> toggleButtons;
-    private int[] tab_menu_ids = {R.layout.tab_menu_1, R.layout.tab_menu_2, R.layout.tab_menu_3, R.layout.tab_menu_4,
-            R.layout.tab_menu_5, R.layout.tab_menu_6, R.layout.tab_menu_7, R.layout.tab_menu_8, R.layout.tab_menu_9};
+    private ArrayList<TabMenu> tabMenus;
+//    private int[] tab_menu_ids = {R.layout.tab_menu_1, R.layout.tab_menu_2, R.layout.tab_menu_3, R.layout.tab_menu_4,
+//            R.layout.tab_menu_5, R.layout.tab_menu_6, R.layout.tab_menu_7, R.layout.tab_menu_8, R.layout.tab_menu_9};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,11 +82,12 @@ public class MainActivity extends AppCompatActivity {
                 LinearLayout linearLayout = findViewById(R.id.main_hidden_layout);
                 linearLayout.setVisibility(View.VISIBLE);
 
-                LinearLayout layout = findViewById(R.id.main_layout_toggleButtons);
+                FlowLayout layout = findViewById(R.id.main_layout_toggleButtons);
                 layout.removeAllViews();
-
-                LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                inflater.inflate(tab_menu_ids[tab.getPosition()], layout, true);
+                ArrayList<ToggleButton> list = tabMenus.get(tab.getPosition()).getToggleButtons();
+                for (ToggleButton button : list) {
+                    layout.addView(button);
+                }
             }
 
             @Override
@@ -105,18 +107,24 @@ public class MainActivity extends AppCompatActivity {
         button_apply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                ArrayList<ToggleButton> list = tabMenus.get(tabLayout.getSelectedTabPosition()).getToggleButtons();
+                for (ToggleButton button : list) {
+                    button.setChecked(false);
+                }
 
                 LinearLayout linearLayout = findViewById(R.id.main_hidden_layout);
                 linearLayout.setVisibility(View.GONE);
             }
         });
 
-        LinearLayout layout = findViewById(R.id.main_layout_toggleButtons);
-        layout.removeAllViews();
+        setTabMenu();
 
-        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        inflater.inflate(tab_menu_ids[0], layout, true);
+        FlowLayout layout = findViewById(R.id.main_layout_toggleButtons);
+        layout.removeAllViews();
+        ArrayList<ToggleButton> list = tabMenus.get(0).getToggleButtons();
+        for (ToggleButton button : list) {
+            layout.addView(button);
+        }
     }
 
     @Override
@@ -213,41 +221,41 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setTabMenu() {
-        toggleButtons = new ArrayList<>();
+        tabMenus = new ArrayList<>();
         TabMenu tabMenu = new TabMenu(this);
         tabMenu.addMenus("원룸, 투룸", "원룸텔", "쉐어하우스");
-        toggleButtons.add(tabMenu);
+        tabMenus.add(tabMenu);
 
         TabMenu tabMenu1 = new TabMenu(this);
         tabMenu1.addMenus("빌라/주택", "오피스텔", "아파트", "상가/사무실");
-        toggleButtons.add(tabMenu1);
+        tabMenus.add(tabMenu1);
 
         TabMenu tabMenu2 = new TabMenu(this);
         tabMenu2.addMenus("월세", "전세", "매매", "단기임대");
-        toggleButtons.add(tabMenu2);
+        tabMenus.add(tabMenu2);
 
         TabMenu tabMenu3 = new TabMenu(this);
         tabMenu3.addMenus("0~1000", "1001~2000", "2001~3000", "3000이상");
-        toggleButtons.add(tabMenu3);
+        tabMenus.add(tabMenu3);
 
         TabMenu tabMenu4 = new TabMenu(this);
         tabMenu4.addMenus("0~1000", "1001~2000", "2001~3000", "3000이상");
-        toggleButtons.add(tabMenu4);
+        tabMenus.add(tabMenu4);
 
         TabMenu tabMenu5 = new TabMenu(this);
         tabMenu5.addMenus("원룸", "투룸", "쓰리룸 이상");
-        toggleButtons.add(tabMenu5);
+        tabMenus.add(tabMenu5);
 
         TabMenu tabMenu6 = new TabMenu(this);
         tabMenu6.addMenus("1층~5층", "6층 이상", "반지하", "옥탑", "복층");
-        toggleButtons.add(tabMenu6);
+        tabMenus.add(tabMenu6);
 
         TabMenu tabMenu7 = new TabMenu(this);
         tabMenu7.addMenus("5평 이하", "6~10평", "11평 이상");
-        toggleButtons.add(tabMenu7);
+        tabMenus.add(tabMenu7);
 
         TabMenu tabMenu8 = new TabMenu(this);
         tabMenu8.addMenus("신축", "풀옵션", "주차가능", "엘레베이터", "반려동물", "전세자금대출", "큰길가", "권리분석");
-        toggleButtons.add(tabMenu8);
+        tabMenus.add(tabMenu8);
     }
 }

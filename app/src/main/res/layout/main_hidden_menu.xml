@@ -6,16 +6,15 @@
     android:background="#FFAAAAAA"
     android:orientation="vertical">
 
-    <LinearLayout
+    <com.minerdev.greformanager.FlowLayout
         android:id="@+id/main_layout_toggleButtons"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal" />
+        android:layout_height="wrap_content" />
 
     <Button
         android:id="@+id/main_button_apply"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="적용" />
+        android:text="초기화" />
 </LinearLayout>
