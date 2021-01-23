@@ -1,6 +1,7 @@
 package com.minerdev.greformanager;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.ToggleButton;
@@ -23,6 +24,8 @@ public class TabMenu {
         ToggleButton toggleButton = new ToggleButton(context);
         toggleButton.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         toggleButton.setText(menuTitle);
+        toggleButton.setTextOn(menuTitle);
+        toggleButton.setTextOff(menuTitle);
         toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -35,12 +38,7 @@ public class TabMenu {
 
     public void addMenus(String... menuTitles) {
         for (String menuTitle : menuTitles) {
-            ToggleButton toggleButton = new ToggleButton(context);
-            toggleButton.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-            toggleButton.setText(menuTitle);
-            toggleButton.setTextOn(menuTitle);
-            toggleButton.setTextOff(menuTitle);
-            toggleButtons.add(toggleButton);
+            addMenu(menuTitle);
         }
     }
 
