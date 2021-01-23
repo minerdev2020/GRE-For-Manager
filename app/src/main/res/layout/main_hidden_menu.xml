@@ -6,15 +6,33 @@
     android:background="#FFAAAAAA"
     android:orientation="vertical">
 
+    <LinearLayout
+        android:id="@+id/main_layout_min_max"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" />
+
     <com.minerdev.greformanager.FlowLayout
         android:id="@+id/main_layout_toggleButtons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <Button
-        android:id="@+id/main_button_apply"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="초기화" />
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/main_button_reset"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="초기화" />
+
+        <Button
+            android:id="@+id/main_button_apply"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="적용" />
+    </LinearLayout>
 </LinearLayout>

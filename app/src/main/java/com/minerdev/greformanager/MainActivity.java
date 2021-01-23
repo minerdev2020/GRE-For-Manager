@@ -1,6 +1,5 @@
 package com.minerdev.greformanager;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,8 +9,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
@@ -31,8 +33,6 @@ public class MainActivity extends AppCompatActivity {
     private long backPressedTime = 0;
     private HouseListAdapter adapter;
     private ArrayList<TabMenu> tabMenus;
-//    private int[] tab_menu_ids = {R.layout.tab_menu_1, R.layout.tab_menu_2, R.layout.tab_menu_3, R.layout.tab_menu_4,
-//            R.layout.tab_menu_5, R.layout.tab_menu_6, R.layout.tab_menu_7, R.layout.tab_menu_8, R.layout.tab_menu_9};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,14 +79,28 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                LinearLayout linearLayout = findViewById(R.id.main_hidden_layout);
-                linearLayout.setVisibility(View.VISIBLE);
+                LinearLayout hidden_layout = findViewById(R.id.main_hidden_layout);
+                hidden_layout.setVisibility(View.VISIBLE);
 
-                FlowLayout layout = findViewById(R.id.main_layout_toggleButtons);
-                layout.removeAllViews();
-                ArrayList<ToggleButton> list = tabMenus.get(tab.getPosition()).getToggleButtons();
-                for (ToggleButton button : list) {
-                    layout.addView(button);
+                FlowLayout flowLayout = findViewById(R.id.main_layout_toggleButtons);
+                flowLayout.removeAllViews();
+
+                LinearLayout linearLayout = findViewById(R.id.main_layout_min_max);
+                linearLayout.removeAllViews();
+
+                if (tab.getPosition() != 3 && tab.getPosition() != 4) {
+                    ArrayList<ToggleButton> list = tabMenus.get(tab.getPosition()).getToggleButtons();
+                    for (ToggleButton button : list) {
+                        flowLayout.addView(button);
+                    }
+
+                } else if (tab.getPosition() == 3) {
+                    LayoutInflater inflater = getLayoutInflater();
+                    inflater.inflate(R.layout.deposit_layout, linearLayout, true);
+
+                } else {
+                    LayoutInflater inflater = getLayoutInflater();
+                    inflater.inflate(R.layout.monthly_rent_layout, linearLayout, true);
                 }
             }
 
@@ -107,9 +121,32 @@ public class MainActivity extends AppCompatActivity {
         button_apply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ArrayList<ToggleButton> list = tabMenus.get(tabLayout.getSelectedTabPosition()).getToggleButtons();
-                for (ToggleButton button : list) {
-                    button.setChecked(false);
+                int tabPos = tabLayout.getSelectedTabPosition();
+                if (tabPos != 3 && tabPos != 4) {
+                    ArrayList<ToggleButton> list = tabMenus.get(tabPos).getToggleButtons();
+                    for (ToggleButton button : list) {
+                        button.setChecked(false);
+                    }
+
+                } else if (tabPos == 3) {
+                    TextView textView = findViewById(R.id.deposit_textView);
+                    EditText max = findViewById(R.id.deposit_editText_max);
+                    EditText min = findViewById(R.id.deposit_editText_min);
+
+                    textView.setText("0원 ~ 전체");
+                    max.setText("");
+                    min.setText("");
+
+                } else {
+                    TextView textView = findViewById(R.id.monthly_rent_textView);
+                    EditText max = findViewById(R.id.monthly_rent_editText_max);
+                    EditText min = findViewById(R.id.monthly_rent_editText_min);
+                    CheckBox checkBox = findViewById(R.id.monthly_rent_checkBox);
+
+                    textView.setText("0원 ~ 전체");
+                    max.setText("");
+                    min.setText("");
+                    checkBox.setChecked(false);
                 }
 
                 LinearLayout linearLayout = findViewById(R.id.main_hidden_layout);
@@ -234,13 +271,8 @@ public class MainActivity extends AppCompatActivity {
         tabMenu2.addMenus("월세", "전세", "매매", "단기임대");
         tabMenus.add(tabMenu2);
 
-        TabMenu tabMenu3 = new TabMenu(this);
-        tabMenu3.addMenus("0~1000", "1001~2000", "2001~3000", "3000이상");
-        tabMenus.add(tabMenu3);
-
-        TabMenu tabMenu4 = new TabMenu(this);
-        tabMenu4.addMenus("0~1000", "1001~2000", "2001~3000", "3000이상");
-        tabMenus.add(tabMenu4);
+        tabMenus.add(null);
+        tabMenus.add(null);
 
         TabMenu tabMenu5 = new TabMenu(this);
         tabMenu5.addMenus("원룸", "투룸", "쓰리룸 이상");
