@@ -2,6 +2,7 @@ package com.minerdev.greformanager;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -111,7 +112,8 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-
+                Button button_reset = findViewById(R.id.main_button_reset);
+                button_reset.performClick();
             }
 
             @Override
