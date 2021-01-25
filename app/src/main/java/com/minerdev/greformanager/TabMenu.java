@@ -26,13 +26,6 @@ public class TabMenu {
         toggleButton.setText(menuTitle);
         toggleButton.setTextOn(menuTitle);
         toggleButton.setTextOff(menuTitle);
-        toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                String buttonText = toggleButton.getText().toString();
-                FilterActivity.filter.setCheckState(buttonText, isChecked);
-            }
-        });
         toggleButtons.add(toggleButton);
     }
 

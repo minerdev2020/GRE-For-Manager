@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private static final long FINISH_INTERVAL_TIME = 2000;
     private static final ArrayList<House> items = new ArrayList<>();
     private long backPressedTime = 0;
+
     private HouseListAdapter adapter;
     private ArrayList<TabMenu> tabMenus;
 
@@ -39,9 +40,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // 툴바 초기화
         Toolbar toolbar = findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
 
+        // 매물 RecyclerView 및 HouseListAdapter 초기화
         RecyclerView recyclerView = findViewById(R.id.main_recyclerView);
         LinearLayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(manager);
@@ -59,7 +62,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         recyclerView.setAdapter(adapter);
-
+        
+        // 매물 리스트 초기화 및 HouseListAdapter에 리스트 등록
         items.clear();
 
         House.SerializedData serializedData = new House.SerializedData();
@@ -75,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
         }
         adapter.setItems(items);
 
+        // TabLayout 초기화
         TabLayout tabLayout = findViewById(R.id.main_tabLayout);
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -117,45 +122,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Button button_apply = findViewById(R.id.main_button_apply);
-        button_apply.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int tabPos = tabLayout.getSelectedTabPosition();
-                if (tabPos != 3 && tabPos != 4) {
-                    ArrayList<ToggleButton> list = tabMenus.get(tabPos).getToggleButtons();
-                    for (ToggleButton button : list) {
-                        button.setChecked(false);
-                    }
+        // 탭 메뉴 리스트 초기화
+        setTabMenus();
 
-                } else if (tabPos == 3) {
-                    TextView textView = findViewById(R.id.deposit_textView);
-                    EditText max = findViewById(R.id.deposit_editText_max);
-                    EditText min = findViewById(R.id.deposit_editText_min);
+        // 적용, 초기화 버튼 초기화
+        setButtons(tabLayout);
 
-                    textView.setText("0원 ~ 전체");
-                    max.setText("");
-                    min.setText("");
-
-                } else {
-                    TextView textView = findViewById(R.id.monthly_rent_textView);
-                    EditText max = findViewById(R.id.monthly_rent_editText_max);
-                    EditText min = findViewById(R.id.monthly_rent_editText_min);
-                    CheckBox checkBox = findViewById(R.id.monthly_rent_checkBox);
-
-                    textView.setText("0원 ~ 전체");
-                    max.setText("");
-                    min.setText("");
-                    checkBox.setChecked(false);
-                }
-
-                LinearLayout linearLayout = findViewById(R.id.main_hidden_layout);
-                linearLayout.setVisibility(View.GONE);
-            }
-        });
-
-        setTabMenu();
-
+        // 첫번째 탭 메뉴 초기화
         FlowLayout layout = findViewById(R.id.main_layout_toggleButtons);
         layout.removeAllViews();
         ArrayList<ToggleButton> list = tabMenus.get(0).getToggleButtons();
@@ -257,7 +230,7 @@ public class MainActivity extends AppCompatActivity {
 //        adapter.notifyDataSetChanged();
     }
 
-    private void setTabMenu() {
+    private void setTabMenus() {
         tabMenus = new ArrayList<>();
         TabMenu tabMenu = new TabMenu(this);
         tabMenu.addMenus("원룸, 투룸", "원룸텔", "쉐어하우스");
@@ -289,5 +262,82 @@ public class MainActivity extends AppCompatActivity {
         TabMenu tabMenu8 = new TabMenu(this);
         tabMenu8.addMenus("신축", "풀옵션", "주차가능", "엘레베이터", "반려동물", "전세자금대출", "큰길가", "권리분석");
         tabMenus.add(tabMenu8);
+    }
+
+    private void setButtons(TabLayout tabLayout) {
+        Button button_apply = findViewById(R.id.main_button_apply);
+        button_apply.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int tabPos = tabLayout.getSelectedTabPosition();
+                if (tabPos != 3 && tabPos != 4) {
+                    ArrayList<ToggleButton> list = tabMenus.get(tabPos).getToggleButtons();
+                    for (ToggleButton button : list) {
+                        FilterActivity.Filter.setCheckState(button.getText().toString(), button.isChecked());
+                    }
+
+                } else if (tabPos == 3) {
+                    EditText max = findViewById(R.id.deposit_editText_max);
+                    EditText min = findViewById(R.id.deposit_editText_min);
+
+                    String minStr = min.getText().toString();
+                    String maxStr = max.getText().toString();
+
+                    int minValue = minStr.equals("") ? 0 : Integer.parseInt(minStr);
+                    int maxValue = maxStr.equals("") ? 0 : Integer.parseInt(maxStr);
+                    FilterActivity.Filter.setDeposit(minValue, maxValue);
+
+                } else {
+                    EditText max = findViewById(R.id.monthly_rent_editText_max);
+                    EditText min = findViewById(R.id.monthly_rent_editText_min);
+                    CheckBox checkBox = findViewById(R.id.monthly_rent_checkBox);
+
+                    String minStr = min.getText().toString();
+                    String maxStr = max.getText().toString();
+
+                    int minValue = minStr.equals("") ? 0 : Integer.parseInt(minStr);
+                    int maxValue = maxStr.equals("") ? 0 : Integer.parseInt(maxStr);
+                    boolean isContain = checkBox.isChecked();
+                    FilterActivity.Filter.setMonthlyRent(isContain, minValue, maxValue);
+                }
+
+                LinearLayout linearLayout = findViewById(R.id.main_hidden_layout);
+                linearLayout.setVisibility(View.GONE);
+            }
+        });
+
+        Button button_reset = findViewById(R.id.main_button_reset);
+        button_reset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int tabPos = tabLayout.getSelectedTabPosition();
+                if (tabPos != 3 && tabPos != 4) {
+                    ArrayList<ToggleButton> list = tabMenus.get(tabPos).getToggleButtons();
+                    for (ToggleButton button : list) {
+                        button.setChecked(false);
+                    }
+
+                } else if (tabPos == 3) {
+                    TextView textView = findViewById(R.id.deposit_textView);
+                    EditText max = findViewById(R.id.deposit_editText_max);
+                    EditText min = findViewById(R.id.deposit_editText_min);
+
+                    textView.setText("0원 ~ 전체");
+                    max.setText("");
+                    min.setText("");
+
+                } else {
+                    TextView textView = findViewById(R.id.monthly_rent_textView);
+                    EditText max = findViewById(R.id.monthly_rent_editText_max);
+                    EditText min = findViewById(R.id.monthly_rent_editText_min);
+                    CheckBox checkBox = findViewById(R.id.monthly_rent_checkBox);
+
+                    textView.setText("0원 ~ 전체");
+                    max.setText("");
+                    min.setText("");
+                    checkBox.setChecked(false);
+                }
+            }
+        });
     }
 }

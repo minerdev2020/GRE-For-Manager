@@ -7,8 +7,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.HashMap;
 
 public class FilterActivity extends AppCompatActivity {
-    public static Filter filter = new Filter();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,14 +25,56 @@ public class FilterActivity extends AppCompatActivity {
                 "신축", "풀옵션", "주차가능", "엘레베이터", "반려동물", "전세자금대출", "큰길가", "권리분석"
         };
 
+        private static int depositMin;
+        private static int depositMax;
+
+        private static int monthlyRentMin;
+        private static int monthlyRentMax;
+        private static boolean isContainManageFee;
+
         private Filter() {
             for (String text : texts) {
                 checkedStates.put(text, false);
             }
         }
 
-        public void setCheckState(String buttonText, boolean isChecked) {
+        public static void setCheckState(String buttonText, boolean isChecked) {
             checkedStates.put(buttonText, isChecked);
+        }
+
+        public static void setDeposit(int min, int max) {
+            depositMin = min;
+            depositMax = max;
+        }
+
+        public static void setMonthlyRent(boolean isContain, int min, int max) {
+            isContainManageFee = isContain;
+            monthlyRentMin = min;
+            monthlyRentMax = max;
+        }
+
+        public static HashMap<String, Boolean> getCheckedStates() {
+            return checkedStates;
+        }
+
+        public static int getDepositMin() {
+            return depositMin;
+        }
+
+        public static int getDepositMax() {
+            return depositMax;
+        }
+
+        public static boolean getIsContainManageFee() {
+            return isContainManageFee;
+        }
+
+        public static int getMonthlyRentMin() {
+            return monthlyRentMin;
+        }
+
+        public static int getMonthlyRentMax() {
+            return monthlyRentMax;
         }
     }
 }
