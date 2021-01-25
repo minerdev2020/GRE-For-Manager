@@ -87,10 +87,10 @@ public class MainActivity extends AppCompatActivity {
                 deposit_layout.setVisibility(View.GONE);
                 monthly_rent_layout.setVisibility(View.GONE);
 
-                if (tab.getPosition() != 3 && tab.getPosition() != 4) {
-                    FlowLayout flowLayout = findViewById(R.id.main_layout_toggleButtons);
-                    flowLayout.removeAllViews();
+                FlowLayout flowLayout = findViewById(R.id.main_layout_toggleButtons);
+                flowLayout.removeAllViews();
 
+                if (tab.getPosition() != 3 && tab.getPosition() != 4) {
                     ArrayList<ToggleButton> list = tabMenus.get(tab.getPosition()).getToggleButtons();
                     for (ToggleButton button : list) {
                         flowLayout.addView(button);
