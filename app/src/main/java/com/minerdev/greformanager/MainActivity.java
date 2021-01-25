@@ -2,7 +2,6 @@ package com.minerdev.greformanager;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -23,6 +22,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.internal.FlowLayout;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
@@ -82,25 +82,25 @@ public class MainActivity extends AppCompatActivity {
                 LinearLayout hidden_layout = findViewById(R.id.main_hidden_layout);
                 hidden_layout.setVisibility(View.VISIBLE);
 
-                FlowLayout flowLayout = findViewById(R.id.main_layout_toggleButtons);
-                flowLayout.removeAllViews();
-
-                LinearLayout linearLayout = findViewById(R.id.main_layout_min_max);
-                linearLayout.removeAllViews();
+                LinearLayout deposit_layout = findViewById(R.id.main_deposit_layout);
+                LinearLayout monthly_rent_layout = findViewById(R.id.main_monthly_rent_layout);
+                deposit_layout.setVisibility(View.GONE);
+                monthly_rent_layout.setVisibility(View.GONE);
 
                 if (tab.getPosition() != 3 && tab.getPosition() != 4) {
+                    FlowLayout flowLayout = findViewById(R.id.main_layout_toggleButtons);
+                    flowLayout.removeAllViews();
+
                     ArrayList<ToggleButton> list = tabMenus.get(tab.getPosition()).getToggleButtons();
                     for (ToggleButton button : list) {
                         flowLayout.addView(button);
                     }
 
                 } else if (tab.getPosition() == 3) {
-                    LayoutInflater inflater = getLayoutInflater();
-                    inflater.inflate(R.layout.deposit_layout, linearLayout, true);
+                    deposit_layout.setVisibility(View.VISIBLE);
 
                 } else {
-                    LayoutInflater inflater = getLayoutInflater();
-                    inflater.inflate(R.layout.monthly_rent_layout, linearLayout, true);
+                    monthly_rent_layout.setVisibility(View.VISIBLE);
                 }
             }
 

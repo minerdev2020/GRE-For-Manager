@@ -6,13 +6,15 @@
     android:background="#FFAAAAAA"
     android:orientation="vertical">
 
-    <LinearLayout
-        android:id="@+id/main_layout_min_max"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" />
+    <include
+        layout="@layout/monthly_rent_layout"
+        android:visibility="gone" />
 
-    <com.minerdev.greformanager.FlowLayout
+    <include
+        layout="@layout/deposit_layout"
+        android:visibility="gone" />
+
+    <com.google.android.material.internal.FlowLayout
         android:id="@+id/main_layout_toggleButtons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
