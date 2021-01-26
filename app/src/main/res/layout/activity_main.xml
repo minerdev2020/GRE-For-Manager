@@ -87,7 +87,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:backgroundTint="#FFFFFFFF"
-            android:src="@drawable/round_filter_alt_24" />
+            android:src="@drawable/ic_round_filter_alt_24" />
     </LinearLayout>
 
     <FrameLayout
