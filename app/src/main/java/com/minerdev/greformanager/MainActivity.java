@@ -2,7 +2,6 @@ package com.minerdev.greformanager;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -29,12 +28,16 @@ import com.google.android.material.tabs.TabLayout;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
+    public static final Filter filter = new Filter();
+
     private static final long FINISH_INTERVAL_TIME = 2000;
     private static final ArrayList<House> items = new ArrayList<>();
+
     private long backPressedTime = 0;
 
+    private TabLayout tabLayout;
     private HouseListAdapter adapter;
-    private ArrayList<TabMenu> tabMenus;
+    private TabPageManager tabPageManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,88 +66,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         recyclerView.setAdapter(adapter);
-        
-        // 매물 리스트 초기화 및 HouseListAdapter에 리스트 등록
-        items.clear();
-
-        House.SerializedData serializedData = new House.SerializedData();
-        serializedData.uid = 0;
-        serializedData.address = "대구시 달성군 다사읍 달구벌대로000길 00-00";
-        serializedData.houseType = 1;
-        serializedData.paymentType = 2;
-        serializedData.state = 0;
-        serializedData.price = "5억 4000";
-
-        for (int i = 0; i < 12; i++) {
-            items.add(new House(serializedData));
-        }
-        adapter.setItems(items);
 
         // TabLayout 초기화
-        TabLayout tabLayout = findViewById(R.id.main_tabLayout);
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                LinearLayout hidden_layout = findViewById(R.id.main_hidden_layout);
-                hidden_layout.setVisibility(View.VISIBLE);
-
-                LinearLayout deposit_layout = findViewById(R.id.main_deposit_layout);
-                LinearLayout monthly_rent_layout = findViewById(R.id.main_monthly_rent_layout);
-                deposit_layout.setVisibility(View.GONE);
-                monthly_rent_layout.setVisibility(View.GONE);
-
-                FlowLayout flowLayout = findViewById(R.id.main_layout_toggleButtons);
-                flowLayout.removeAllViews();
-
-                if (tab.getPosition() != 3 && tab.getPosition() != 4) {
-                    ArrayList<ToggleButton> list = tabMenus.get(tab.getPosition()).getToggleButtons();
-                    for (ToggleButton button : list) {
-                        String key = button.getText().toString();
-                        button.setChecked(FilterActivity.filter.getCheckedState(key));
-                        flowLayout.addView(button);
-                    }
-
-                } else if (tab.getPosition() == 3) {
-                    Filter filter = FilterActivity.filter;
-                    deposit_layout.setVisibility(View.VISIBLE);
-
-                    TextView textView = findViewById(R.id.deposit_textView);
-                    EditText max = findViewById(R.id.deposit_editText_max);
-                    EditText min = findViewById(R.id.deposit_editText_min);
-
-                    textView.setText(filter.getDepositMin() + "원 ~ " + filter.getDepositMax() + "원");
-                    max.setText(String.valueOf(filter.getDepositMax()));
-                    min.setText(String.valueOf(filter.getDepositMin()));
-
-                } else {
-                    Filter filter = FilterActivity.filter;
-
-                    monthly_rent_layout.setVisibility(View.VISIBLE);
-
-                    TextView textView = findViewById(R.id.monthly_rent_textView);
-                    EditText max = findViewById(R.id.monthly_rent_editText_max);
-                    EditText min = findViewById(R.id.monthly_rent_editText_min);
-                    CheckBox checkBox = findViewById(R.id.monthly_rent_checkBox);
-
-                    textView.setText(filter.getMonthlyRentMin() + "원 ~ " + filter.getMonthlyRentMax() + "원");
-                    max.setText(String.valueOf(filter.getMonthlyRentMax()));
-                    min.setText(String.valueOf(filter.getMonthlyRentMin()));
-                    checkBox.setChecked(filter.getIsContainManageFee());
-                }
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-                LinearLayout linearLayout = findViewById(R.id.main_hidden_layout);
-                int visibility = linearLayout.getVisibility();
-                linearLayout.setVisibility(visibility == View.VISIBLE ? View.GONE : View.VISIBLE);
-            }
-        });
+        setTabLayout();
 
         // 탭 메뉴 리스트 초기화
         setTabMenus();
@@ -155,10 +79,26 @@ public class MainActivity extends AppCompatActivity {
         // 첫번째 탭 메뉴 초기화
         FlowLayout layout = findViewById(R.id.main_layout_toggleButtons);
         layout.removeAllViews();
-        ArrayList<ToggleButton> list = tabMenus.get(0).getToggleButtons();
+        ArrayList<ToggleButton> list = tabPageManager.getItem(0).getToggleButtons();
         for (ToggleButton button : list) {
             layout.addView(button);
         }
+
+        // 매물 리스트 초기화 및 HouseListAdapter에 리스트 등록
+        items.clear();
+
+        House.SerializedData serializedData = new House.SerializedData();
+        serializedData.uid = 0;
+        serializedData.address = "대구시 달성군 다사읍 달구벌대로000길 00-00";
+        serializedData.state = 0;
+        serializedData.price = "5억 4000";
+        serializedData.paymentType = 1;
+        serializedData.houseType = 1;
+
+        for (int i = 0; i < 12; i++) {
+            items.add(new House(serializedData));
+        }
+        adapter.setItems(items);
     }
 
     @Override
@@ -171,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-//                rearrangeList(query, group1, group2);
+                rearrangeList(query, filter);
                 InputMethodManager manager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
                 manager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                 return true;
@@ -234,58 +174,121 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void rearrangeList(String keyword, int group1, int group2) {
-//        if (keyword == null && group1 == 0 && group2 == 0) {
-//            adapter.setItems(originalItems);
-//            adapter.notifyDataSetChanged();
-//            return;
-//        }
-//
-//        items.clear();
-//        for (Person i : originalItems) {
-//            if ((keyword == null || i.getName().contains(keyword))
-//                    && (group1 == 0 || i.getState().getName() == items1[group1])
-//                    && (group2 == 0 || i.getType().getName() == items2[group2])) {
-//                items.add(i);
-//            }
-//        }
-//
-//        adapter.setItems(items);
-//        adapter.notifyDataSetChanged();
+    private void rearrangeList(String keyword, Filter filter) {
+        if (keyword == null && filter == null) {
+            adapter.setItems(items);
+            adapter.notifyDataSetChanged();
+            return;
+        }
+
+        ArrayList<House> temp = new ArrayList<>();
+        for (House i : items) {
+            if ((keyword == null || i.getAddress().contains(keyword))
+                    && (filter == null || filter.isMatch(i))) {
+                temp.add(i);
+            }
+        }
+
+        adapter.setItems(temp);
+        adapter.notifyDataSetChanged();
+    }
+
+    private void setTabLayout() {
+        // TabLayout 초기화
+        tabLayout = findViewById(R.id.main_tabLayout);
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                LinearLayout hidden_layout = findViewById(R.id.main_hidden_layout);
+                hidden_layout.setVisibility(View.VISIBLE);
+
+                LinearLayout deposit_layout = findViewById(R.id.main_deposit_layout);
+                LinearLayout monthly_rent_layout = findViewById(R.id.main_monthly_rent_layout);
+                deposit_layout.setVisibility(View.GONE);
+                monthly_rent_layout.setVisibility(View.GONE);
+
+                FlowLayout flowLayout = findViewById(R.id.main_layout_toggleButtons);
+                flowLayout.removeAllViews();
+
+                if (tab.getText().toString().equals("보증금")) {
+                    deposit_layout.setVisibility(View.VISIBLE);
+
+                    TextView textView = findViewById(R.id.deposit_textView);
+                    EditText max = findViewById(R.id.deposit_editText_max);
+                    EditText min = findViewById(R.id.deposit_editText_min);
+
+                    textView.setText(filter.getDepositMin() + "원 ~ " + filter.getDepositMax() + "원");
+                    max.setText(String.valueOf(filter.getDepositMax()));
+                    min.setText(String.valueOf(filter.getDepositMin()));
+
+                } else if (tab.getText().toString().equals("월세금")) {
+                    monthly_rent_layout.setVisibility(View.VISIBLE);
+
+                    TextView textView = findViewById(R.id.monthly_rent_textView);
+                    EditText max = findViewById(R.id.monthly_rent_editText_max);
+                    EditText min = findViewById(R.id.monthly_rent_editText_min);
+                    CheckBox checkBox = findViewById(R.id.monthly_rent_checkBox);
+
+                    textView.setText(filter.getMonthlyRentMin() + "원 ~ " + filter.getMonthlyRentMax() + "원");
+                    max.setText(String.valueOf(filter.getMonthlyRentMax()));
+                    min.setText(String.valueOf(filter.getMonthlyRentMin()));
+                    checkBox.setChecked(filter.getIsContainManageFee());
+
+                } else {
+                    ArrayList<ToggleButton> list = tabPageManager.getItem(tab.getPosition()).getToggleButtons();
+                    for (ToggleButton button : list) {
+                        String key = button.getText().toString();
+                        button.setChecked(filter.getCheckedState(key));
+                        flowLayout.addView(button);
+                    }
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                LinearLayout linearLayout = findViewById(R.id.main_hidden_layout);
+                int visibility = linearLayout.getVisibility();
+                linearLayout.setVisibility(visibility == View.VISIBLE ? View.GONE : View.VISIBLE);
+            }
+        });
     }
 
     private void setTabMenus() {
-        tabMenus = new ArrayList<>();
-        TabMenu tabMenu = new TabMenu(this);
-        tabMenu.addMenus("원룸, 투룸", "원룸텔", "쉐어하우스");
-        tabMenus.add(tabMenu);
+        tabPageManager = new TabPageManager();
 
-        TabMenu tabMenu1 = new TabMenu(this);
-        tabMenu1.addMenus("빌라/주택", "오피스텔", "아파트", "상가/사무실");
-        tabMenus.add(tabMenu1);
+        TabPage tabPage1 = new TabPage(this);
+        tabPage1.addMenus("건물형태", "빌라/주택", "오피스텔", "아파트", "상가/사무실");
+        tabPageManager.addItem(tabPage1);
 
-        TabMenu tabMenu2 = new TabMenu(this);
-        tabMenu2.addMenus("월세", "전세", "매매", "단기임대");
-        tabMenus.add(tabMenu2);
+        TabPage tabPage2 = new TabPage(this);
+        tabPage2.addMenus("매물종류", "월세", "전세", "매매", "단기임대");
+        tabPageManager.addItem(tabPage2);
 
-        tabMenus.add(null);
-        tabMenus.add(null);
+        tabPageManager.addItem(null);
+        tabPageManager.addItem(null);
 
-        TabMenu tabMenu5 = new TabMenu(this);
-        tabMenu5.addMenus("원룸", "투룸", "쓰리룸 이상");
-        tabMenus.add(tabMenu5);
+        TabPage tabPage5 = new TabPage(this);
+        tabPage5.addMenus("방 개수", "원룸", "투룸", "쓰리룸 이상");
+        tabPageManager.addItem(tabPage5);
 
-        TabMenu tabMenu6 = new TabMenu(this);
-        tabMenu6.addMenus("1층~5층", "6층 이상", "반지하", "옥탑", "복층");
-        tabMenus.add(tabMenu6);
+        TabPage tabPage6 = new TabPage(this);
+        tabPage6.addMenus("층수", "1층~5층", "6층 이상", "반지하", "옥탑", "복층");
+        tabPageManager.addItem(tabPage6);
 
-        TabMenu tabMenu7 = new TabMenu(this);
-        tabMenu7.addMenus("5평 이하", "6~10평", "11평 이상");
-        tabMenus.add(tabMenu7);
+        TabPage tabPage7 = new TabPage(this);
+        tabPage7.addMenus("평수", "5평 이하", "6~10평", "11평 이상");
+        tabPageManager.addItem(tabPage7);
 
-        TabMenu tabMenu8 = new TabMenu(this);
-        tabMenu8.addMenus("신축", "풀옵션", "주차가능", "엘레베이터", "반려동물", "전세자금대출", "큰길가", "권리분석");
-        tabMenus.add(tabMenu8);
+        TabPage tabPage8 = new TabPage(this);
+        tabPage8.addMenus("추가옵션", "신축", "풀옵션", "주차가능", "엘레베이터", "반려동물", "전세자금대출", "큰길가", "권리분석");
+        tabPageManager.addItem(tabPage8);
+
+        filter.Initialize();
     }
 
     private void setButtons(TabLayout tabLayout) {
@@ -293,15 +296,10 @@ public class MainActivity extends AppCompatActivity {
         button_apply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Filter filter = FilterActivity.filter;
                 int tabPos = tabLayout.getSelectedTabPosition();
-                if (tabPos != 3 && tabPos != 4) {
-                    ArrayList<ToggleButton> list = tabMenus.get(tabPos).getToggleButtons();
-                    for (ToggleButton button : list) {
-                        filter.setCheckState(button.getText().toString(), button.isChecked());
-                    }
+                String tabPageTitle = tabLayout.getTabAt(tabPos).getText().toString();
 
-                } else if (tabPos == 3) {
+                if (tabPageTitle.equals("보증금")) {
                     EditText max = findViewById(R.id.deposit_editText_max);
                     EditText min = findViewById(R.id.deposit_editText_min);
 
@@ -309,10 +307,10 @@ public class MainActivity extends AppCompatActivity {
                     String maxStr = max.getText().toString();
 
                     int minValue = minStr.equals("") ? 0 : Integer.parseInt(minStr);
-                    int maxValue = maxStr.equals("") ? 0 : Integer.parseInt(maxStr);
+                    int maxValue = maxStr.equals("") ? Integer.MAX_VALUE : Integer.parseInt(maxStr);
                     filter.setDeposit(minValue, maxValue);
 
-                } else {
+                } else if (tabPageTitle.equals("월세금")) {
                     EditText max = findViewById(R.id.monthly_rent_editText_max);
                     EditText min = findViewById(R.id.monthly_rent_editText_min);
                     CheckBox checkBox = findViewById(R.id.monthly_rent_checkBox);
@@ -321,13 +319,21 @@ public class MainActivity extends AppCompatActivity {
                     String maxStr = max.getText().toString();
 
                     int minValue = minStr.equals("") ? 0 : Integer.parseInt(minStr);
-                    int maxValue = maxStr.equals("") ? 0 : Integer.parseInt(maxStr);
+                    int maxValue = maxStr.equals("") ? Integer.MAX_VALUE : Integer.parseInt(maxStr);
                     boolean isContain = checkBox.isChecked();
                     filter.setMonthlyRent(isContain, minValue, maxValue);
+
+                } else {
+                    ArrayList<ToggleButton> list = tabPageManager.getItem(tabPos).getToggleButtons();
+                    for (ToggleButton button : list) {
+                        filter.setCheckedState(button.getText().toString(), button.isChecked());
+                    }
+
+                    LinearLayout linearLayout = findViewById(R.id.main_hidden_layout);
+                    linearLayout.setVisibility(View.GONE);
                 }
 
-                LinearLayout linearLayout = findViewById(R.id.main_hidden_layout);
-                linearLayout.setVisibility(View.GONE);
+                rearrangeList(null, filter);
             }
         });
 
@@ -336,13 +342,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 int tabPos = tabLayout.getSelectedTabPosition();
-                if (tabPos != 3 && tabPos != 4) {
-                    ArrayList<ToggleButton> list = tabMenus.get(tabPos).getToggleButtons();
-                    for (ToggleButton button : list) {
-                        button.setChecked(false);
-                    }
+                String tabPageTitle = tabLayout.getTabAt(tabPos).getText().toString();
 
-                } else if (tabPos == 3) {
+                if (tabPageTitle.equals("보증금")) {
                     TextView textView = findViewById(R.id.deposit_textView);
                     EditText max = findViewById(R.id.deposit_editText_max);
                     EditText min = findViewById(R.id.deposit_editText_min);
@@ -351,7 +353,7 @@ public class MainActivity extends AppCompatActivity {
                     max.setText("");
                     min.setText("");
 
-                } else {
+                } else if (tabPageTitle.equals("월세금")) {
                     TextView textView = findViewById(R.id.monthly_rent_textView);
                     EditText max = findViewById(R.id.monthly_rent_editText_max);
                     EditText min = findViewById(R.id.monthly_rent_editText_min);
@@ -361,6 +363,12 @@ public class MainActivity extends AppCompatActivity {
                     max.setText("");
                     min.setText("");
                     checkBox.setChecked(false);
+
+                } else {
+                    ArrayList<ToggleButton> list = tabPageManager.getItem(tabPos).getToggleButtons();
+                    for (ToggleButton button : list) {
+                        button.setChecked(false);
+                    }
                 }
             }
         });

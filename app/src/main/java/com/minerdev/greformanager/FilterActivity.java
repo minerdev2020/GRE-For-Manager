@@ -5,7 +5,7 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class FilterActivity extends AppCompatActivity {
-    public static Filter filter = new Filter();
+    public static Filter filter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

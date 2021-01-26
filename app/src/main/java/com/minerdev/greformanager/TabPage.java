@@ -8,11 +8,11 @@ import android.widget.ToggleButton;
 
 import java.util.ArrayList;
 
-public class TabMenu {
+public class TabPage {
     private ArrayList<ToggleButton> toggleButtons = new ArrayList<>();
     private Context context;
 
-    public TabMenu(Context context) {
+    public TabPage(Context context) {
         this.context = context;
     }
 
@@ -20,18 +20,20 @@ public class TabMenu {
         return toggleButtons;
     }
 
-    public void addMenu(String menuTitle) {
+    public void addMenu(String tabPageTitle, String menuTitle) {
         ToggleButton toggleButton = new ToggleButton(context);
         toggleButton.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         toggleButton.setText(menuTitle);
         toggleButton.setTextOn(menuTitle);
         toggleButton.setTextOff(menuTitle);
         toggleButtons.add(toggleButton);
+
+        Filter.addMenuTitle(tabPageTitle, menuTitle);
     }
 
-    public void addMenus(String... menuTitles) {
+    public void addMenus(String tabPageTitle, String... menuTitles) {
         for (String menuTitle : menuTitles) {
-            addMenu(menuTitle);
+            addMenu(tabPageTitle, menuTitle);
         }
     }
 

@@ -5,17 +5,34 @@ public class House {
     private String price;
     private String address;
     private State state;
-    private House_Type houseType;
-    private Payment_Type paymentType;
-    private Filter filter;
+
+    private HouseType houseType;
+    private PaymentType paymentType;
+    private int deposit;
+    private int monthlyRent;
+    private int roomCount;
+    private int floor;
+    private float area;
+    private byte extra;
 
     public House(SerializedData serializedData) {
+        setAll(serializedData);
+    }
+
+    public void setAll(SerializedData serializedData) {
         this.uid = serializedData.uid;
         this.price = serializedData.price;
         this.address = serializedData.address;
         this.state = State.values()[serializedData.state];
-        this.houseType = House_Type.values()[serializedData.houseType];
-        this.paymentType = Payment_Type.values()[serializedData.paymentType];
+
+        this.houseType = HouseType.values()[serializedData.houseType];
+        this.paymentType = PaymentType.values()[serializedData.paymentType];
+        this.deposit = serializedData.deposit;
+        this.monthlyRent = serializedData.monthlyRent;
+        this.roomCount = serializedData.roomCount;
+        this.floor = serializedData.floor;
+        this.area = serializedData.area;
+        this.extra = serializedData.extra;
     }
 
     public int getUid() {
@@ -26,16 +43,8 @@ public class House {
         return price;
     }
 
-    public void setPrice(String price) {
-        this.price = price;
-    }
-
     public String getAddress() {
         return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
     }
 
     public State getState() {
@@ -46,38 +55,40 @@ public class House {
         this.state = state;
     }
 
-    public House_Type getHouseType() {
+    public HouseType getHouseType() {
         return houseType;
     }
 
-    public void setHouseType(House_Type houseType) {
-        this.houseType = houseType;
-    }
-
-    public Payment_Type getPaymentType() {
+    public PaymentType getPaymentType() {
         return paymentType;
     }
 
-    public void setPaymentType(Payment_Type paymentType) {
-        this.paymentType = paymentType;
+    public int getDeposit() {
+        return deposit;
     }
 
-    public enum Payment_Type {
-        SALE("매매"), MONTHLY_RENT("월세"), JEONSE("전세"), SHORT_TERM_RENTAL("단기임대");
+    public int getMonthlyRent() {
+        return monthlyRent;
+    }
 
-        private final String name;
+    public int getRoomCount() {
+        return roomCount;
+    }
 
-        private Payment_Type(String name) {
-            this.name = name;
-        }
+    public int getFloor() {
+        return floor;
+    }
 
-        public String getName() {
-            return name;
-        }
+    public float getArea() {
+        return area;
+    }
+
+    public byte getExtra() {
+        return extra;
     }
 
     public enum State {
-        Sale("판매중"), SOLD_OUT("판매완료");
+        SALE("판매중"), SOLD_OUT("판매완료");
 
         private final String name;
 
@@ -90,12 +101,26 @@ public class House {
         }
     }
 
-    public enum House_Type {
-        APT("아파트"), VILLA("빌라/주택"), OFFICETELS("오피스텔"), OFFICE("상가/사무실");
+    public enum HouseType {
+        VILLA("빌라/주택"), OFFICETELS("오피스텔"), APT("아파트"), OFFICE("상가/사무실");
 
         private final String name;
 
-        private House_Type(String name) {
+        private HouseType(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+    }
+
+    public enum PaymentType {
+        MONTHLY_RENT("월세"), JEONSE("전세"), BUY("매매"), SHORT_TERM_RENTAL("단기임대");
+
+        private final String name;
+
+        private PaymentType(String name) {
             this.name = name;
         }
 
@@ -108,20 +133,15 @@ public class House {
         public int uid;
         public String price;
         public String address;
-        public int state;
-        public int houseType;
-        public int paymentType;
-    }
+        public byte state;
 
-    public static class Filter {
-        public int oneOrTwoRoom;
-        public int houseType;
-        public int saleType;
+        public byte houseType;
+        public byte paymentType;
         public int deposit;
-        public int monthlyRentFee;
-        public int roomCount;
-        public int stair;
-        public int area;
-        public int extra;
+        public int monthlyRent;
+        public byte roomCount;
+        public byte floor;
+        public float area;
+        public byte extra;
     }
 }
