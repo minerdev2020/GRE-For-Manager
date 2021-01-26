@@ -99,21 +99,43 @@ public class MainActivity extends AppCompatActivity {
                 if (tab.getPosition() != 3 && tab.getPosition() != 4) {
                     ArrayList<ToggleButton> list = tabMenus.get(tab.getPosition()).getToggleButtons();
                     for (ToggleButton button : list) {
+                        String key = button.getText().toString();
+                        button.setChecked(Filter.getInstance().getCheckedState(key));
                         flowLayout.addView(button);
                     }
 
                 } else if (tab.getPosition() == 3) {
+                    Filter filter = Filter.getInstance();
                     deposit_layout.setVisibility(View.VISIBLE);
 
+                    TextView textView = findViewById(R.id.deposit_textView);
+                    EditText max = findViewById(R.id.deposit_editText_max);
+                    EditText min = findViewById(R.id.deposit_editText_min);
+
+                    textView.setText(filter.getDepositMin() + "원 ~ " + filter.getDepositMax() + "원");
+                    max.setText(String.valueOf(filter.getDepositMax()));
+                    min.setText(String.valueOf(filter.getDepositMin()));
+
                 } else {
+                    Filter filter = Filter.getInstance();
+
                     monthly_rent_layout.setVisibility(View.VISIBLE);
+
+                    TextView textView = findViewById(R.id.monthly_rent_textView);
+                    EditText max = findViewById(R.id.monthly_rent_editText_max);
+                    EditText min = findViewById(R.id.monthly_rent_editText_min);
+                    CheckBox checkBox = findViewById(R.id.monthly_rent_checkBox);
+
+                    textView.setText(filter.getMonthlyRentMin() + "원 ~ " + filter.getMonthlyRentMax() + "원");
+                    max.setText(String.valueOf(filter.getMonthlyRentMax()));
+                    min.setText(String.valueOf(filter.getMonthlyRentMin()));
+                    checkBox.setChecked(filter.getIsContainManageFee());
                 }
             }
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-                Button button_reset = findViewById(R.id.main_button_reset);
-                button_reset.performClick();
+
             }
 
             @Override
@@ -271,11 +293,12 @@ public class MainActivity extends AppCompatActivity {
         button_apply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Filter filter = Filter.getInstance();
                 int tabPos = tabLayout.getSelectedTabPosition();
                 if (tabPos != 3 && tabPos != 4) {
                     ArrayList<ToggleButton> list = tabMenus.get(tabPos).getToggleButtons();
                     for (ToggleButton button : list) {
-                        FilterActivity.Filter.setCheckState(button.getText().toString(), button.isChecked());
+                        filter.setCheckState(button.getText().toString(), button.isChecked());
                     }
 
                 } else if (tabPos == 3) {
@@ -287,7 +310,7 @@ public class MainActivity extends AppCompatActivity {
 
                     int minValue = minStr.equals("") ? 0 : Integer.parseInt(minStr);
                     int maxValue = maxStr.equals("") ? 0 : Integer.parseInt(maxStr);
-                    FilterActivity.Filter.setDeposit(minValue, maxValue);
+                    filter.setDeposit(minValue, maxValue);
 
                 } else {
                     EditText max = findViewById(R.id.monthly_rent_editText_max);
@@ -300,7 +323,7 @@ public class MainActivity extends AppCompatActivity {
                     int minValue = minStr.equals("") ? 0 : Integer.parseInt(minStr);
                     int maxValue = maxStr.equals("") ? 0 : Integer.parseInt(maxStr);
                     boolean isContain = checkBox.isChecked();
-                    FilterActivity.Filter.setMonthlyRent(isContain, minValue, maxValue);
+                    filter.setMonthlyRent(isContain, minValue, maxValue);
                 }
 
                 LinearLayout linearLayout = findViewById(R.id.main_hidden_layout);
