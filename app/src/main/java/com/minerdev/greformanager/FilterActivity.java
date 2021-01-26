@@ -4,9 +4,9 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.util.HashMap;
-
 public class FilterActivity extends AppCompatActivity {
+    public static Filter filter = new Filter();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

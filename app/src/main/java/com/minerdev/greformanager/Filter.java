@@ -21,14 +21,10 @@ public class Filter {
     private int monthlyRentMax;
     private boolean isContainManageFee;
 
-    private Filter() {
+    public Filter() {
         for (String text : texts) {
             checkedStates.put(text, false);
         }
-    }
-
-    public static Filter getInstance() {
-        return LazyHolder.INSTANCE;
     }
 
     public void setCheckState(String buttonText, boolean isChecked) {
@@ -72,10 +68,5 @@ public class Filter {
 
     public int getMonthlyRentMax() {
         return monthlyRentMax;
-    }
-
-    private static class LazyHolder {
-        // 클래스 로딩 시점에서 생성
-        private static final Filter INSTANCE = new Filter();
     }
 }

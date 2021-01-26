@@ -100,12 +100,12 @@ public class MainActivity extends AppCompatActivity {
                     ArrayList<ToggleButton> list = tabMenus.get(tab.getPosition()).getToggleButtons();
                     for (ToggleButton button : list) {
                         String key = button.getText().toString();
-                        button.setChecked(Filter.getInstance().getCheckedState(key));
+                        button.setChecked(FilterActivity.filter.getCheckedState(key));
                         flowLayout.addView(button);
                     }
 
                 } else if (tab.getPosition() == 3) {
-                    Filter filter = Filter.getInstance();
+                    Filter filter = FilterActivity.filter;
                     deposit_layout.setVisibility(View.VISIBLE);
 
                     TextView textView = findViewById(R.id.deposit_textView);
@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
                     min.setText(String.valueOf(filter.getDepositMin()));
 
                 } else {
-                    Filter filter = Filter.getInstance();
+                    Filter filter = FilterActivity.filter;
 
                     monthly_rent_layout.setVisibility(View.VISIBLE);
 
@@ -293,7 +293,7 @@ public class MainActivity extends AppCompatActivity {
         button_apply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Filter filter = Filter.getInstance();
+                Filter filter = FilterActivity.filter;
                 int tabPos = tabLayout.getSelectedTabPosition();
                 if (tabPos != 3 && tabPos != 4) {
                     ArrayList<ToggleButton> list = tabMenus.get(tabPos).getToggleButtons();
