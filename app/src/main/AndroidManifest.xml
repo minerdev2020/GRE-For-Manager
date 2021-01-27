@@ -11,8 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.GREForManager">
-        <activity android:name=".FilterActivity"></activity>
-        <activity android:name=".MyMenuActivity" />
+        <activity android:name=".FilterActivity"/>
         <activity android:name=".HouseModifyActivity" />
         <activity
             android:name=".HouseDetailActivity"

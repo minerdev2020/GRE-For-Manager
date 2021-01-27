@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="80dp"
+    android:background="#FFDDDDDD"
+    android:gravity="bottom"
+    android:orientation="vertical"
+    android:paddingLeft="20dp"
+    android:paddingBottom="20dp">
+
+    <TextView
+        android:id="@+id/nav_header_id"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="root"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+
+    <TextView
+        android:id="@+id/nav_header_type"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="관리자"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"/>
+</LinearLayout>

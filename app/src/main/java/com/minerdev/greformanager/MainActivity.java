@@ -1,6 +1,8 @@
 package com.minerdev.greformanager;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,10 +22,13 @@ import android.widget.ToggleButton;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.internal.FlowLayout;
+import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
@@ -75,6 +80,9 @@ public class MainActivity extends AppCompatActivity {
 
         // 적용, 초기화 버튼 초기화
         setButtons(tabLayout);
+        
+        // NavigationView 초기화
+        setNavigationView();
 
         // 첫번째 탭 메뉴 초기화
         FlowLayout layout = findViewById(R.id.main_layout_toggleButtons);
@@ -83,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
         for (ToggleButton button : list) {
             layout.addView(button);
         }
-
+        
         // 매물 리스트 초기화 및 HouseListAdapter에 리스트 등록
         items.clear();
 
@@ -143,8 +151,8 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case R.id.main_menu_my_menu:
-                intent = new Intent(this, MyMenuActivity.class);
-                startActivity(intent);
+                DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
+                drawerLayout.openDrawer(GravityCompat.END);
                 break;
 
             default:
@@ -370,6 +378,33 @@ public class MainActivity extends AppCompatActivity {
                     Filter.addCheckedStates(toggleButtonGroups.get(tabPos).getTitle(), list);
                     rearrangeList(null);
                 }
+            }
+        });
+    }
+
+    private void setNavigationView() {
+        DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(MenuItem menuItem) {
+                drawerLayout.closeDrawers();
+
+                int id = menuItem.getItemId();
+                if(id == R.id.nav_menu_logout){
+                    SharedPreferences sharedPreferences = getSharedPreferences("login", Activity.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+
+                    editor.clear();
+                    editor.commit();
+
+                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+
+                return true;
             }
         });
     }
