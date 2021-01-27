@@ -10,6 +10,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -246,6 +247,15 @@ public class MainActivity extends AppCompatActivity {
                 LinearLayout linearLayout = findViewById(R.id.main_hidden_layout);
                 int visibility = linearLayout.getVisibility();
                 linearLayout.setVisibility(visibility == View.VISIBLE ? View.GONE : View.VISIBLE);
+            }
+        });
+
+        ImageButton filter = findViewById(R.id.main_imageButton);
+        filter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, FilterActivity.class);
+                startActivity(intent);
             }
         });
     }
