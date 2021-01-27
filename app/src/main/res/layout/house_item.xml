@@ -3,7 +3,7 @@
     android:id="@+id/houseItem_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="3dp"
+    android:layout_marginVertical="3dp"
     android:background="#FFFFFFFF"
     android:elevation="10dp">
 

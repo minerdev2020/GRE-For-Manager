@@ -130,4 +130,20 @@ public class ToggleButtonGroup {
 
         toggleButtonCheckedStates.clear();
     }
+
+    public void initCheckedStates(HashMap<String, Boolean> checkedStates) {
+        if (checkedStates == null) {
+            toggleButtonCheckedStates.clear();
+        }
+
+        for (ToggleButton button : toggleButtons) {
+            if (checkedStates == null) {
+                button.setChecked(false);
+
+            } else {
+                button.setChecked(checkedStates.get(button.getText().toString()));
+                toggleButtonCheckedStates.put(button.getText().toString(), button.isChecked());
+            }
+        }
+    }
 }

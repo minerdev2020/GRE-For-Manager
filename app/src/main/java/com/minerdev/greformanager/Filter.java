@@ -8,7 +8,7 @@ public class Filter {
             (byte) 0x000F0000, (byte) 0x00F00000, (byte) 0x0F000000, (byte) 0xF0000000
     };
 
-    private static HashMap<String, HashMap<String, Boolean>> checkedStates = new HashMap<>();
+    private static final HashMap<String, HashMap<String, Boolean>> checkedStates = new HashMap<>();
 
     private static int depositMin;
     private static int depositMax;
@@ -18,6 +18,10 @@ public class Filter {
 
     public static void addCheckedStates(String tabTitle, HashMap<String, Boolean> checkedStates) {
         Filter.checkedStates.put(tabTitle, checkedStates);
+    }
+
+    public static HashMap<String, Boolean> getCheckedStates(String tabTitle) {
+        return checkedStates.get(tabTitle);
     }
 
     public static int getDepositMin() {

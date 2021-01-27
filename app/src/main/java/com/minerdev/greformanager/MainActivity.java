@@ -20,6 +20,7 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
@@ -35,6 +36,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
+    private static final int FILTER_ACTIVITY_REQUEST_CODE = 0;
     private static final long FINISH_INTERVAL_TIME = 2000;
     private static final ArrayList<House> items = new ArrayList<>();
 
@@ -72,6 +74,15 @@ public class MainActivity extends AppCompatActivity {
         });
         recyclerView.setAdapter(adapter);
 
+        // 탭 메뉴 아래 가려진 매물 눌림 방지
+        LinearLayout hidden_layout = findViewById(R.id.main_hidden_layout);
+        hidden_layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                return;
+            }
+        });
+
         // TabLayout 초기화
         setTabLayout();
 
@@ -80,18 +91,17 @@ public class MainActivity extends AppCompatActivity {
 
         // 적용, 초기화 버튼 초기화
         setButtons(tabLayout);
-        
+
         // NavigationView 초기화
         setNavigationView();
 
         // 첫번째 탭 메뉴 초기화
         FlowLayout layout = findViewById(R.id.main_layout_toggleButtons);
-        layout.removeAllViews();
         ArrayList<ToggleButton> list = toggleButtonGroups.get(0).getToggleButtons();
         for (ToggleButton button : list) {
             layout.addView(button);
         }
-        
+
         // 매물 리스트 초기화 및 HouseListAdapter에 리스트 등록
         items.clear();
 
@@ -146,11 +156,13 @@ public class MainActivity extends AppCompatActivity {
         Intent intent;
         switch (item.getItemId()) {
             case R.id.main_menu_add:
+                hideHiddenLayout();
                 intent = new Intent(this, HouseModifyActivity.class);
                 startActivity(intent);
                 break;
 
             case R.id.main_menu_my_menu:
+                hideHiddenLayout();
                 DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
                 drawerLayout.openDrawer(GravityCompat.END);
                 break;
@@ -164,9 +176,20 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
+        if (drawerLayout.isDrawerOpen(GravityCompat.END)) {
+            drawerLayout.closeDrawer(GravityCompat.END);
+            return;
+        }
+
         SearchView searchView = findViewById(R.id.main_searchView);
         if (searchView.hasFocus()) {
             searchView.onActionViewCollapsed();
+            return;
+        }
+
+        if (getHiddenLayoutVisibility() == View.VISIBLE) {
+            hideHiddenLayout();
             return;
         }
 
@@ -180,6 +203,17 @@ public class MainActivity extends AppCompatActivity {
             backPressedTime = tempTime;
             Toast.makeText(this, "한 번 더 누르시면 종료됩니다.", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (requestCode == FILTER_ACTIVITY_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                setCheckedStates();
+            }
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     private void rearrangeList(String keyword) {
@@ -201,8 +235,7 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                LinearLayout hidden_layout = findViewById(R.id.main_hidden_layout);
-                hidden_layout.setVisibility(View.VISIBLE);
+                showHiddenLayout();
 
                 LinearLayout deposit_layout = findViewById(R.id.main_deposit_layout);
                 LinearLayout monthly_rent_layout = findViewById(R.id.main_monthly_rent_layout);
@@ -252,9 +285,12 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-                LinearLayout linearLayout = findViewById(R.id.main_hidden_layout);
-                int visibility = linearLayout.getVisibility();
-                linearLayout.setVisibility(visibility == View.VISIBLE ? View.GONE : View.VISIBLE);
+               if (getHiddenLayoutVisibility() == View.VISIBLE) {
+                   hideHiddenLayout();
+
+               } else {
+                   showHiddenLayout();
+               }
             }
         });
 
@@ -262,8 +298,9 @@ public class MainActivity extends AppCompatActivity {
         filter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                hideHiddenLayout();
                 Intent intent = new Intent(MainActivity.this, FilterActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, FILTER_ACTIVITY_REQUEST_CODE);
             }
         });
     }
@@ -392,7 +429,7 @@ public class MainActivity extends AppCompatActivity {
                 drawerLayout.closeDrawers();
 
                 int id = menuItem.getItemId();
-                if(id == R.id.nav_menu_logout){
+                if (id == R.id.nav_menu_logout) {
                     SharedPreferences sharedPreferences = getSharedPreferences("login", Activity.MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
 
@@ -407,5 +444,30 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
+    }
+
+    private void setCheckedStates() {
+        for (ToggleButtonGroup group : toggleButtonGroups) {
+            if (group != null) {
+                group.initCheckedStates(Filter.getCheckedStates(group.getTitle()));
+            }
+        }
+
+        rearrangeList(null);
+    }
+
+    private int getHiddenLayoutVisibility() {
+        LinearLayout linearLayout = findViewById(R.id.main_hidden_layout);
+        return linearLayout.getVisibility();
+    }
+
+    private void showHiddenLayout() {
+        LinearLayout linearLayout = findViewById(R.id.main_hidden_layout);
+        linearLayout.setVisibility(View.VISIBLE);
+    }
+
+    private void hideHiddenLayout() {
+        LinearLayout linearLayout = findViewById(R.id.main_hidden_layout);
+        linearLayout.setVisibility(View.GONE);
     }
 }
