@@ -26,10 +26,9 @@ import com.google.android.material.internal.FlowLayout;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
-    public static final Filter filter = new Filter();
-
     private static final long FINISH_INTERVAL_TIME = 2000;
     private static final ArrayList<House> items = new ArrayList<>();
 
@@ -37,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
 
     private TabLayout tabLayout;
     private HouseListAdapter adapter;
-    private TabPageManager tabPageManager;
+    private ArrayList<ToggleButtonGroup> toggleButtonGroups;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,8 +69,8 @@ public class MainActivity extends AppCompatActivity {
         // TabLayout 초기화
         setTabLayout();
 
-        // 탭 메뉴 리스트 초기화
-        setTabMenus();
+        // 토글 버튼 그룹 리스트 초기화
+        setToggleButtonGroups();
 
         // 적용, 초기화 버튼 초기화
         setButtons(tabLayout);
@@ -79,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         // 첫번째 탭 메뉴 초기화
         FlowLayout layout = findViewById(R.id.main_layout_toggleButtons);
         layout.removeAllViews();
-        ArrayList<ToggleButton> list = tabPageManager.getItem(0).getToggleButtons();
+        ArrayList<ToggleButton> list = toggleButtonGroups.get(0).getToggleButtons();
         for (ToggleButton button : list) {
             layout.addView(button);
         }
@@ -111,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                rearrangeList(query, filter);
+                rearrangeList(query);
                 InputMethodManager manager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
                 manager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                 return true;
@@ -174,17 +173,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void rearrangeList(String keyword, Filter filter) {
-        if (keyword == null && filter == null) {
-            adapter.setItems(items);
-            adapter.notifyDataSetChanged();
-            return;
-        }
-
+    private void rearrangeList(String keyword) {
         ArrayList<House> temp = new ArrayList<>();
         for (House i : items) {
             if ((keyword == null || i.getAddress().contains(keyword))
-                    && (filter == null || filter.isMatch(i))) {
+                    && Filter.isMatch(i)) {
                 temp.add(i);
             }
         }
@@ -217,9 +210,9 @@ public class MainActivity extends AppCompatActivity {
                     EditText max = findViewById(R.id.deposit_editText_max);
                     EditText min = findViewById(R.id.deposit_editText_min);
 
-                    textView.setText(filter.getDepositMin() + "원 ~ " + filter.getDepositMax() + "원");
-                    max.setText(String.valueOf(filter.getDepositMax()));
-                    min.setText(String.valueOf(filter.getDepositMin()));
+                    textView.setText(Filter.getDepositMin() + "원 ~ " + Filter.getDepositMax() + "원");
+                    max.setText(String.valueOf(Filter.getDepositMax()));
+                    min.setText(String.valueOf(Filter.getDepositMin()));
 
                 } else if (tab.getText().toString().equals("월세금")) {
                     monthly_rent_layout.setVisibility(View.VISIBLE);
@@ -229,16 +222,15 @@ public class MainActivity extends AppCompatActivity {
                     EditText min = findViewById(R.id.monthly_rent_editText_min);
                     CheckBox checkBox = findViewById(R.id.monthly_rent_checkBox);
 
-                    textView.setText(filter.getMonthlyRentMin() + "원 ~ " + filter.getMonthlyRentMax() + "원");
-                    max.setText(String.valueOf(filter.getMonthlyRentMax()));
-                    min.setText(String.valueOf(filter.getMonthlyRentMin()));
-                    checkBox.setChecked(filter.getIsContainManageFee());
+                    textView.setText(Filter.getMonthlyRentMin() + "원 ~ " + Filter.getMonthlyRentMax() + "원");
+                    max.setText(String.valueOf(Filter.getMonthlyRentMax()));
+                    min.setText(String.valueOf(Filter.getMonthlyRentMin()));
+                    checkBox.setChecked(Filter.isIsContainManageFee());
 
                 } else {
-                    ArrayList<ToggleButton> list = tabPageManager.getItem(tab.getPosition()).getToggleButtons();
+                    toggleButtonGroups.get(tab.getPosition()).loadCheckedStates();
+                    ArrayList<ToggleButton> list = toggleButtonGroups.get(tab.getPosition()).getToggleButtons();
                     for (ToggleButton button : list) {
-                        String key = button.getText().toString();
-                        button.setChecked(filter.getCheckedState(key));
                         flowLayout.addView(button);
                     }
                 }
@@ -258,37 +250,35 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void setTabMenus() {
-        tabPageManager = new TabPageManager();
+    private void setToggleButtonGroups() {
+        toggleButtonGroups = new ArrayList<>();
 
-        TabPage tabPage1 = new TabPage(this);
-        tabPage1.addMenus("건물형태", "빌라/주택", "오피스텔", "아파트", "상가/사무실");
-        tabPageManager.addItem(tabPage1);
+        ToggleButtonGroup toggleButtonGroup1 = new ToggleButtonGroup(this, "건물형태");
+        toggleButtonGroup1.addToggleButtons("빌라/주택", "오피스텔", "아파트", "상가/사무실");
+        toggleButtonGroups.add(toggleButtonGroup1);
 
-        TabPage tabPage2 = new TabPage(this);
-        tabPage2.addMenus("매물종류", "월세", "전세", "매매", "단기임대");
-        tabPageManager.addItem(tabPage2);
+        ToggleButtonGroup toggleButtonGroup2 = new ToggleButtonGroup(this, "매물종류");
+        toggleButtonGroup2.addToggleButtons("월세", "전세", "매매", "단기임대");
+        toggleButtonGroups.add(toggleButtonGroup2);
 
-        tabPageManager.addItem(null);
-        tabPageManager.addItem(null);
+        toggleButtonGroups.add(null);
+        toggleButtonGroups.add(null);
 
-        TabPage tabPage5 = new TabPage(this);
-        tabPage5.addMenus("방 개수", "원룸", "투룸", "쓰리룸 이상");
-        tabPageManager.addItem(tabPage5);
+        ToggleButtonGroup toggleButtonGroup5 = new ToggleButtonGroup(this, "방 개수");
+        toggleButtonGroup5.addToggleButtons("원룸", "투룸", "쓰리룸 이상");
+        toggleButtonGroups.add(toggleButtonGroup5);
 
-        TabPage tabPage6 = new TabPage(this);
-        tabPage6.addMenus("층수", "1층~5층", "6층 이상", "반지하", "옥탑", "복층");
-        tabPageManager.addItem(tabPage6);
+        ToggleButtonGroup toggleButtonGroup6 = new ToggleButtonGroup(this, "층수");
+        toggleButtonGroup6.addToggleButtons("1층~5층", "6층 이상", "반지하", "옥탑", "복층");
+        toggleButtonGroups.add(toggleButtonGroup6);
 
-        TabPage tabPage7 = new TabPage(this);
-        tabPage7.addMenus("평수", "5평 이하", "6~10평", "11평 이상");
-        tabPageManager.addItem(tabPage7);
+        ToggleButtonGroup toggleButtonGroup7 = new ToggleButtonGroup(this, "평수");
+        toggleButtonGroup7.addToggleButtons("5평 이하", "6~10평", "11평 이상");
+        toggleButtonGroups.add(toggleButtonGroup7);
 
-        TabPage tabPage8 = new TabPage(this);
-        tabPage8.addMenus("추가옵션", "신축", "풀옵션", "주차가능", "엘레베이터", "반려동물", "전세자금대출", "큰길가", "권리분석");
-        tabPageManager.addItem(tabPage8);
-
-        filter.Initialize();
+        ToggleButtonGroup toggleButtonGroup8 = new ToggleButtonGroup(this, "추가옵션");
+        toggleButtonGroup8.addToggleButtons("신축", "풀옵션", "주차가능", "엘레베이터", "반려동물", "전세자금대출", "큰길가", "권리분석");
+        toggleButtonGroups.add(toggleButtonGroup8);
     }
 
     private void setButtons(TabLayout tabLayout) {
@@ -308,7 +298,7 @@ public class MainActivity extends AppCompatActivity {
 
                     int minValue = minStr.equals("") ? 0 : Integer.parseInt(minStr);
                     int maxValue = maxStr.equals("") ? Integer.MAX_VALUE : Integer.parseInt(maxStr);
-                    filter.setDeposit(minValue, maxValue);
+                    Filter.setDeposit(minValue, maxValue);
 
                 } else if (tabPageTitle.equals("월세금")) {
                     EditText max = findViewById(R.id.monthly_rent_editText_max);
@@ -321,19 +311,17 @@ public class MainActivity extends AppCompatActivity {
                     int minValue = minStr.equals("") ? 0 : Integer.parseInt(minStr);
                     int maxValue = maxStr.equals("") ? Integer.MAX_VALUE : Integer.parseInt(maxStr);
                     boolean isContain = checkBox.isChecked();
-                    filter.setMonthlyRent(isContain, minValue, maxValue);
+                    Filter.setMonthlyRen(isContain, minValue, maxValue);
 
                 } else {
-                    ArrayList<ToggleButton> list = tabPageManager.getItem(tabPos).getToggleButtons();
-                    for (ToggleButton button : list) {
-                        filter.setCheckedState(button.getText().toString(), button.isChecked());
-                    }
-
-                    LinearLayout linearLayout = findViewById(R.id.main_hidden_layout);
-                    linearLayout.setVisibility(View.GONE);
+                    toggleButtonGroups.get(tabPos).saveCheckedStates();
+                    HashMap<String, Boolean> list = toggleButtonGroups.get(tabPos).getToggleButtonCheckedStates();
+                    Filter.addCheckedStates(toggleButtonGroups.get(tabPos).getTitle(), list);
                 }
 
-                rearrangeList(null, filter);
+                LinearLayout linearLayout = findViewById(R.id.main_hidden_layout);
+                linearLayout.setVisibility(View.GONE);
+                rearrangeList(null);
             }
         });
 
@@ -352,6 +340,7 @@ public class MainActivity extends AppCompatActivity {
                     textView.setText("0원 ~ 전체");
                     max.setText("");
                     min.setText("");
+                    Filter.setDeposit(0, Integer.MAX_VALUE);
 
                 } else if (tabPageTitle.equals("월세금")) {
                     TextView textView = findViewById(R.id.monthly_rent_textView);
@@ -363,12 +352,13 @@ public class MainActivity extends AppCompatActivity {
                     max.setText("");
                     min.setText("");
                     checkBox.setChecked(false);
+                    Filter.setMonthlyRen(false, 0, Integer.MAX_VALUE);
 
                 } else {
-                    ArrayList<ToggleButton> list = tabPageManager.getItem(tabPos).getToggleButtons();
-                    for (ToggleButton button : list) {
-                        button.setChecked(false);
-                    }
+                    toggleButtonGroups.get(tabPos).resetCheckedStates();
+                    HashMap<String, Boolean> list = toggleButtonGroups.get(tabPos).getToggleButtonCheckedStates();
+                    Filter.addCheckedStates(toggleButtonGroups.get(tabPos).getTitle(), list);
+                    rearrangeList(null);
                 }
             }
         });

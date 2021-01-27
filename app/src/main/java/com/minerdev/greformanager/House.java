@@ -10,6 +10,7 @@ public class House {
     private PaymentType paymentType;
     private int deposit;
     private int monthlyRent;
+    private boolean isContainManageFee;
     private int roomCount;
     private int floor;
     private float area;
@@ -29,6 +30,7 @@ public class House {
         this.paymentType = PaymentType.values()[serializedData.paymentType];
         this.deposit = serializedData.deposit;
         this.monthlyRent = serializedData.monthlyRent;
+        this.isContainManageFee = serializedData.isContainManageFee;
         this.roomCount = serializedData.roomCount;
         this.floor = serializedData.floor;
         this.area = serializedData.area;
@@ -69,6 +71,10 @@ public class House {
 
     public int getMonthlyRent() {
         return monthlyRent;
+    }
+
+    public boolean isContainManageFee() {
+        return isContainManageFee;
     }
 
     public int getRoomCount() {
@@ -139,6 +145,7 @@ public class House {
         public byte paymentType;
         public int deposit;
         public int monthlyRent;
+        public boolean isContainManageFee;
         public byte roomCount;
         public byte floor;
         public float area;

@@ -1,6 +1,5 @@
 package com.minerdev.greformanager;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Filter {
@@ -9,66 +8,59 @@ public class Filter {
             (byte) 0x000F0000, (byte) 0x00F00000, (byte) 0x0F000000, (byte) 0xF0000000
     };
 
-    // 각 탭 페이지의 토글 버튼 텍스트
-    private static final HashMap<String, ArrayList<String>> toggleButtonTexts = new HashMap<>();
-//    private static String[] texts = {
-//            "빌라/주택", "오피스텔", "아파트", "상가/사무실",
-//            "월세", "전세", "매매", "단기임대",
-//            "원룸", "투룸", "쓰리룸 이상",
-//            "1층~5층", "6층 이상", "반지하", "옥탑", "복층",
-//            "5평 이하", "6~10평", "11평 이상",
-//            "신축", "풀옵션", "주차가능", "엘레베이터", "반려동물", "전세자금대출", "큰길가", "권리분석"}
-//};
+    private static HashMap<String, HashMap<String, Boolean>> checkedStates = new HashMap<>();
 
-    // 각 토글 버튼의 토글 상태
-    private final HashMap<String, Boolean> checkedStates = new HashMap<>();
+    private static int depositMin;
+    private static int depositMax;
+    private static int monthlyRentMin;
+    private static int monthlyRentMax;
+    private static boolean isContainManageFee;
 
-    private int depositMin;
-    private int depositMax;
-
-    private int monthlyRentMin;
-    private int monthlyRentMax;
-    private boolean isContainManageFee;
-
-    public static void addMenuTitle(String tabPageTitle, String text) {
-        if (toggleButtonTexts.get(tabPageTitle) == null) {
-            toggleButtonTexts.put(tabPageTitle, new ArrayList<>());
-        }
-
-        toggleButtonTexts.get(tabPageTitle).add(text);
+    public static void addCheckedStates(String tabTitle, HashMap<String, Boolean> checkedStates) {
+        Filter.checkedStates.put(tabTitle, checkedStates);
     }
 
-    public static HashMap<String, ArrayList<String>> getToggleButtonTexts() {
-        return toggleButtonTexts;
+    public static int getDepositMin() {
+        return depositMin;
     }
 
-    public static ArrayList<String> getToggleButtonTextsInPage(String tabPageTitle) {
-        return toggleButtonTexts.get(tabPageTitle);
+    public static int getDepositMax() {
+        return depositMax;
     }
 
-    public void Initialize() {
-        for (ArrayList<String> list : toggleButtonTexts.values()) {
-            for (String text : list) {
-                checkedStates.put(text, false);
-            }
-        }
-
-        depositMin = 0;
-        depositMax = 0;
-        monthlyRentMin = 0;
-        monthlyRentMax = 0;
-        isContainManageFee = false;
+    public static int getMonthlyRentMin() {
+        return monthlyRentMin;
     }
 
-    public boolean isMatch(House house) {
+    public static int getMonthlyRentMax() {
+        return monthlyRentMax;
+    }
+
+    public static boolean isIsContainManageFee() {
+        return isContainManageFee;
+    }
+
+    public static void setDeposit(int depositMin, int depositMax) {
+        Filter.depositMin = depositMin;
+        Filter.depositMax = depositMax;
+    }
+
+    public static void setMonthlyRen(boolean isContainManageFee, int monthlyRentMin, int monthlyRentMax) {
+        Filter.isContainManageFee = isContainManageFee;
+        Filter.monthlyRentMin = monthlyRentMin;
+        Filter.monthlyRentMax = monthlyRentMax;
+    }
+
+    public static boolean isMatch(House house) {
         if (house == null) {
             return false;
         }
 
-        if (getCheckedState(house.getHouseType().getName())
-                && getCheckedState(house.getPaymentType().getName())
+        if (getCheckedState("건물형태", house.getHouseType().getName())
+                && getCheckedState("매물종류", house.getPaymentType().getName())
                 && (house.getDeposit() >= depositMin && house.getDeposit() <= depositMax)
                 && (house.getMonthlyRent() >= monthlyRentMin && house.getDeposit() <= monthlyRentMax)
+                && (house.isContainManageFee() == isContainManageFee)
                 && checkRoomCount(house.getRoomCount())
                 && checkFloor(house.getFloor())
                 && checkArea(house.getArea())
@@ -81,72 +73,7 @@ public class Filter {
         }
     }
 
-    public String getCheckedTextsInSingleLine(String tabPageTitle) {
-        String result = "";
-        ArrayList<String> list = toggleButtonTexts.get(tabPageTitle);
-        for (String buttonText : list) {
-            if (checkedStates.get(buttonText)) {
-                if (!result.equals("")) {
-                    result += " | ";
-                }
-
-                result += buttonText;
-            }
-        }
-
-        return result;
-    }
-
-    public Boolean getCheckedState(String buttonText) {
-        return checkedStates.get(buttonText);
-    }
-
-    public Boolean getCheckedState(String tabPageTitle, int position) {
-        String buttonText = toggleButtonTexts.get(tabPageTitle).get(position);
-        return checkedStates.get(buttonText);
-    }
-
-    public void setCheckedState(String buttonText, boolean isChecked) {
-        checkedStates.put(buttonText, isChecked);
-    }
-
-    public void setCheckedState(String tabPageTitle, int position, boolean isChecked) {
-        String buttonText = toggleButtonTexts.get(tabPageTitle).get(position);
-        checkedStates.put(buttonText, isChecked);
-    }
-
-    public int getDepositMin() {
-        return depositMin;
-    }
-
-    public int getDepositMax() {
-        return depositMax;
-    }
-
-    public void setDeposit(int min, int max) {
-        depositMin = min;
-        depositMax = max;
-    }
-
-    public int getMonthlyRentMin() {
-        return monthlyRentMin;
-    }
-
-    public int getMonthlyRentMax() {
-        return monthlyRentMax;
-    }
-
-    public void setMonthlyRent(boolean isContain, int min, int max) {
-        isContainManageFee = isContain;
-        monthlyRentMin = min;
-        monthlyRentMax = max;
-    }
-
-    public boolean getIsContainManageFee() {
-        return isContainManageFee;
-    }
-
-    private boolean checkFlag(byte flag, int position) {
+    private static boolean checkFlag(byte flag, int position) {
         if ((flag & FLAGS[position]) == 0) {
             return false;
 
@@ -155,71 +82,115 @@ public class Filter {
         }
     }
 
-    private boolean checkRoomCount(int roomCount) {
-        int index = getRoomCountIndex(roomCount);
-        return getCheckedState("방 개수", index);
+    private static boolean checkRoomCount(int roomCount) {
+        return getCheckedState("방 개수", getRoomCountIndex(roomCount));
     }
 
-    private boolean checkFloor(int floor) {
-        int index = getFloorIndex(floor);
-        return getCheckedState("층수", index);
+    private static boolean checkFloor(int floor) {
+        return getCheckedState("층수", getFloorIndex(floor));
     }
 
-    private boolean checkArea(float area) {
-        int index = getAreaIndex(area);
-        return getCheckedState("평수", index);
+    private static boolean checkArea(float area) {
+        return getCheckedState("평수", getAreaIndex(area));
     }
 
-    private boolean checkExtra(byte extra) {
-        int size = getToggleButtonTextsInPage("추가옵션").size();
-        for (int i = 0; i < size; i++) {
-            if (checkFlag(extra, i) != getCheckedState("추가옵션", i)) {
+    private static boolean checkExtra(byte extra) {
+        if (checkedStates.size() == 0) {
+            return true;
+        }
+
+        if (checkedStates.get("추가옵션") == null) {
+            return true;
+        }
+
+        int i = 0;
+        for (Boolean state : checkedStates.get("추가옵션").values()) {
+            if (state == null || checkFlag(extra, i) != state) {
                 return false;
             }
+
+            i++;
         }
 
         return true;
     }
 
-    private int getRoomCountIndex(int roomCount) {
+    private static String getRoomCountIndex(int roomCount) {
         if (roomCount == 1) {
-            return 0;
+            return "원룸";
 
         } else if (roomCount == 2) {
-            return 1;
+            return "투룸";
 
         } else {
-            return 2;
+            return "쓰리룸 이상";
         }
     }
 
-    private int getFloorIndex(int floor) {
+    private static String getFloorIndex(int floor) {
         if (floor == -100) {
-            return 3;
+            return "옥탑";
 
         } else if (floor == -99) {
-            return 4;
+            return "복층";
 
         } else if (floor <= 0) {
-            return 2;
+            return "반지하";
 
         } else if (floor <= 5) {
-            return 0;
+            return "1층~5층";
 
         } else {
-            return 1;
+            return "6층 이상";
         }
     }
 
-    private int getAreaIndex(float area) {
+    private static String getAreaIndex(float area) {
         if (area <= 5) {
-            return 0;
+            return "5평 이하";
 
         } else if (area <= 10) {
-            return 1;
+            return "6~10평";
 
         } else {
-            return 2;
+            return "11평 이상";
         }
+    }
+
+    private static boolean getCheckedState(String tabTitle, String key) {
+        if (checkedStates.size() == 0) {
+            return true;
+        }
+
+        if (checkedStates.get(tabTitle) == null) {
+            return true;
+        }
+
+        return checkedStates.get(tabTitle).get(key);
+    }
+
+    private static boolean getCheckedState(String key) {
+        if (checkedStates.size() == 0) {
+            return true;
+        }
+
+        Boolean result = false;
+        for (HashMap<String, Boolean> list : checkedStates.values()) {
+            if (list == null) {
+                continue;
+            }
+
+            Boolean temp = list.get(key);
+            if (temp == null) {
+                continue;
+            }
+
+            if (temp == true) {
+                result = true;
+                break;
+            }
+        }
+
+        return result;
     }
 }
