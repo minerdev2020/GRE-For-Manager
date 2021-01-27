@@ -101,6 +101,8 @@ public class ToggleButtonGroup {
         toggleButton.setText(text);
         toggleButton.setTextOn(text);
         toggleButton.setTextOff(text);
+        toggleButton.setMinWidth(0);
+        toggleButton.setMinimumWidth(0);
 
         toggleButtons.add(toggleButton);
     }
