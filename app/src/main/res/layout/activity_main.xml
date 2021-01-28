@@ -99,7 +99,7 @@
                 android:id="@+id/main_recyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#FFDDDDDD" />
+                android:background="#FFEEEEEE" />
 
             <include
                 layout="@layout/main_hidden_menu"

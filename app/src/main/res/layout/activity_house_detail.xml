@@ -16,11 +16,28 @@
         android:theme="?attr/actionBarTheme"
         app:menu="@menu/house_detail_toolbar" />
 
-    <include
-        layout="@layout/detail"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <include
+                layout="@layout/image_slider"
+                android:layout_width="match_parent"
+                android:layout_height="300dp" />
+
+            <include
+                layout="@layout/house_detail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </ScrollView>
 
     <Switch
         android:id="@+id/house_detail_switch1"

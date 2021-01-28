@@ -2,24 +2,25 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/houseItem_layout"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginVertical="3dp"
-    android:background="#FFFFFFFF"
-    android:elevation="10dp">
+    android:layout_height="100dp"
+    android:layout_marginBottom="1dp"
+    android:background="#FFFFFFFF">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:background="?attr/selectableItemBackground">
 
         <ImageView
             android:id="@+id/houseItem_imageView_profile"
-            android:layout_width="80dp"
-            android:layout_height="match_parent" />
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:layout_margin="2dp" />
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:layout_weight="1"
             android:orientation="vertical">
 
@@ -59,6 +60,13 @@
                 android:singleLine="true"
                 android:text="description description description description description"
                 android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/houseItem_textView_upload_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1주전"
+                android:textSize="13sp" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

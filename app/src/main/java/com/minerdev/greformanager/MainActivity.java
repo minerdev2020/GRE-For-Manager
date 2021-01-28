@@ -42,9 +42,9 @@ public class MainActivity extends AppCompatActivity {
 
     private long backPressedTime = 0;
 
+    private final HouseListAdapter adapter = new HouseListAdapter();;
+    private final ArrayList<ToggleButtonGroup> toggleButtonGroups = new ArrayList<>();
     private TabLayout tabLayout;
-    private HouseListAdapter adapter;
-    private ArrayList<ToggleButtonGroup> toggleButtonGroups;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +59,6 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView recyclerView = findViewById(R.id.main_recyclerView);
         LinearLayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(manager);
-        adapter = new HouseListAdapter();
         adapter.setOnItemClickListener(new OnHouseItemClickListener() {
             @Override
             public void onItemClick(HouseListAdapter.ViewHolder viewHolder, View view, int position) {
@@ -219,7 +218,7 @@ public class MainActivity extends AppCompatActivity {
     private void rearrangeList(String keyword) {
         ArrayList<House> temp = new ArrayList<>();
         for (House i : items) {
-            if ((keyword == null || i.getAddress().contains(keyword))
+            if ((keyword == null || i.getHouseNumber().contains(keyword))
                     && Filter.isMatch(i)) {
                 temp.add(i);
             }
@@ -306,8 +305,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setToggleButtonGroups() {
-        toggleButtonGroups = new ArrayList<>();
-
         ToggleButtonGroup toggleButtonGroup1 = new ToggleButtonGroup(this, "건물형태");
         toggleButtonGroup1.addToggleButtons("빌라/주택", "오피스텔", "아파트", "상가/사무실");
         toggleButtonGroups.add(toggleButtonGroup1);

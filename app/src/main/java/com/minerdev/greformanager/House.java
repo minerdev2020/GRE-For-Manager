@@ -2,6 +2,7 @@ package com.minerdev.greformanager;
 
 public class House {
     private int uid;
+    private String houseNumber;
     private String price;
     private String address;
     private State state;
@@ -22,6 +23,7 @@ public class House {
 
     public void setAll(SerializedData serializedData) {
         this.uid = serializedData.uid;
+        this.houseNumber = serializedData.houseNumber;
         this.price = serializedData.price;
         this.address = serializedData.address;
         this.state = State.values()[serializedData.state];
@@ -39,6 +41,10 @@ public class House {
 
     public int getUid() {
         return uid;
+    }
+
+    public String getHouseNumber() {
+        return houseNumber;
     }
 
     public String getPrice() {
@@ -137,6 +143,7 @@ public class House {
 
     public static class SerializedData {
         public int uid;
+        public String houseNumber;
         public String price;
         public String address;
         public byte state;
