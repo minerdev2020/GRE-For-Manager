@@ -13,8 +13,8 @@
         android:theme="@style/Theme.GREForManager">
 
         <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="@string/maps_api_key" />
+            android:name="com.naver.maps.map.CLIENT_ID"
+            android:value="@string/client_id" />
 
         <activity android:name=".FilterActivity" />
         <activity android:name=".HouseModifyActivity" />
@@ -34,4 +34,5 @@
             </intent-filter>
         </activity>
     </application>
+
 </manifest>

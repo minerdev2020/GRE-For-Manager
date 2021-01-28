@@ -11,8 +11,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
 
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
+import com.naver.maps.geometry.LatLng;
+import com.naver.maps.map.CameraUpdate;
+import com.naver.maps.map.MapFragment;
+import com.naver.maps.map.NaverMap;
+import com.naver.maps.map.OnMapReadyCallback;
+import com.naver.maps.map.overlay.Marker;
 
 public class HouseDetailActivity extends AppCompatActivity {
     private final ImageAdapter adapter = new ImageAdapter(this);
@@ -31,7 +35,25 @@ public class HouseDetailActivity extends AppCompatActivity {
         ViewPager viewPager = findViewById(R.id.image_slider_viewPager_image);
         viewPager.setAdapter(adapter);
 
-
+        Intent intent = getIntent();
+        LatLng latLng = new LatLng(
+                intent.getDoubleExtra("latitude", 0),
+                intent.getDoubleExtra("longitude", 0)
+        );
+        MapFragment mapFragment = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        if (mapFragment == null) {
+            mapFragment = MapFragment.newInstance();
+            getSupportFragmentManager().beginTransaction().add(R.id.map, mapFragment).commit();
+        }
+        mapFragment.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(@NonNull NaverMap naverMap) {
+                naverMap.setLiteModeEnabled(true);
+                naverMap.moveCamera(CameraUpdate.scrollTo(latLng));
+                Marker marker = new Marker(latLng);
+                marker.setMap(naverMap);
+            }
+        });
     }
 
     @Override

@@ -62,7 +62,11 @@ public class MainActivity extends AppCompatActivity {
         adapter.setOnItemClickListener(new OnHouseItemClickListener() {
             @Override
             public void onItemClick(HouseListAdapter.ViewHolder viewHolder, View view, int position) {
+                String address = adapter.getItem(position).getAddress();
+
                 Intent intent = new Intent(MainActivity.this, HouseDetailActivity.class);
+                intent.putExtra("latitude", 35.857222);
+                intent.putExtra("longitude", 128.465556);
                 startActivity(intent);
             }
 
