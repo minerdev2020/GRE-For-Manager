@@ -2,7 +2,6 @@
 <com.minerdev.greformanager.OneSideDrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -42,48 +41,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                app:tabMode="scrollable">
-
-                <com.google.android.material.tabs.TabItem
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="건물형태" />
-
-                <com.google.android.material.tabs.TabItem
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="매물종류" />
-
-                <com.google.android.material.tabs.TabItem
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="보증금" />
-
-                <com.google.android.material.tabs.TabItem
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="월세금" />
-
-                <com.google.android.material.tabs.TabItem
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="방 개수" />
-
-                <com.google.android.material.tabs.TabItem
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="층수" />
-
-                <com.google.android.material.tabs.TabItem
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="평수" />
-
-                <com.google.android.material.tabs.TabItem
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="추가옵션" />
-            </com.google.android.material.tabs.TabLayout>
+                app:tabMode="scrollable" />
 
             <ImageButton
                 android:id="@+id/main_imageButton"
@@ -101,8 +59,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/main_recyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#FFEEEEEE" />
+                android:layout_height="match_parent" />
 
             <include
                 layout="@layout/main_hidden_menu"
@@ -117,6 +74,5 @@
         android:layout_gravity="end"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header"
-
         app:menu="@menu/nav_menu" />
 </com.minerdev.greformanager.OneSideDrawerLayout>

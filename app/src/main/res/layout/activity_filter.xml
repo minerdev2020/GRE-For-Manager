@@ -14,14 +14,12 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#FFEEEEEE"
             android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="1dp"
-                android:background="#FFFFFFFF"
                 android:orientation="vertical"
                 android:paddingVertical="10dp">
 
@@ -36,11 +34,12 @@
                     android:layout_height="wrap_content" />
             </LinearLayout>
 
+            <View style="@style/Divider" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="1dp"
-                android:background="#FFFFFFFF"
                 android:orientation="vertical"
 
                 android:paddingVertical="10dp">
@@ -56,11 +55,12 @@
                     android:layout_height="wrap_content" />
             </LinearLayout>
 
+            <View style="@style/Divider" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="1dp"
-                android:background="#FFFFFFFF"
                 android:orientation="vertical"
                 android:paddingVertical="10dp">
 
@@ -79,11 +79,12 @@
                 </com.google.android.material.internal.FlowLayout>
             </LinearLayout>
 
+            <View style="@style/Divider" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="1dp"
-                android:background="#FFFFFFFF"
                 android:orientation="vertical"
                 android:paddingVertical="10dp">
 
@@ -102,11 +103,12 @@
                 </com.google.android.material.internal.FlowLayout>
             </LinearLayout>
 
+            <View style="@style/Divider" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="1dp"
-                android:background="#FFFFFFFF"
                 android:orientation="vertical"
                 android:paddingVertical="10dp">
 
@@ -121,11 +123,12 @@
                     android:layout_height="wrap_content" />
             </LinearLayout>
 
+            <View style="@style/Divider" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="1dp"
-                android:background="#FFFFFFFF"
                 android:orientation="vertical"
                 android:paddingVertical="10dp">
 
@@ -140,11 +143,12 @@
                     android:layout_height="wrap_content" />
             </LinearLayout>
 
+            <View style="@style/Divider" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="1dp"
-                android:background="#FFFFFFFF"
                 android:orientation="vertical"
                 android:paddingVertical="10dp">
 
@@ -159,11 +163,12 @@
                     android:layout_height="wrap_content" />
             </LinearLayout>
 
+            <View style="@style/Divider" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="1dp"
-                android:background="#FFFFFFFF"
                 android:orientation="vertical"
                 android:paddingVertical="10dp">
 

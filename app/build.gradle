@@ -20,6 +20,7 @@ android {
             file("../secure.properties")?.withInputStream { secureProps.load(it) }
         }
         resValue "string", "client_id", (secureProps.getProperty("CLIENT_ID") ?: "")
+        resValue "string", "client_secret", (secureProps.getProperty("CLIENT_SECRET") ?: "")
     }
 
     buildTypes {

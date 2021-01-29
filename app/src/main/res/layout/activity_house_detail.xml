@@ -12,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
+        android:elevation="10dp"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
         app:menu="@menu/house_detail_toolbar" />
@@ -32,6 +33,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="300dp" />
 
+            <View style="@style/Divider" />
+
             <include
                 layout="@layout/house_detail"
                 android:layout_width="match_parent"
@@ -42,9 +45,10 @@
     <Switch
         android:id="@+id/house_detail_switch1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#FFAAAAAA"
-        android:switchMinWidth="70dp"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#FFEEEEEE"
+        android:elevation="10dp"
+        android:paddingHorizontal="20dp"
         android:text="판매 완료"
-        android:textSize="30dp" />
+        android:textSize="20sp" />
 </LinearLayout>

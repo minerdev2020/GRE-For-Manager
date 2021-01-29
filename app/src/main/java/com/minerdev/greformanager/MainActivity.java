@@ -35,6 +35,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String[] tabTitles = {"건물형태", "매물종류", "보증금", "월세금", "방 개수", "층수", "평수", "추가옵션"};
+    private static final String[][] toggleButtonTitles = {
+            {"빌라/주택", "오피스텔", "아파트", "상가/사무실"},
+            {"월세", "전세", "매매", "단기임대"},
+            null,
+            null,
+            {"원룸", "투룸", "쓰리룸 이상"},
+            {"1층~5층", "6층 이상", "반지하", "옥탑", "복층"},
+            {"5평 이하", "6~10평", "11평 이상"},
+            {"신축", "풀옵션", "주차가능", "엘레베이터", "반려동물", "전세자금대출", "큰길가", "권리분석"}
+    };
+
     private static final int FILTER_ACTIVITY_REQUEST_CODE = 0;
     private static final long FINISH_INTERVAL_TIME = 2000;
     private static final ArrayList<House> items = new ArrayList<>();
@@ -64,8 +76,7 @@ public class MainActivity extends AppCompatActivity {
                 String address = adapter.getItem(position).getAddress();
 
                 Intent intent = new Intent(MainActivity.this, HouseDetailActivity.class);
-                intent.putExtra("latitude", 35.857222);
-                intent.putExtra("longitude", 128.465556);
+                intent.putExtra("address", address);
                 startActivity(intent);
             }
 
@@ -109,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
 
         House.SerializedData serializedData = new House.SerializedData();
         serializedData.uid = 0;
-        serializedData.address = "대구시 달성군 다사읍 달구벌대로000길 00-00";
+        serializedData.address = "대구광역시 달성군 다사읍 달구벌대로174길 10-17";
         serializedData.state = 0;
         serializedData.price = "5억 4000";
         serializedData.paymentType = 1;
@@ -232,6 +243,13 @@ public class MainActivity extends AppCompatActivity {
     private void setTabLayout() {
         // TabLayout 초기화
         tabLayout = findViewById(R.id.main_tabLayout);
+
+        for (String tabTitle : tabTitles) {
+            TabLayout.Tab tab = tabLayout.newTab();
+            tab.setText(tabTitle);
+            tabLayout.addTab(tab);
+        }
+
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -306,32 +324,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setToggleButtonGroups() {
-        ToggleButtonGroup toggleButtonGroup1 = new ToggleButtonGroup(this, "건물형태");
-        toggleButtonGroup1.addToggleButtons("빌라/주택", "오피스텔", "아파트", "상가/사무실");
-        toggleButtonGroups.add(toggleButtonGroup1);
+        for (int i = 0; i < tabTitles.length; i++) {
+            if (toggleButtonTitles[i] == null) {
+                toggleButtonGroups.add(null);
+                continue;
+            }
 
-        ToggleButtonGroup toggleButtonGroup2 = new ToggleButtonGroup(this, "매물종류");
-        toggleButtonGroup2.addToggleButtons("월세", "전세", "매매", "단기임대");
-        toggleButtonGroups.add(toggleButtonGroup2);
-
-        toggleButtonGroups.add(null);
-        toggleButtonGroups.add(null);
-
-        ToggleButtonGroup toggleButtonGroup5 = new ToggleButtonGroup(this, "방 개수");
-        toggleButtonGroup5.addToggleButtons("원룸", "투룸", "쓰리룸 이상");
-        toggleButtonGroups.add(toggleButtonGroup5);
-
-        ToggleButtonGroup toggleButtonGroup6 = new ToggleButtonGroup(this, "층수");
-        toggleButtonGroup6.addToggleButtons("1층~5층", "6층 이상", "반지하", "옥탑", "복층");
-        toggleButtonGroups.add(toggleButtonGroup6);
-
-        ToggleButtonGroup toggleButtonGroup7 = new ToggleButtonGroup(this, "평수");
-        toggleButtonGroup7.addToggleButtons("5평 이하", "6~10평", "11평 이상");
-        toggleButtonGroups.add(toggleButtonGroup7);
-
-        ToggleButtonGroup toggleButtonGroup8 = new ToggleButtonGroup(this, "추가옵션");
-        toggleButtonGroup8.addToggleButtons("신축", "풀옵션", "주차가능", "엘레베이터", "반려동물", "전세자금대출", "큰길가", "권리분석");
-        toggleButtonGroups.add(toggleButtonGroup8);
+            ToggleButtonGroup toggleButtonGroup = new ToggleButtonGroup(this, tabTitles[i]);
+            toggleButtonGroup.addToggleButtons(toggleButtonTitles[i]);
+            toggleButtonGroups.add(toggleButtonGroup);
+        }
     }
 
     private void setButtons(TabLayout tabLayout) {
@@ -468,5 +470,8 @@ public class MainActivity extends AppCompatActivity {
     private void hideHiddenLayout() {
         LinearLayout linearLayout = findViewById(R.id.main_hidden_layout);
         linearLayout.setVisibility(View.GONE);
+
+        Button button_reset = findViewById(R.id.main_button_reset);
+        button_reset.performClick();
     }
 }

@@ -90,8 +90,7 @@ public class HouseListAdapter extends RecyclerView.Adapter<HouseListAdapter.View
             textView_price.setText(House.getPrice());
             textView_house_info.setText(House.getHouseType().getName());
             textView_description.setText(House.getAddress());
-            imageView_profile.setBackgroundResource(R.drawable.ic_launcher_background);
-            imageView_profile.setImageResource(R.drawable.ic_launcher_foreground);
+            imageView_profile.setImageResource(R.drawable.house);
         }
     }
 }
