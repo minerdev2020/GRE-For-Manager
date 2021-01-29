@@ -3,7 +3,8 @@
     android:id="@+id/main_hidden_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#FFAAAAAA"
+    android:background="#FFEEEEEE"
+    android:elevation="10dp"
     android:orientation="vertical">
 
     <include

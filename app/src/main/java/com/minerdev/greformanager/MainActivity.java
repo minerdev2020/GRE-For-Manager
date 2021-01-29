@@ -24,7 +24,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -39,12 +38,12 @@ public class MainActivity extends AppCompatActivity {
     private static final int FILTER_ACTIVITY_REQUEST_CODE = 0;
     private static final long FINISH_INTERVAL_TIME = 2000;
     private static final ArrayList<House> items = new ArrayList<>();
+    private final HouseListAdapter adapter = new HouseListAdapter();
+    private final ArrayList<ToggleButtonGroup> toggleButtonGroups = new ArrayList<>();
 
     private long backPressedTime = 0;
-
-    private final HouseListAdapter adapter = new HouseListAdapter();;
-    private final ArrayList<ToggleButtonGroup> toggleButtonGroups = new ArrayList<>();
     private TabLayout tabLayout;
+    private OneSideDrawerLayout drawerLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -166,7 +165,6 @@ public class MainActivity extends AppCompatActivity {
 
             case R.id.main_menu_my_menu:
                 hideHiddenLayout();
-                DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
                 drawerLayout.openDrawer(GravityCompat.END);
                 break;
 
@@ -179,9 +177,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
         if (drawerLayout.isDrawerOpen(GravityCompat.END)) {
-            drawerLayout.closeDrawer(GravityCompat.END);
+            drawerLayout.closeDrawers();
             return;
         }
 
@@ -288,12 +285,12 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-               if (getHiddenLayoutVisibility() == View.VISIBLE) {
-                   hideHiddenLayout();
+                if (getHiddenLayoutVisibility() == View.VISIBLE) {
+                    hideHiddenLayout();
 
-               } else {
-                   showHiddenLayout();
-               }
+                } else {
+                    showHiddenLayout();
+                }
             }
         });
 
@@ -421,7 +418,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setNavigationView() {
-        DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
+        drawerLayout = findViewById(R.id.drawer_layout);
+        drawerLayout.lockSwipe(GravityCompat.END);
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
