@@ -3,6 +3,4 @@
     <string name="naver_open_api_geocode">https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode</string>
     <string name="api_key_id_header">X-NCP-APIGW-API-KEY-ID</string>
     <string name="api_key_header">"X-NCP-APIGW-API-KEY"</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -17,12 +17,26 @@
             android:layout_height="wrap_content"
             android:text="주소 입력" />
 
-        <EditText
-            android:id="@+id/house_modify_editView_address"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="지번 또는 도로명 주소"
-            android:singleLine="true" />
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/house_modify_editView_address"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="지번 또는 도로명 주소"
+                android:singleLine="true" />
+
+            <ImageButton
+                android:id="@+id/house_modify_imageButton_search"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#FFFFFFFF"
+                android:src="@drawable/ic_round_search_24" />
+        </LinearLayout>
     </LinearLayout>
 
     <View style="@style/Divider" />

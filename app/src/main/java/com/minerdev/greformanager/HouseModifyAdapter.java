@@ -11,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
@@ -79,7 +80,6 @@ public class HouseModifyAdapter extends PagerAdapter {
     }
 
     private void setAddressPage(View view) {
-        arrayAdapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1);
         EditText editText = view.findViewById(R.id.house_modify_editView_address);
         editText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -100,6 +100,17 @@ public class HouseModifyAdapter extends PagerAdapter {
             }
         });
 
+        ImageButton imageButton = view.findViewById(R.id.house_modify_imageButton_search);
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String text = editText.getText().toString();
+                if (text.length() >= 2) {
+                    Geocode.getInstance().getQueryResponseFromNaver(context, text);
+                }
+            }
+        });
+
         ListView listView = view.findViewById(R.id.house_modify_listView_address);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -107,6 +118,7 @@ public class HouseModifyAdapter extends PagerAdapter {
                 editText.setText(parent.getItemAtPosition(position).toString());
             }
         });
+        arrayAdapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1);
         listView.setAdapter(arrayAdapter);
 
         Geocode.getInstance().setOnDataReceiveCallback(new Geocode.OnDataReceiveCallback() {

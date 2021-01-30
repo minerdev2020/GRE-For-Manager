@@ -71,7 +71,7 @@ public class HouseModifyActivity extends AppCompatActivity {
     public void finish() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("저장하지 않고 돌아가시겠습니까?");
-        builder.setIcon(R.drawable.ic_round_priority_high_24);
+        builder.setIcon(R.drawable.ic_round_help_24);
         builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -152,7 +152,7 @@ public class HouseModifyActivity extends AppCompatActivity {
     private void save() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("저장하시겠습니까?");
-        builder.setIcon(R.drawable.ic_round_priority_high_24);
+        builder.setIcon(R.drawable.ic_round_help_24);
         builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
