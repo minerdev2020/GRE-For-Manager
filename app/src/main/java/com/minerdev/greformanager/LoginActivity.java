@@ -17,13 +17,16 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.pedro.library.AutoPermissions;
+import com.pedro.library.AutoPermissionsListener;
 
 import java.util.regex.Pattern;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity implements AutoPermissionsListener {
     private static final long FINISH_INTERVAL_TIME = 2000;
     private long backPressedTime = 0;
 
@@ -33,6 +36,8 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        AutoPermissions.Companion.loadAllPermissions(this, 101);
 
         editText_pw = findViewById(R.id.login_editText_pw);
 
@@ -58,6 +63,22 @@ public class LoginActivity extends AppCompatActivity {
             backPressedTime = tempTime;
             Toast.makeText(this, "한 번 더 누르시면 종료됩니다.", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        AutoPermissions.Companion.parsePermissions(this, requestCode, permissions, this);
+    }
+
+    @Override
+    public void onDenied(int i, String[] strings) {
+        finish();
+    }
+
+    @Override
+    public void onGranted(int i, String[] strings) {
+
     }
 
     private void tryLogin(View view, String id, String pw) {

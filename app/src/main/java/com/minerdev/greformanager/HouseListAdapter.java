@@ -3,7 +3,6 @@ package com.minerdev.greformanager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -15,10 +14,10 @@ import java.util.ArrayList;
 
 public class HouseListAdapter extends RecyclerView.Adapter<HouseListAdapter.ViewHolder> {
     private ArrayList<House> items = new ArrayList<>();
-    private OnHouseItemClickListener listener;
+    private OnItemClickListener listener;
     private View itemView;
 
-    public void setOnItemClickListener(OnHouseItemClickListener clickListener) {
+    public void setOnItemClickListener(OnItemClickListener clickListener) {
         listener = clickListener;
     }
 
@@ -57,6 +56,10 @@ public class HouseListAdapter extends RecyclerView.Adapter<HouseListAdapter.View
         items.set(position, item);
     }
 
+    public interface OnItemClickListener {
+        void onItemClick(HouseListAdapter.ViewHolder viewHolder, View view, int position);
+    }
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private TextView textView_payment;
         private TextView textView_price;
@@ -64,7 +67,7 @@ public class HouseListAdapter extends RecyclerView.Adapter<HouseListAdapter.View
         private TextView textView_description;
         private ImageView imageView_profile;
 
-        public ViewHolder(@NonNull View itemView, final OnHouseItemClickListener clickListener) {
+        public ViewHolder(@NonNull View itemView, final OnItemClickListener clickListener) {
             super(itemView);
 
             textView_payment = itemView.findViewById(R.id.houseItem_textView_payment_type);

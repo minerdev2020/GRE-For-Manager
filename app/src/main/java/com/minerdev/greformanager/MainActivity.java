@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView recyclerView = findViewById(R.id.main_recyclerView);
         LinearLayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(manager);
-        adapter.setOnItemClickListener(new OnHouseItemClickListener() {
+        adapter.setOnItemClickListener(new HouseListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(HouseListAdapter.ViewHolder viewHolder, View view, int position) {
                 String address = adapter.getItem(position).getAddress();
@@ -78,11 +78,6 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(MainActivity.this, HouseDetailActivity.class);
                 intent.putExtra("address", address);
                 startActivity(intent);
-            }
-
-            @Override
-            public void onItemLongClick(HouseListAdapter.ViewHolder viewHolder, View view, int position) {
-
             }
         });
         recyclerView.setAdapter(adapter);
@@ -218,13 +213,13 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
         if (requestCode == FILTER_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 setCheckedStates();
             }
         }
-
-        super.onActivityResult(requestCode, resultCode, data);
     }
 
     private void rearrangeList(String keyword) {

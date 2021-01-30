@@ -25,16 +25,17 @@
                 android:text="매물 사진 추가" />
 
             <ImageButton
+                android:id="@+id/house_modify_imageButton_add"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:backgroundTint="#FFEEEEEE"
                 android:src="@drawable/ic_round_add_a_photo_24" />
         </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/house_modify_layout_added_images"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" />
     </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/house_modify_recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 </LinearLayout>

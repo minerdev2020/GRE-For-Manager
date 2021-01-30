@@ -1,17 +1,21 @@
 package com.minerdev.greformanager;
 
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,7 +24,7 @@ import androidx.viewpager.widget.ViewPager;
 import java.util.ArrayList;
 
 public class HouseModifyActivity extends AppCompatActivity {
-    private final HouseModifyAdapter adapter = new HouseModifyAdapter(this);
+    private final SectionPageAdapter adapter = new SectionPageAdapter(getSupportFragmentManager());
 
     private ViewPager viewPager;
     private Button button_next;
@@ -39,6 +43,11 @@ public class HouseModifyActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
+
+                if (getCurrentFocus() != null) {
+                    InputMethodManager manager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                    manager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                }
             }
         });
 
@@ -48,6 +57,11 @@ public class HouseModifyActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
+
+                if (getCurrentFocus() != null) {
+                    InputMethodManager manager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                    manager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                }
             }
         });
         setViewPager();
@@ -112,6 +126,10 @@ public class HouseModifyActivity extends AppCompatActivity {
                         @Override
                         public void onClick(View v) {
                             viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
+                            if (getCurrentFocus() != null) {
+                                InputMethodManager manager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                                manager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                            }
                         }
                     });
 
@@ -120,6 +138,11 @@ public class HouseModifyActivity extends AppCompatActivity {
                     button_next.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+                            if (getCurrentFocus() != null) {
+                                InputMethodManager manager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                                manager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                            }
+
                             save();
                         }
                     });
@@ -131,6 +154,10 @@ public class HouseModifyActivity extends AppCompatActivity {
                         @Override
                         public void onClick(View v) {
                             viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
+                            if (getCurrentFocus() != null) {
+                                InputMethodManager manager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                                manager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                            }
                         }
                     });
                 }
@@ -142,9 +169,9 @@ public class HouseModifyActivity extends AppCompatActivity {
             }
         });
 
-        adapter.addLayout(R.layout.house_modify_input_address);
-        adapter.addLayout(R.layout.house_modify_select_images);
-        adapter.addLayout(R.layout.house_modify_input_info);
+        adapter.addFragment(new AddressFragment(), "매물 주소 입력");
+        adapter.addFragment(new ImageFragment(), "매물 사진 선택");
+        adapter.addFragment(new InfoFragment(), "매물 정보 입력");
 
         viewPager.setAdapter(adapter);
     }
