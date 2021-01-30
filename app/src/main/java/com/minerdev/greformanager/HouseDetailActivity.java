@@ -34,7 +34,7 @@ public class HouseDetailActivity extends AppCompatActivity {
 
         readImages();
 
-        ViewPager viewPager = findViewById(R.id.image_slider_viewPager_image);
+        ViewPager viewPager = findViewById(R.id.house_detail_viewPager_image);
         viewPager.setAdapter(adapter);
 
         MapFragment mapFragment = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -55,13 +55,13 @@ public class HouseDetailActivity extends AppCompatActivity {
                 Intent intent = getIntent();
                 String address = intent.getStringExtra("address");
 
-                Geocode.getInstance().getPointFromNaver(HouseDetailActivity.this, address);
+                Geocode.getInstance().getQueryResponseFromNaver(HouseDetailActivity.this, address);
                 Geocode.getInstance().setOnDataReceiveCallback(new Geocode.OnDataReceiveCallback() {
                     @Override
                     public void parseData(GeocodeResult result) {
                         GeocodeResult.Address address = result.addresses.get(0);
                         LatLng latLng = new LatLng(Double.parseDouble(address.y), Double.parseDouble(address.x));
-                        naverMap.moveCamera(CameraUpdate.scrollAndZoomTo(latLng, 15));
+                        naverMap.moveCamera(CameraUpdate.scrollAndZoomTo(latLng, 16));
                         Marker marker = new Marker(latLng);
                         marker.setMap(naverMap);
                     }

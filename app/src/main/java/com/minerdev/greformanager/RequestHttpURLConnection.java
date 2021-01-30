@@ -20,9 +20,13 @@ public class RequestHttpURLConnection {
     public String request(RequestMethod requestMethod, String urlString, ContentValues values, ContentValues headers) {
         HttpURLConnection urlConn = null;
         try {
-            URL url = new URL(urlString + "?" + getValuesInSingleLine(values));
+            if (requestMethod == RequestMethod.GET && values != null && values.size() > 0) {
+                urlString += "?" + getValuesInSingleLine(values);
+            }
+
+            URL url = new URL(urlString);
             urlConn = (HttpURLConnection) url.openConnection();
-            urlConn.setRequestMethod("GET");
+            urlConn.setRequestMethod(requestMethod.getName());
             urlConn.setRequestProperty("Accept-Charset", "UTF-8");
             urlConn.setRequestProperty("Context_Type", "application/x-www-form-urlencoded;charset=UTF-8");
 
@@ -34,7 +38,7 @@ public class RequestHttpURLConnection {
                 os.close();
             }
 
-            if (headers != null) {
+            if (headers != null && headers.size() > 0) {
                 for (Map.Entry<String, Object> parameter : headers.valueSet()) {
                     String key = parameter.getKey();
                     String value = parameter.getValue().toString();

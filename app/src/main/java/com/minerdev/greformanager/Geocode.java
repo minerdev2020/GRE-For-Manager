@@ -24,7 +24,7 @@ public class Geocode {
         this.listener = listener;
     }
 
-    public void getPointFromNaver(Context context, String address) {
+    public void getQueryResponseFromNaver(Context context, String address) {
         try {
             address = URLEncoder.encode(address, "UTF-8");
 

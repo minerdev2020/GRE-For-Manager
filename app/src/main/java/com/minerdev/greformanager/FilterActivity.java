@@ -48,7 +48,7 @@ public class FilterActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.filter_menu, menu);
+        menuInflater.inflate(R.menu.filter_toolbar, menu);
 
         return super.onCreateOptionsMenu(menu);
     }

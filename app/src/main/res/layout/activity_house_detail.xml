@@ -28,15 +28,22 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <include
-                layout="@layout/image_slider"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="300dp" />
+                android:layout_height="@dimen/image_slider_height"
+                android:orientation="vertical">
+
+                <androidx.viewpager.widget.ViewPager
+                    android:id="@+id/house_detail_viewPager_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#FFEEEEEE" />
+            </LinearLayout>
 
             <View style="@style/Divider" />
 
             <include
-                layout="@layout/house_detail"
+                layout="@layout/house_detail_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </LinearLayout>
