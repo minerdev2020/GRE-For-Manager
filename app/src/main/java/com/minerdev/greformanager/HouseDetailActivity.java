@@ -37,17 +37,6 @@ public class HouseDetailActivity extends AppCompatActivity {
         ViewPager viewPager = findViewById(R.id.image_slider_viewPager_image);
         viewPager.setAdapter(adapter);
 
-        Intent intent = getIntent();
-        String address = intent.getStringExtra("address");
-        String client_id = getString(R.string.client_id);
-        String client_secret = getString(R.string.client_secret);
-
-        Geocoding.getInstance().getPointFromNaver(this, client_id, client_secret, address);
-        Geocoding.Point point = Geocoding.getInstance().getPoint();
-        LatLng latLng = new LatLng(point.x, point.y);
-
-        Log.d("Geocoding", point.toString());
-
         MapFragment mapFragment = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         if (mapFragment == null) {
             mapFragment = MapFragment.newInstance();
@@ -58,14 +47,25 @@ public class HouseDetailActivity extends AppCompatActivity {
             @Override
             public void onMapReady(@NonNull NaverMap naverMap) {
                 naverMap.setLiteModeEnabled(true);
-                naverMap.moveCamera(CameraUpdate.scrollAndZoomTo(latLng, 15));
 
                 UiSettings uiSettings = naverMap.getUiSettings();
                 uiSettings.setZoomControlEnabled(false);
                 uiSettings.setAllGesturesEnabled(false);
 
-                Marker marker = new Marker(latLng);
-                marker.setMap(naverMap);
+                Intent intent = getIntent();
+                String address = intent.getStringExtra("address");
+
+                Geocode.getInstance().getPointFromNaver(HouseDetailActivity.this, address);
+                Geocode.getInstance().setOnDataReceiveCallback(new Geocode.OnDataReceiveCallback() {
+                    @Override
+                    public void parseData(GeocodeResult result) {
+                        GeocodeResult.Address address = result.addresses.get(0);
+                        LatLng latLng = new LatLng(Double.parseDouble(address.y), Double.parseDouble(address.x));
+                        naverMap.moveCamera(CameraUpdate.scrollAndZoomTo(latLng, 15));
+                        Marker marker = new Marker(latLng);
+                        marker.setMap(naverMap);
+                    }
+                });
             }
         });
     }

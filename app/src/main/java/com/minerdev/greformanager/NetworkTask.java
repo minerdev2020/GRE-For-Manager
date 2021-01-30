@@ -14,7 +14,9 @@ public class NetworkTask extends AsyncTask<Void, String, String> {
     private ContentValues header;
     private Context context;
     private RequestHttpURLConnection.RequestMethod requestMethod;
-    private OnDataReceiveListener listener;
+    private OnDataReceiveCallback listener;
+    private String dialogMsg;
+    private boolean isDialogEnable;
 
     public NetworkTask(Context context, String url, ContentValues values) {
         initialize(context, url, values, null);
@@ -33,16 +35,26 @@ public class NetworkTask extends AsyncTask<Void, String, String> {
     }
 
     public void setDialogMsg(String dialogMsg) {
-        dialog.setMessage(dialogMsg);
+        this.dialogMsg = dialogMsg;
     }
 
-    public void setOnDataReceiveListener(OnDataReceiveListener listener) {
+    public void setDialogEnable(boolean dialogEnable) {
+        isDialogEnable = dialogEnable;
+    }
+
+    public void setOnDataReceiveCallback(OnDataReceiveCallback listener) {
         this.listener = listener;
     }
 
     @Override
     protected void onPreExecute() {
-        dialog.show();
+        if (isDialogEnable) {
+            dialog = new ProgressDialog(this.context);
+            dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            dialog.setCancelable(false);
+            dialog.setMessage(dialogMsg);
+            dialog.show();
+        }
     }
 
     @Override
@@ -55,13 +67,17 @@ public class NetworkTask extends AsyncTask<Void, String, String> {
 
     @Override
     protected void onPostExecute(String s) {
-        dialog.dismiss();
+        if (isDialogEnable) {
+            dialog.dismiss();
+        }
 
         if (s == null) {
             Toast.makeText(context, "서버 연결 시간 초과!", Toast.LENGTH_SHORT).show();
 
         } else {
-            listener.parseData(s);
+            if (listener != null) {
+                listener.parseData(s);
+            }
         }
     }
 
@@ -71,16 +87,12 @@ public class NetworkTask extends AsyncTask<Void, String, String> {
         this.values = values;
         this.header = header;
         this.requestMethod = RequestHttpURLConnection.RequestMethod.GET;
-        this.listener = new OnDataReceiveListener() {
-            @Override
-            public void parseData(String receivedString) {
-                return;
-            }
-        };
+        this.listener = null;
+        this.dialogMsg = "서버에 연결중...";
+        this.isDialogEnable = false;
+    }
 
-        dialog = new ProgressDialog(this.context);
-        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        dialog.setCancelable(false);
-        dialog.setMessage("서버에 연결중...");
+    public interface OnDataReceiveCallback {
+        void parseData(String receivedString);
     }
 }
