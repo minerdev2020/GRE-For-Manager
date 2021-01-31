@@ -26,7 +26,7 @@ import java.util.ArrayList;
 public class HouseModifyActivity extends AppCompatActivity {
     private final SectionPageAdapter adapter = new SectionPageAdapter(getSupportFragmentManager());
 
-    private ViewPager viewPager;
+    private NonSwipeViewPager viewPager;
     private Button button_next;
     private Button button_previous;
 
@@ -104,14 +104,13 @@ public class HouseModifyActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        adapter.getItem(viewPager.getCurrentItem()).onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
     public void setViewPager() {
         viewPager = findViewById(R.id.house_modify_viewPager);
-        viewPager.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return true;
-            }
-        });
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {

@@ -61,7 +61,8 @@ public class AddressFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                editText.setText(parent.getItemAtPosition(position).toString());
+                editText.setText(parent.getItemAtPosition(position).toString() + " ");
+                editText.setSelection(editText.length());
             }
         });
         arrayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1);

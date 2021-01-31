@@ -6,7 +6,7 @@
     android:orientation="vertical"
     tools:context=".HouseModifyActivity">
 
-    <androidx.viewpager.widget.ViewPager
+    <com.minerdev.greformanager.NonSwipeViewPager
         android:id="@+id/house_modify_viewPager"
         android:layout_width="match_parent"
         android:layout_height="0dp"

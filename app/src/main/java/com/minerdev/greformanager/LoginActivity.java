@@ -1,9 +1,10 @@
 package com.minerdev.greformanager;
 
+import android.Manifest;
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.InputFilter;
 import android.text.Spanned;
@@ -13,20 +14,19 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.material.snackbar.Snackbar;
-import com.pedro.library.AutoPermissions;
-import com.pedro.library.AutoPermissionsListener;
 
 import java.util.regex.Pattern;
 
-public class LoginActivity extends AppCompatActivity implements AutoPermissionsListener {
+public class LoginActivity extends AppCompatActivity {
     private static final long FINISH_INTERVAL_TIME = 2000;
     private long backPressedTime = 0;
 
@@ -36,8 +36,6 @@ public class LoginActivity extends AppCompatActivity implements AutoPermissionsL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
-        AutoPermissions.Companion.loadAllPermissions(this, 101);
 
         editText_pw = findViewById(R.id.login_editText_pw);
 
@@ -65,22 +63,6 @@ public class LoginActivity extends AppCompatActivity implements AutoPermissionsL
         }
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        AutoPermissions.Companion.parsePermissions(this, requestCode, permissions, this);
-    }
-
-    @Override
-    public void onDenied(int i, String[] strings) {
-        finish();
-    }
-
-    @Override
-    public void onGranted(int i, String[] strings) {
-
-    }
-
     private void tryLogin(View view, String id, String pw) {
         if (!id.isEmpty() && !pw.isEmpty()) {
             if (id.equals("root") && pw.equals("admin")) {
@@ -95,7 +77,7 @@ public class LoginActivity extends AppCompatActivity implements AutoPermissionsL
                 finish();
 
             } else {
-                Snackbar.make(view, "해당 계정은 존재 하지않습니다!", Snackbar.LENGTH_LONG).show();
+                Snackbar.make(view, "한 번 더 누르시면 종료됩니다.", Snackbar.LENGTH_LONG).show();
                 editText_pw.setText("");
             }
 

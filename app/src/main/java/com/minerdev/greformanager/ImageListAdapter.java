@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -65,19 +66,41 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.View
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private ImageView imageView;
-        private ImageButton imageButton;
+        private ImageButton imageButton_delete;
+        private ImageButton imageButton_thumbnail;
+        private TextView textView;
+
+        private static boolean isSetThumbnail = false;
 
         public ViewHolder(@NonNull View itemView, final OnItemClickListener clickListener) {
             super(itemView);
 
             imageView = itemView.findViewById(R.id.imageItem_imageView);
-            imageButton = itemView.findViewById(R.id.imageItem_imageButton_delete);
-            imageButton.setOnClickListener(new View.OnClickListener() {
+            imageButton_delete = itemView.findViewById(R.id.imageItem_imageButton_delete);
+            imageButton_delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     clickListener.onItemClick(ViewHolder.this, itemView, getAdapterPosition());
                 }
             });
+
+            imageButton_thumbnail = itemView.findViewById(R.id.imageItem_imageButton_thumbnail);
+            imageButton_thumbnail.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    textView.setVisibility(textView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+                    isSetThumbnail = true;
+                }
+            });
+
+            textView = itemView.findViewById(R.id.imageItem_textView_thumbnail);
+            if (getAdapterPosition() == -1 && !isSetThumbnail) {
+                textView.setVisibility(View.VISIBLE);
+                isSetThumbnail = true;
+
+            } else {
+                textView.setVisibility(View.GONE);
+            }
         }
 
         public void setItem(Uri uri) {
