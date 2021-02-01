@@ -50,7 +50,8 @@ public class MainActivity extends AppCompatActivity {
     private static final int FILTER_ACTIVITY_REQUEST_CODE = 0;
     private static final long FINISH_INTERVAL_TIME = 2000;
     private static final ArrayList<House> items = new ArrayList<>();
-    private final HouseListAdapter adapter = new HouseListAdapter();
+    private final HouseListAdapter saleAdapter = new HouseListAdapter();
+    private final HouseListAdapter soldAdapter = new HouseListAdapter();
     private final ArrayList<ToggleButtonGroup> toggleButtonGroups = new ArrayList<>();
 
     private long backPressedTime = 0;
@@ -66,21 +67,37 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
 
-        // 매물 RecyclerView 및 HouseListAdapter 초기화
-        RecyclerView recyclerView = findViewById(R.id.main_recyclerView);
+        // 판매중 매물 RecyclerView 및 HouseListAdapter 초기화
+        RecyclerView saleRecyclerView = findViewById(R.id.main_recyclerView_sale);
         LinearLayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        recyclerView.setLayoutManager(manager);
-        adapter.setOnItemClickListener(new HouseListAdapter.OnItemClickListener() {
+        saleRecyclerView.setLayoutManager(manager);
+        saleAdapter.setOnItemClickListener(new HouseListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(HouseListAdapter.ViewHolder viewHolder, View view, int position) {
-                String address = adapter.getItem(position).getAddress();
+                String address = saleAdapter.getItem(position).getAddress();
 
                 Intent intent = new Intent(MainActivity.this, HouseDetailActivity.class);
                 intent.putExtra("address", address);
                 startActivity(intent);
             }
         });
-        recyclerView.setAdapter(adapter);
+        saleRecyclerView.setAdapter(saleAdapter);
+
+        // 판매완료 매물 RecyclerView 및 HouseListAdapter 초기화
+        RecyclerView soldRecyclerView = findViewById(R.id.main_recyclerView_sold);
+        LinearLayoutManager manager1 = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        soldRecyclerView.setLayoutManager(manager1);
+        soldAdapter.setOnItemClickListener(new HouseListAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(HouseListAdapter.ViewHolder viewHolder, View view, int position) {
+                String address = soldAdapter.getItem(position).getAddress();
+
+                Intent intent = new Intent(MainActivity.this, HouseDetailActivity.class);
+                intent.putExtra("address", address);
+                startActivity(intent);
+            }
+        });
+        soldRecyclerView.setAdapter(soldAdapter);
 
         // 탭 메뉴 아래 가려진 매물 눌림 방지
         LinearLayout hidden_layout = findViewById(R.id.main_hidden_layout);
@@ -307,7 +324,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        ImageButton filter = findViewById(R.id.main_imageButton);
+        ImageButton filter = findViewById(R.id.main_imageButton_filter);
         filter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
