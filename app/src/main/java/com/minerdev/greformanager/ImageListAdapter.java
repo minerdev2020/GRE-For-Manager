@@ -17,6 +17,7 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.View
     private ArrayList<Uri> items = new ArrayList<>();
     private OnItemClickListener listener;
     private View itemView;
+    private int thumbnailPos = 0;
 
     public void setOnItemClickListener(OnItemClickListener clickListener) {
         listener = clickListener;
@@ -32,7 +33,7 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.View
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.setItem(items.get(position));
+        holder.setItem(items.get(position), thumbnailPos);
     }
 
     @Override
@@ -60,8 +61,18 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.View
         items.remove(position);
     }
 
+    public int getThumbnailPos() {
+        return thumbnailPos;
+    }
+
+    public void setThumbnailPos(int position) {
+        this.thumbnailPos = position;
+    }
+
     public interface OnItemClickListener {
-        void onItemClick(ImageListAdapter.ViewHolder viewHolder, View view, int position);
+        void onDeleteButtonClick(ImageListAdapter.ViewHolder viewHolder, View view, int position);
+
+        void onThumbnailButtonClick(ImageListAdapter.ViewHolder viewHolder, View view, int position);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -69,8 +80,6 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.View
         private ImageButton imageButton_delete;
         private ImageButton imageButton_thumbnail;
         private TextView textView;
-
-        private static boolean isSetThumbnail = false;
 
         public ViewHolder(@NonNull View itemView, final OnItemClickListener clickListener) {
             super(itemView);
@@ -80,7 +89,9 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.View
             imageButton_delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    clickListener.onItemClick(ViewHolder.this, itemView, getAdapterPosition());
+                    if (clickListener != null) {
+                        clickListener.onDeleteButtonClick(ViewHolder.this, itemView, getAdapterPosition());
+                    }
                 }
             });
 
@@ -88,23 +99,24 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.View
             imageButton_thumbnail.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    textView.setVisibility(textView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
-                    isSetThumbnail = true;
+                    if (clickListener != null) {
+                        clickListener.onThumbnailButtonClick(ViewHolder.this, itemView, getAdapterPosition());
+                    }
                 }
             });
 
             textView = itemView.findViewById(R.id.imageItem_textView_thumbnail);
-            if (getAdapterPosition() == -1 && !isSetThumbnail) {
+        }
+
+        public void setItem(Uri uri, int thumbnailPos) {
+            imageView.setImageURI(uri);
+
+            if (getAdapterPosition() == thumbnailPos) {
                 textView.setVisibility(View.VISIBLE);
-                isSetThumbnail = true;
 
             } else {
                 textView.setVisibility(View.GONE);
             }
-        }
-
-        public void setItem(Uri uri) {
-            imageView.setImageURI(uri);
         }
     }
 }

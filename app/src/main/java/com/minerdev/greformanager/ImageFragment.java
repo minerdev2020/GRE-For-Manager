@@ -36,8 +36,22 @@ public class ImageFragment extends Fragment {
         recyclerView.setLayoutManager(manager);
         imageListAdapter.setOnItemClickListener(new ImageListAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(ImageListAdapter.ViewHolder viewHolder, View view, int position) {
+            public void onDeleteButtonClick(ImageListAdapter.ViewHolder viewHolder, View view, int position) {
+                int thumbnailPos = imageListAdapter.getThumbnailPos();
+                if (thumbnailPos == position) {
+                    imageListAdapter.setThumbnailPos(0);
+
+                } else if (thumbnailPos > position) {
+                    imageListAdapter.setThumbnailPos(thumbnailPos - 1);
+                }
+
                 imageListAdapter.removeItem(position);
+                imageListAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onThumbnailButtonClick(ImageListAdapter.ViewHolder viewHolder, View view, int position) {
+                imageListAdapter.setThumbnailPos(position);
                 imageListAdapter.notifyDataSetChanged();
             }
         });
@@ -86,9 +100,8 @@ public class ImageFragment extends Fragment {
         switch (requestCode) {
             case 101:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    /*권한이 있는경우 실행할 코드....*/
+
                 } else {
-                    // 하나라도 거부한다면.
                     AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
                     alertDialog.setTitle("앱 권한");
                     alertDialog.setMessage("해당 앱의 원활한 기능을 이용하시려면 애플리케이션 정보>권한에서 '저장공간' 권한을 허용해 주십시오.");

@@ -119,18 +119,22 @@ public class HouseModifyActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int position) {
+                button_previous.setEnabled(true);
+                button_next.setText("다음");
+                button_next.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
+
+                        if (getCurrentFocus() != null) {
+                            InputMethodManager manager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                            manager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                        }
+                    }
+                });
+
                 if (position == 0) {
                     button_previous.setEnabled(false);
-                    button_next.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
-                            if (getCurrentFocus() != null) {
-                                InputMethodManager manager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-                                manager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-                            }
-                        }
-                    });
 
                 } else if (position == (adapter.getCount() - 1)) {
                     button_next.setText("완료");
@@ -143,20 +147,6 @@ public class HouseModifyActivity extends AppCompatActivity {
                             }
 
                             save();
-                        }
-                    });
-
-                } else {
-                    button_previous.setEnabled(true);
-                    button_next.setText("다음");
-                    button_next.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
-                            if (getCurrentFocus() != null) {
-                                InputMethodManager manager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-                                manager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-                            }
                         }
                     });
                 }
