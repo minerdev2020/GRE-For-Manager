@@ -18,7 +18,6 @@
             android:name="com.naver.maps.map.CLIENT_ID"
             android:value="@string/client_id" />
 
-        <activity android:name=".FilterActivity" />
         <activity android:name=".HouseModifyActivity" />
         <activity
             android:name=".HouseDetailActivity"

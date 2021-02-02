@@ -1,14 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <item
-        android:id="@+id/dummy"
-        android:title="더미" />
-
-    <item
-        android:id="@+id/dummy1"
-        android:title="더미1" />
-
     <item
         android:id="@+id/nav_menu_logout"
         android:title="로그아웃" />
