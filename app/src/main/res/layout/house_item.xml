@@ -70,6 +70,4 @@
                 android:textSize="13sp" />
         </LinearLayout>
     </LinearLayout>
-
-    <View style="@style/Divider" />
 </LinearLayout>

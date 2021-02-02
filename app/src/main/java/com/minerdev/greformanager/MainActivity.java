@@ -24,6 +24,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -71,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView saleRecyclerView = findViewById(R.id.main_recyclerView_sale);
         LinearLayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         saleRecyclerView.setLayoutManager(manager);
+        saleRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         saleAdapter.setOnItemClickListener(new HouseListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(HouseListAdapter.ViewHolder viewHolder, View view, int position) {
@@ -83,10 +85,21 @@ public class MainActivity extends AppCompatActivity {
         });
         saleRecyclerView.setAdapter(saleAdapter);
 
+        ImageButton imageButton = findViewById(R.id.main_imageButton_sale_expand);
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                RecyclerView recyclerView = findViewById(R.id.main_recyclerView_sale);
+                recyclerView.setVisibility(recyclerView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+                imageButton.setImageResource(recyclerView.getVisibility() == View.VISIBLE ? R.drawable.ic_round_expand_less_24 : R.drawable.ic_round_expand_more_24);
+            }
+        });
+
         // 판매완료 매물 RecyclerView 및 HouseListAdapter 초기화
         RecyclerView soldRecyclerView = findViewById(R.id.main_recyclerView_sold);
         LinearLayoutManager manager1 = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         soldRecyclerView.setLayoutManager(manager1);
+        soldRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         soldAdapter.setOnItemClickListener(new HouseListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(HouseListAdapter.ViewHolder viewHolder, View view, int position) {
@@ -98,6 +111,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         soldRecyclerView.setAdapter(soldAdapter);
+
+        ImageButton imageButton1 = findViewById(R.id.main_imageButton_sold_expand);
+        imageButton1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                RecyclerView recyclerView = findViewById(R.id.main_recyclerView_sold);
+                recyclerView.setVisibility(recyclerView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+                imageButton1.setImageResource(recyclerView.getVisibility() == View.VISIBLE ? R.drawable.ic_round_expand_less_24 : R.drawable.ic_round_expand_more_24);
+            }
+        });
 
         // 탭 메뉴 아래 가려진 매물 눌림 방지
         LinearLayout hidden_layout = findViewById(R.id.main_hidden_layout);
@@ -141,7 +164,8 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 0; i < 12; i++) {
             items.add(new House(serializedData));
         }
-        adapter.setItems(items);
+        saleAdapter.setItems(items);
+        soldAdapter.setItems(items);
     }
 
     @Override
@@ -248,8 +272,11 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        adapter.setItems(temp);
-        adapter.notifyDataSetChanged();
+        saleAdapter.setItems(temp);
+        saleAdapter.notifyDataSetChanged();
+
+        soldAdapter.setItems(temp);
+        soldAdapter.notifyDataSetChanged();
     }
 
     private void setTabLayout() {

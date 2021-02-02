@@ -40,6 +40,4 @@
             android:text="대표사진"
             android:textColor="#FF000000" />
     </FrameLayout>
-
-    <View style="@style/Divider" />
 </LinearLayout>
