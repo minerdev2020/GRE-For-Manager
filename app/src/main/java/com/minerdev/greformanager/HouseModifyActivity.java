@@ -1,27 +1,17 @@
 package com.minerdev.greformanager;
 
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
-
-import java.util.ArrayList;
 
 public class HouseModifyActivity extends AppCompatActivity {
     private final SectionPageAdapter adapter = new SectionPageAdapter(getSupportFragmentManager());
@@ -158,9 +148,9 @@ public class HouseModifyActivity extends AppCompatActivity {
             }
         });
 
-        adapter.addFragment(new AddressFragment(), "매물 주소 입력");
-        adapter.addFragment(new ImageFragment(), "매물 사진 선택");
         adapter.addFragment(new InfoFragment(), "매물 정보 입력");
+        adapter.addFragment(new ImageFragment(), "매물 사진 선택");
+        adapter.addFragment(new PreviewFragment(), "미리보기");
 
         viewPager.setAdapter(adapter);
     }

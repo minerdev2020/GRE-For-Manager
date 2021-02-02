@@ -23,6 +23,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.regex.Pattern;
 
@@ -111,7 +112,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void setupEditTexts() {
-        EditText editText_id = findViewById(R.id.login_editText_id);
+        TextInputEditText editText_id = findViewById(R.id.login_editText_id);
         editText_id.setFilters(new InputFilter[]{new InputFilter() {
             @Override
             public CharSequence filter(CharSequence charSequence, int i, int i1, Spanned spanned, int i2, int i3) {
@@ -124,7 +125,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         }, new InputFilter.LengthFilter(8)});
 
-        EditText editText_pw = findViewById(R.id.login_editText_pw);
+        TextInputEditText editText_pw = findViewById(R.id.login_editText_pw);
         editText_pw.setFilters(new InputFilter[]{new InputFilter() {
             @Override
             public CharSequence filter(CharSequence charSequence, int i, int i1, Spanned spanned, int i2, int i3) {
