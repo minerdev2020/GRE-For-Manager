@@ -35,27 +35,6 @@ public class ImageFragment extends Fragment {
         RecyclerView recyclerView = rootView.findViewById(R.id.house_modify_recyclerView);
         LinearLayoutManager manager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(manager);
-        imageListAdapter.setOnItemClickListener(new ImageListAdapter.OnItemClickListener() {
-            @Override
-            public void onDeleteButtonClick(ImageListAdapter.ViewHolder viewHolder, View view, int position) {
-                int thumbnailPos = imageListAdapter.getThumbnailPos();
-                if (thumbnailPos == position) {
-                    imageListAdapter.setThumbnailPos(0);
-
-                } else if (thumbnailPos > position) {
-                    imageListAdapter.setThumbnailPos(thumbnailPos - 1);
-                }
-
-                imageListAdapter.removeItem(position);
-                imageListAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onThumbnailButtonClick(ImageListAdapter.ViewHolder viewHolder, View view, int position) {
-                imageListAdapter.setThumbnailPos(position);
-                imageListAdapter.notifyDataSetChanged();
-            }
-        });
         recyclerView.setAdapter(imageListAdapter);
         recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
 
