@@ -147,7 +147,7 @@ public class HouseModifyActivity extends AppCompatActivity {
 
             }
         });
-
+        
         adapter.addFragment(new InfoFragment(), "매물 정보 입력");
         adapter.addFragment(new ImageFragment(), "매물 사진 선택");
         adapter.addFragment(new PreviewFragment(), "미리보기");

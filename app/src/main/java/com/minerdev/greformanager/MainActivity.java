@@ -122,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
         serializedData.price = "5억 4000";
         serializedData.paymentType = 1;
         serializedData.houseType = 1;
+        serializedData.houseNumber = "1";
 
         for (int i = 0; i < 12; i++) {
             items.add(new House(serializedData));
@@ -210,7 +211,7 @@ public class MainActivity extends AppCompatActivity {
     private void rearrangeList(String keyword) {
         ArrayList<House> temp = new ArrayList<>();
         for (House i : items) {
-            if ((keyword == null || i.getHouseNumber().contains(keyword))) {
+            if ((keyword == null || i.getHouseNumber().contains(keyword) || i.getAddress().contains(keyword))) {
                 temp.add(i);
             }
         }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -31,75 +32,29 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:paddingHorizontal="50dp"
+                    android:paddingHorizontal="5dp"
                     android:paddingVertical="10dp">
 
-                    <TableLayout
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:stretchColumns="1">
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="horizontal">
 
-                        <View style="@style/Divider" />
+                        <TextView
+                            android:id="@+id/house_modify_textView_address"
+                            style="@style/TextAppearance.AppCompat.Body1"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
 
-                        <TableRow
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent">
-
-                            <TextView
-                                style="@style/TextAppearance.AppCompat.Body1"
-                                android:layout_width="@dimen/house_modify_text_width"
-                                android:layout_height="@dimen/house_modify_widget_height"
-                                android:gravity="center"
-                                android:text="시/도" />
-
-                            <Spinner
-                                android:id="@+id/house_modify_spinner_address1"
-                                android:layout_width="wrap_content"
-
-                                android:layout_height="match_parent" />
-                        </TableRow>
-
-                        <View style="@style/Divider" />
-
-                        <TableRow
-                            android:layout_width="match_parent"
-                            android:layout_height="@dimen/house_modify_widget_height">
-
-                            <TextView
-                                style="@style/TextAppearance.AppCompat.Body1"
-                                android:layout_width="@dimen/house_modify_text_width"
-                                android:layout_height="@dimen/house_modify_widget_height"
-                                android:gravity="center"
-                                android:text="시/군/구" />
-
-                            <Spinner
-                                android:id="@+id/house_modify_spinner_address2"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent" />
-                        </TableRow>
-
-                        <View style="@style/Divider" />
-
-                        <TableRow
-                            android:layout_width="match_parent"
-                            android:layout_height="@dimen/house_modify_widget_height">
-
-                            <TextView
-                                style="@style/TextAppearance.AppCompat.Body1"
-                                android:layout_width="@dimen/house_modify_text_width"
-                                android:layout_height="@dimen/house_modify_widget_height"
-                                android:gravity="center"
-                                android:text="읍/면/동" />
-
-                            <Spinner
-                                android:id="@+id/house_modify_spinner_address3"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent" />
-                        </TableRow>
-
-                        <View style="@style/Divider" />
-
-                    </TableLayout>
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/house_modify_search"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="주소 찾기"
+                            app:icon="@drawable/ic_round_search_24" />
+                    </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
 
