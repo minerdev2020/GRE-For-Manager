@@ -89,7 +89,7 @@ public class InfoFragment extends Fragment {
         webView.getSettings().setJavaScriptEnabled(true);
         webView.addJavascriptInterface(new AndroidBridge(), "GREApp");
         webView.setWebChromeClient(new WebChromeClient());
-        webView.loadUrl("http://192.168.35.91:80/get_daum_address.php");
+        webView.loadUrl(getString(R.string.web_server_dns) + "/get_daum_address.php");
 
         dialog.setContentView(webView);
         ViewGroup.LayoutParams params = dialog.getWindow().getAttributes();
