@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,30 +23,23 @@ import androidx.fragment.app.Fragment;
 import com.google.android.material.button.MaterialButton;
 
 public class InfoFragment extends Fragment {
-    private Handler handler = new Handler();
-    private TextView textView;
+    private final Handler handler = new Handler();
+    private TextView textView_address;
+    private Dialog dialog;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_info, container, false);
 
-        textView = rootView.findViewById(R.id.house_modify_textView_address);
+        textView_address = rootView.findViewById(R.id.house_modify_textView_address);
 
         MaterialButton button = rootView.findViewById(R.id.house_modify_search);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                WebView webView = new WebView(getContext());
-
-                webView.getSettings().setJavaScriptEnabled(true);
-                webView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
-                webView.getSettings().setSupportMultipleWindows(true);
-
-                webView.setWebChromeClient(new PopupWebChromeClient());
-
-                webView.addJavascriptInterface(new AndroidBridge(), "GREApp");
-                webView.loadUrl("http://192.168.35.91:80/get_daum_address.php");
+                setAddressDialog();
+                dialog.show();
             }
         });
 
@@ -57,39 +51,20 @@ public class InfoFragment extends Fragment {
         return rootView;
     }
 
-    private class PopupWebChromeClient extends WebChromeClient {
-        @Override
-        public boolean onCreateWindow(WebView view, boolean isDialog, boolean isUserGesture, Message resultMsg) {
-            WebView newWebView = new WebView(getContext());
-            WebSettings webSettings = newWebView.getSettings();
-            webSettings.setJavaScriptEnabled(true);
+    private void setAddressDialog() {
+        dialog = new Dialog(getContext());
 
-            final Dialog dialog = new Dialog(getContext());
-            dialog.setContentView(newWebView);
+        WebView webView = new WebView(getContext());
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.addJavascriptInterface(new AndroidBridge(), "GREApp");
+        webView.setWebChromeClient(new WebChromeClient());
+        webView.loadUrl("http://192.168.35.91:80/get_daum_address.php");
 
-            ViewGroup.LayoutParams params = dialog.getWindow().getAttributes();
-            params.width = ViewGroup.LayoutParams.MATCH_PARENT;
-            params.height = ViewGroup.LayoutParams.MATCH_PARENT;
-            dialog.getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);
-            dialog.show();
-            newWebView.setWebChromeClient(new WebChromeClient() {
-                @Override
-                public void onCloseWindow(WebView window) {
-                    dialog.dismiss();
-                }
-            });
-
-            newWebView.setWebViewClient(new WebViewClient() {
-                @Override
-                public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                    return false;
-                }
-            });
-
-            ((WebView.WebViewTransport) resultMsg.obj).setWebView(newWebView);
-            resultMsg.sendToTarget();
-            return true;
-        }
+        dialog.setContentView(webView);
+        ViewGroup.LayoutParams params = dialog.getWindow().getAttributes();
+        params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+        params.height = ViewGroup.LayoutParams.MATCH_PARENT;
+        dialog.getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);
     }
 
     private class AndroidBridge {
@@ -98,7 +73,8 @@ public class InfoFragment extends Fragment {
             handler.post(new Runnable() {
                 @Override
                 public void run() {
-                    textView.setText(String.format("(%s) %s %s", arg1, arg2, arg3));
+                    textView_address.setText(String.format("(%s) %s %s", arg1, arg2, arg3));
+                    dialog.dismiss();
                 }
             });
         }

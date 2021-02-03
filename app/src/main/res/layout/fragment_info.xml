@@ -52,7 +52,7 @@
                             android:id="@+id/house_modify_search"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="주소 찾기"
+                            android:text="검색"
                             app:icon="@drawable/ic_round_search_24" />
                     </LinearLayout>
                 </LinearLayout>
