@@ -109,36 +109,61 @@ public class HouseModifyActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int position) {
-                button_previous.setEnabled(true);
-                button_next.setText("다음");
-                button_next.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
+                switch (position) {
+                    case 0:
+                        button_previous.setEnabled(false);
+                        button_next.setText("다음");
+                        button_next.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
 
-                        if (getCurrentFocus() != null) {
-                            InputMethodManager manager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-                            manager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-                        }
-                    }
-                });
+                                if (getCurrentFocus() != null) {
+                                    InputMethodManager manager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                                    manager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                                }
 
-                if (position == 0) {
-                    button_previous.setEnabled(false);
-
-                } else if (position == (adapter.getCount() - 1)) {
-                    button_next.setText("완료");
-                    button_next.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            if (getCurrentFocus() != null) {
-                                InputMethodManager manager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-                                manager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                                checkInfo();
                             }
+                        });
+                        break;
 
-                            save();
-                        }
-                    });
+                    case 1:
+                        button_previous.setEnabled(true);
+                        button_next.setText("다음");
+                        button_next.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
+
+                                if (getCurrentFocus() != null) {
+                                    InputMethodManager manager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                                    manager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                                }
+
+                                checkImage();
+                            }
+                        });
+                        break;
+
+
+                    case 2:
+                        button_next.setText("저장");
+                        button_next.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if (getCurrentFocus() != null) {
+                                    InputMethodManager manager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                                    manager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                                }
+
+                                save();
+                            }
+                        });
+                        break;
+
+                    default:
+                        break;
                 }
             }
 
@@ -153,6 +178,14 @@ public class HouseModifyActivity extends AppCompatActivity {
         adapter.addFragment(new PreviewFragment(), "미리보기");
 
         viewPager.setAdapter(adapter);
+    }
+
+    private void checkInfo() {
+
+    }
+
+    private void checkImage() {
+
     }
 
     private void save() {

@@ -5,7 +5,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -49,7 +48,7 @@
                             android:layout_weight="1" />
 
                         <com.google.android.material.button.MaterialButton
-                            android:id="@+id/house_modify_search"
+                            android:id="@+id/house_modify_materialButton_search"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="검색"
@@ -77,13 +76,32 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:paddingHorizontal="50dp"
+                    android:paddingHorizontal="10dp"
                     android:paddingVertical="10dp">
 
                     <TableLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:stretchColumns="1">
+
+                        <View style="@style/Divider" />
+
+                        <TableRow
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <TextView
+                                style="@style/TextAppearance.AppCompat.Body1"
+                                android:layout_width="@dimen/house_modify_text_width"
+                                android:layout_height="@dimen/house_modify_widget_height"
+                                android:gravity="center"
+                                android:text="매물 종류" />
+
+                            <Spinner
+                                android:id="@+id/house_modify_spinner_houseType"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent" />
+                        </TableRow>
 
                         <View style="@style/Divider" />
 
@@ -156,7 +174,7 @@
                                 android:orientation="horizontal">
 
                                 <EditText
-                                    android:id="@+id/house_modify_manage_fee"
+                                    android:id="@+id/house_modify_editText_manage_fee"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
@@ -167,6 +185,12 @@
                                     android:layout_height="wrap_content"
                                     android:gravity="center"
                                     android:text="만원" />
+
+                                <CheckBox
+                                    android:id="@+id/house_modify_checkBox_manage_fee"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="관리비 없음" />
                             </LinearLayout>
                         </TableRow>
 
@@ -193,7 +217,7 @@
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
-                                    android:inputType="numberDecimal" />
+                                    android:inputType="numberSigned" />
 
                                 <TextView
                                     android:layout_width="wrap_content"
@@ -202,11 +226,11 @@
                                     android:text="㎡=" />
 
                                 <EditText
-                                    android:id="@+id/house_modify_area"
+                                    android:id="@+id/house_modify_area_pyeong"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
-                                    android:inputType="numberDecimal" />
+                                    android:inputType="numberSigned" />
 
                                 <TextView
                                     android:layout_width="wrap_content"
@@ -293,7 +317,8 @@
                 <com.google.android.material.textfield.TextInputLayout
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
-                    android:layout_height="200dp">
+                    android:layout_height="200dp"
+                    app:hintEnabled="false">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/house_modify_detail_info"

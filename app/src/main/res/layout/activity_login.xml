@@ -29,15 +29,14 @@
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="아이디">
+            android:layout_height="match_parent">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/login_editText_id"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:ems="10"
-                android:gravity="left|top"
+                android:hint="아이디"
                 android:inputType="textShortMessage"
                 android:privateImeOptions="defaultInputmode=english" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -45,15 +44,15 @@
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="비밀번호">
+            android:layout_height="match_parent"
+            app:passwordToggleEnabled="true">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/login_editText_pw"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:ems="10"
-                android:gravity="left|top"
+                android:hint="비밀번호"
                 android:inputType="textPassword"
                 android:privateImeOptions="defaultInputmode=english" />
         </com.google.android.material.textfield.TextInputLayout>
