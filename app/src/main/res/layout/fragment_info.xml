@@ -31,8 +31,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:paddingHorizontal="5dp"
-                    android:paddingVertical="10dp">
+                    android:padding="10dp">
+
+                    <View style="@style/Divider" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -54,250 +55,19 @@
                             android:text="검색"
                             app:icon="@drawable/ic_round_search_24" />
                     </LinearLayout>
+
+                    <View style="@style/Divider" />
+
                 </LinearLayout>
             </LinearLayout>
 
             <View style="@style/Divider" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingHorizontal="5dp"
-                android:paddingVertical="10dp">
-
-                <TextView
-                    style="@style/TextAppearance.AppCompat.Menu"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="매물 정보" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingHorizontal="10dp"
-                    android:paddingVertical="10dp">
-
-                    <TableLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:stretchColumns="1">
-
-                        <View style="@style/Divider" />
-
-                        <TableRow
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent">
-
-                            <TextView
-                                style="@style/TextAppearance.AppCompat.Body1"
-                                android:layout_width="@dimen/house_modify_text_width"
-                                android:layout_height="@dimen/house_modify_widget_height"
-                                android:gravity="center"
-                                android:text="매물 종류" />
-
-                            <Spinner
-                                android:id="@+id/house_modify_spinner_houseType"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent" />
-                        </TableRow>
-
-                        <View style="@style/Divider" />
-
-                        <TableRow
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent">
-
-                            <TextView
-                                style="@style/TextAppearance.AppCompat.Body1"
-                                android:layout_width="@dimen/house_modify_text_width"
-                                android:layout_height="@dimen/house_modify_widget_height"
-                                android:gravity="center"
-                                android:text="계약 형태" />
-
-                            <Spinner
-                                android:id="@+id/house_modify_spinner_paymentType"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent" />
-                        </TableRow>
-
-                        <View style="@style/Divider" />
-
-                        <TableRow
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent">
-
-                            <TextView
-                                style="@style/TextAppearance.AppCompat.Body1"
-                                android:layout_width="@dimen/house_modify_text_width"
-                                android:layout_height="@dimen/house_modify_widget_height"
-                                android:gravity="center"
-                                android:text="가격 정보" />
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:orientation="horizontal">
-
-                                <EditText
-                                    android:id="@+id/house_modify_price"
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:inputType="numberDecimal" />
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:gravity="center"
-                                    android:text="만원" />
-                            </LinearLayout>
-                        </TableRow>
-
-                        <View style="@style/Divider" />
-
-                        <TableRow
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent">
-
-                            <TextView
-                                style="@style/TextAppearance.AppCompat.Body1"
-                                android:layout_width="@dimen/house_modify_text_width"
-                                android:layout_height="@dimen/house_modify_widget_height"
-                                android:gravity="center"
-                                android:text="관리비 정보" />
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:orientation="horizontal">
-
-                                <EditText
-                                    android:id="@+id/house_modify_editText_manage_fee"
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:inputType="numberDecimal" />
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:gravity="center"
-                                    android:text="만원" />
-
-                                <CheckBox
-                                    android:id="@+id/house_modify_checkBox_manage_fee"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="관리비 없음" />
-                            </LinearLayout>
-                        </TableRow>
-
-                        <View style="@style/Divider" />
-
-                        <TableRow
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent">
-
-                            <TextView
-                                style="@style/TextAppearance.AppCompat.Body1"
-                                android:layout_width="@dimen/house_modify_text_width"
-                                android:layout_height="@dimen/house_modify_widget_height"
-                                android:gravity="center"
-                                android:text="전용 면적" />
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:orientation="horizontal">
-
-                                <EditText
-                                    android:id="@+id/house_modify_area_meter"
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:inputType="numberSigned" />
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:gravity="center"
-                                    android:text="㎡=" />
-
-                                <EditText
-                                    android:id="@+id/house_modify_area_pyeong"
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:inputType="numberSigned" />
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:gravity="center"
-                                    android:text="평" />
-                            </LinearLayout>
-                        </TableRow>
-
-                        <View style="@style/Divider" />
-
-                    </TableLayout>
-                </LinearLayout>
-            </LinearLayout>
+            <include layout="@layout/house_info_layout" />
 
             <View style="@style/Divider" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingHorizontal="5dp"
-                android:paddingVertical="10dp">
-
-                <TextView
-                    style="@style/TextAppearance.AppCompat.Menu"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="옵션 정보" />
-
-                <TableLayout
-                    android:id="@+id/house_modify_tableLayout_option_info"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="10dp"
-                    android:stretchColumns="1">
-
-                    <TableRow android:layout_marginBottom="5dp">
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="옵션 정보" />
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:text="옵션 정보" />
-                    </TableRow>
-
-                    <TableRow>
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="옵션 정보" />
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:text="옵션 정보" />
-                    </TableRow>
-                </TableLayout>
-            </LinearLayout>
+            <include layout="@layout/house_option_layout" />
 
             <View style="@style/Divider" />
 
@@ -318,6 +88,7 @@
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
+                    android:padding="10dp"
                     app:hintEnabled="false">
 
                     <com.google.android.material.textfield.TextInputEditText

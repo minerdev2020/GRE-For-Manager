@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +16,7 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -74,10 +74,30 @@ public class InfoFragment extends Fragment {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 editText_manage_fee.setEnabled(!isChecked);
                 editText_manage_fee.setText("");
+
+                LinearLayout linearLayout = rootView.findViewById(R.id.house_modify_manage_fee_layout);
+                linearLayout.setVisibility(isChecked ? View.GONE : View.VISIBLE);
             }
         });
+        checkBox_manage_fee.setChecked(true);
 
         setAreaEditTexts(rootView);
+
+        EditText editText_floor = rootView.findViewById(R.id.house_modify_editText_floor);
+        CheckBox checkBox_underground = rootView.findViewById(R.id.house_modify_checkBox_underground);
+        checkBox_underground.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                editText_floor.setEnabled(!isChecked);
+                editText_floor.setText("");
+            }
+        });
+        checkBox_manage_fee.setChecked(true);
+
+        Spinner spinner_structure = rootView.findViewById(R.id.house_modify_spinner_structure);
+        ArrayAdapter<String> arrayAdapter2 = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item);
+        arrayAdapter2.addAll(getResources().getStringArray(R.array.structure));
+        spinner_structure.setAdapter(arrayAdapter2);
 
         return rootView;
     }

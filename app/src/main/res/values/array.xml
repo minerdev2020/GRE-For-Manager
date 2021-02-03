@@ -15,4 +15,14 @@
         <item>임대 매매</item>
         <item>매매</item>
     </string-array>
+
+    <string-array name="structure">
+        <item>오픈형 원룸</item>
+        <item>분리형 원룸</item>
+        <item>복층형 원룸</item>
+        <item>원룸</item>
+        <item>투룸</item>
+        <item>쓰리룸</item>
+        <item>포룸 이상</item>
+    </string-array>
 </resources>

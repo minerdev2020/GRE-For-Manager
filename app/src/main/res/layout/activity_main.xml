@@ -114,6 +114,6 @@
         android:layout_height="match_parent"
         android:layout_gravity="end"
         android:fitsSystemWindows="true"
-        app:headerLayout="@layout/nav_header"
+        app:headerLayout="@layout/nav_header_layout"
         app:menu="@menu/nav_menu" />
 </com.minerdev.greformanager.OneSideDrawerLayout>
