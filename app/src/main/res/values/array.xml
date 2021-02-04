@@ -25,4 +25,31 @@
         <item>쓰리룸</item>
         <item>포룸 이상</item>
     </string-array>
+
+    <string-array name="manage_fee">
+        <item>전기</item>
+        <item>가스</item>
+        <item>수도</item>
+        <item>인터넷</item>
+        <item>케이블</item>
+        <item>기타</item>
+    </string-array>
+
+    <string-array name="option">
+        <item>에어콘</item>
+        <item>세탁기</item>
+        <item>냉장고</item>
+        <item>가스레인지</item>
+        <item>전자레인지</item>
+        <item>인덕션</item>
+        <item>옷장</item>
+        <item>신발장</item>
+        <item>싱크대</item>
+        <item>책상</item>
+        <item>책장</item>
+        <item>침대</item>
+        <item>주차 공간</item>
+        <item>엘레베이터</item>
+        <item>애완동물</item>
+    </string-array>
 </resources>

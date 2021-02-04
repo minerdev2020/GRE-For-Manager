@@ -9,10 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
-import android.webkit.WebChromeClient;
-import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -22,41 +19,56 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.internal.FlowLayout;
 
 public class InfoFragment extends Fragment {
     private final Handler handler = new Handler();
-    private TextView textView_address;
-    private Dialog dialog;
+    private ToggleButtonGroup manageFeeGroup;
+    private ToggleButtonGroup optionGroup;
+    private TextView textViewAddress;
+    private Dialog addressDialog;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_info, container, false);
 
-        textView_address = rootView.findViewById(R.id.house_modify_textView_address);
 
-        MaterialButton button = rootView.findViewById(R.id.house_modify_materialButton_search);
-        button.setOnClickListener(new View.OnClickListener() {
+
+        // 주소 입력 초기화
+        textViewAddress = rootView.findViewById(R.id.house_modify_textView_address);
+
+        MaterialButton buttonSearchAddress = rootView.findViewById(R.id.house_modify_materialButton_search);
+        buttonSearchAddress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 setAddressDialog();
-                dialog.show();
+                addressDialog.show();
             }
         });
 
-        Spinner spinner_payment = rootView.findViewById(R.id.house_modify_spinner_paymentType);
-        ArrayAdapter<String> arrayAdapter4 = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item);
-        spinner_payment.setAdapter(arrayAdapter4);
 
-        Spinner spinner_house = rootView.findViewById(R.id.house_modify_spinner_houseType);
+
+        // 매물 종류 초기화
+        ArrayAdapter<String> arrayAdapter4 = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item);
+        
+        Spinner spinnerPayment = rootView.findViewById(R.id.house_modify_spinner_paymentType);
+        spinnerPayment.setAdapter(arrayAdapter4);
+
+
+
+        // 계약 형태 초기화
         ArrayAdapter<String> arrayAdapter1 = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item);
         arrayAdapter1.addAll(getResources().getStringArray(R.array.houseType));
-        spinner_house.setAdapter(arrayAdapter1);
-        spinner_house.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        
+        Spinner spinnerHouse = rootView.findViewById(R.id.house_modify_spinner_houseType);
+        spinnerHouse.setAdapter(arrayAdapter1);
+        spinnerHouse.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 arrayAdapter4.clear();
@@ -70,69 +82,100 @@ public class InfoFragment extends Fragment {
             }
         });
 
-        EditText editText_manage_fee = rootView.findViewById(R.id.house_modify_editText_manage_fee);
-        CheckBox checkBox_manage_fee = rootView.findViewById(R.id.house_modify_checkBox_manage_fee);
-        checkBox_manage_fee.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+
+        // 관리비 초기화
+        EditText editTextManageFee = rootView.findViewById(R.id.house_modify_editText_manage_fee);
+
+        CheckBox checkBoxManageFee = rootView.findViewById(R.id.house_modify_checkBox_manage_fee);
+        checkBoxManageFee.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                editText_manage_fee.setEnabled(!isChecked);
-                editText_manage_fee.setText("");
+                editTextManageFee.setEnabled(!isChecked);
+                editTextManageFee.setText("");
 
-                LinearLayout linearLayout = rootView.findViewById(R.id.house_modify_manage_fee_layout);
-                linearLayout.setVisibility(isChecked ? View.GONE : View.VISIBLE);
+                FlowLayout layout = rootView.findViewById(R.id.house_modify_flowLayout_manage_fee);
+                layout.setVisibility(isChecked ? View.GONE : View.VISIBLE);
             }
         });
-        checkBox_manage_fee.setChecked(true);
+        checkBoxManageFee.setChecked(true);
 
+        manageFeeGroup = new ToggleButtonGroup(getContext(), "관리비 항목");
+        manageFeeGroup.addToggleButtons(getResources().getStringArray(R.array.manage_fee));
+        FlowLayout flowLayoutManageFee = rootView.findViewById(R.id.house_modify_flowLayout_manage_fee);
+        for (ToggleButton toggleButton : manageFeeGroup.getToggleButtons()) {
+            flowLayoutManageFee.addView(toggleButton);
+        }
+
+
+        // 전용 면적 초기화
         setAreaEditTexts(rootView);
 
-        EditText editText_floor = rootView.findViewById(R.id.house_modify_editText_floor);
-        CheckBox checkBox_underground = rootView.findViewById(R.id.house_modify_checkBox_underground);
-        checkBox_underground.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+
+        // 층 초기화
+        EditText editTextFloor = rootView.findViewById(R.id.house_modify_editText_floor);
+
+        CheckBox checkBoxUnderground = rootView.findViewById(R.id.house_modify_checkBox_underground);
+        checkBoxUnderground.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                editText_floor.setEnabled(!isChecked);
-                editText_floor.setText("");
+                editTextFloor.setEnabled(!isChecked);
+                editTextFloor.setText("");
             }
         });
-        checkBox_manage_fee.setChecked(true);
-
-        Spinner spinner_structure = rootView.findViewById(R.id.house_modify_spinner_structure);
+        checkBoxUnderground.setChecked(false);
+        
+        
+        
+        // 구조 초기화
         ArrayAdapter<String> arrayAdapter2 = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item);
         arrayAdapter2.addAll(getResources().getStringArray(R.array.structure));
-        spinner_structure.setAdapter(arrayAdapter2);
+
+        Spinner spinnerStructure = rootView.findViewById(R.id.house_modify_spinner_structure);
+        spinnerStructure.setAdapter(arrayAdapter2);
+
+
+
+        // 옵션 정보 초기화
+        optionGroup = new ToggleButtonGroup(getContext(), "옵션 항목");
+        optionGroup.addToggleButtons(getResources().getStringArray(R.array.option));
+        FlowLayout flowLayoutOption = rootView.findViewById(R.id.house_modify_flowLayout_option);
+        for (ToggleButton toggleButton : optionGroup.getToggleButtons()) {
+            flowLayoutOption.addView(toggleButton);
+        }
 
         return rootView;
     }
 
     private void setAddressDialog() {
-        dialog = new Dialog(getContext());
-        dialog.setContentView(R.layout.dialog_address);
+        addressDialog = new Dialog(getContext());
+        addressDialog.setContentView(R.layout.dialog_address);
 
-        WebView webView = dialog.findViewById(R.id.address_dialog_button_webView);
+        WebView webView = addressDialog.findViewById(R.id.address_dialog_button_webView);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.addJavascriptInterface(new AndroidBridge(), "GREApp");
         webView.loadUrl(getString(R.string.web_server_dns) + "/get_daum_address.php");
 
-        ViewGroup.LayoutParams params = dialog.getWindow().getAttributes();
+        ViewGroup.LayoutParams params = addressDialog.getWindow().getAttributes();
         params.width = ViewGroup.LayoutParams.MATCH_PARENT;
         params.height = ViewGroup.LayoutParams.MATCH_PARENT;
-        dialog.getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);
+        addressDialog.getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);
 
-        Button button_back = dialog.findViewById(R.id.address_dialog_button_back);
+        Button button_back = addressDialog.findViewById(R.id.address_dialog_button_back);
         button_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialog.dismiss();
+                addressDialog.dismiss();
             }
         });
     }
 
     private void setAreaEditTexts(ViewGroup rootView) {
-        EditText editText_pyeong = rootView.findViewById(R.id.house_modify_area_pyeong);
-        EditText editText_meter = rootView.findViewById(R.id.house_modify_area_meter);
+        EditText editTextPyeong = rootView.findViewById(R.id.house_modify_area_pyeong);
+        EditText editTextMeter = rootView.findViewById(R.id.house_modify_area_meter);
 
-        editText_pyeong.addTextChangedListener(new TextWatcher() {
+        editTextPyeong.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -140,14 +183,14 @@ public class InfoFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (editText_pyeong.hasFocus()) {
+                if (editTextPyeong.hasFocus()) {
                     String temp = s.toString();
                     if (temp.equals("")) {
-                        editText_meter.setText("");
+                        editTextMeter.setText("");
 
                     } else {
                         float area = Float.parseFloat(temp);
-                        editText_meter.setText(String.format("%.2f", area * 3.305));
+                        editTextMeter.setText(String.format("%.2f", area * 3.305));
                     }
                 }
             }
@@ -158,7 +201,7 @@ public class InfoFragment extends Fragment {
             }
         });
 
-        editText_meter.addTextChangedListener(new TextWatcher() {
+        editTextMeter.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -166,14 +209,14 @@ public class InfoFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (editText_meter.hasFocus()) {
+                if (editTextMeter.hasFocus()) {
                     String temp = s.toString();
                     if (temp.equals("")) {
-                        editText_pyeong.setText("");
+                        editTextPyeong.setText("");
 
                     } else {
                         float area = Float.parseFloat(temp);
-                        editText_pyeong.setText(String.format("%.2f", area * 0.3025));
+                        editTextPyeong.setText(String.format("%.2f", area * 0.3025));
                     }
                 }
             }
@@ -191,8 +234,8 @@ public class InfoFragment extends Fragment {
             handler.post(new Runnable() {
                 @Override
                 public void run() {
-                    textView_address.setText(String.format("(%s) %s %s", arg1, arg2, arg3));
-                    dialog.dismiss();
+                    textViewAddress.setText(String.format("(%s) %s %s", arg1, arg2, arg3));
+                    addressDialog.dismiss();
                 }
             });
         }

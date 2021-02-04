@@ -51,9 +51,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+
         // 툴바 초기화
         Toolbar toolbar = findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
+
+
 
         // 판매중 매물 RecyclerView 및 HouseListAdapter 초기화
         RecyclerView saleRecyclerView = findViewById(R.id.main_recyclerView_sale);
@@ -82,6 +86,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
+
         // 판매완료 매물 RecyclerView 및 HouseListAdapter 초기화
         RecyclerView soldRecyclerView = findViewById(R.id.main_recyclerView_sold);
         LinearLayoutManager manager1 = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
@@ -109,8 +115,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
+
         // NavigationView 초기화
         setNavigationView();
+
+
 
         // 매물 리스트 초기화 및 HouseListAdapter에 리스트 등록
         items.clear();
