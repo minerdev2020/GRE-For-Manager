@@ -79,14 +79,14 @@ public class HouseDetailActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        Intent intent;
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
                 break;
 
             case R.id.house_detail_menu_modify:
-                intent = new Intent(this, HouseModifyActivity.class);
+                Intent intent = new Intent(this, HouseModifyActivity.class);
+                intent.putExtra("mode", "modify");
                 startActivity(intent);
                 break;
 

@@ -22,10 +22,12 @@
         <activity android:name=".HouseModifyActivity" />
         <activity
             android:name=".HouseDetailActivity"
-            android:theme="@style/Theme.GREForManager.NoActionBar" />
+            android:theme="@style/Theme.GREForManager.NoActionBar"
+            android:label="매물 상세 정보"/>
         <activity
             android:name=".MainActivity"
-            android:theme="@style/Theme.GREForManager.NoActionBar" />
+            android:theme="@style/Theme.GREForManager.NoActionBar"
+            android:label="매물 리스트"/>
         <activity
             android:name=".LoginActivity"
             android:theme="@style/Theme.GREForManager.NoActionBar">

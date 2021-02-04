@@ -1,6 +1,7 @@
 package com.minerdev.greformanager;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,6 +28,15 @@ public class HouseModifyActivity extends AppCompatActivity {
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
+
+        Intent intent = getIntent();
+        String mode = intent.getStringExtra("mode");
+        if (mode.equals("add")) {
+            actionBar.setTitle("매물 추가");
+
+        } else if (mode.equals("modify")) {
+            actionBar.setTitle("매물 정보 수정");
+        }
 
         button_next = findViewById(R.id.house_modify_button_next);
         button_next.setOnClickListener(new View.OnClickListener() {

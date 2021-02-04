@@ -166,6 +166,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onClose() {
                 searchView.onActionViewCollapsed();
+
+                saleAdapter.setItems(items);
+                saleAdapter.notifyDataSetChanged();
+
+                soldAdapter.setItems(items);
+                soldAdapter.notifyDataSetChanged();
+
                 return true;
             }
         });
@@ -179,6 +186,7 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.main_menu_add:
                 intent = new Intent(this, HouseModifyActivity.class);
+                intent.putExtra("mode", "add");
                 startActivity(intent);
                 break;
 
