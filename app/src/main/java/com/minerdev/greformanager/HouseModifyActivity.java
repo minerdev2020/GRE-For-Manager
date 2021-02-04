@@ -133,7 +133,10 @@ public class HouseModifyActivity extends AppCompatActivity {
                                     manager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                                 }
 
-                                checkInfo();
+                                if (adapter.getItem(position) instanceof OnSaveDataListener) {
+                                    OnSaveDataListener listener = (OnSaveDataListener) adapter.getItem(position);
+                                    listener.saveData();
+                                }
                             }
                         });
                         break;
@@ -151,7 +154,10 @@ public class HouseModifyActivity extends AppCompatActivity {
                                     manager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                                 }
 
-                                checkImage();
+                                if (adapter.getItem(position) instanceof OnSaveDataListener) {
+                                    OnSaveDataListener listener = (OnSaveDataListener) adapter.getItem(position);
+                                    listener.saveData();
+                                }
                             }
                         });
                         break;
@@ -167,7 +173,7 @@ public class HouseModifyActivity extends AppCompatActivity {
                                     manager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                                 }
 
-                                save();
+                                askSave();
                             }
                         });
                         break;
@@ -190,22 +196,14 @@ public class HouseModifyActivity extends AppCompatActivity {
         viewPager.setAdapter(adapter);
     }
 
-    private void checkInfo() {
-
-    }
-
-    private void checkImage() {
-
-    }
-
-    private void save() {
+    private void askSave() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("저장하시겠습니까?");
         builder.setIcon(R.drawable.ic_round_help_24);
         builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                sendData();
+                SendData.getInstance().sendData();
                 HouseModifyActivity.super.finish();
             }
         });
@@ -218,9 +216,5 @@ public class HouseModifyActivity extends AppCompatActivity {
 
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
-    }
-
-    private void sendData() {
-
     }
 }

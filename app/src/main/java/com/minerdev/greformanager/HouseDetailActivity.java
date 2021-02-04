@@ -2,7 +2,6 @@ package com.minerdev.greformanager;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -56,7 +55,7 @@ public class HouseDetailActivity extends AppCompatActivity {
                 String address = intent.getStringExtra("address");
 
                 Geocode.getInstance().getQueryResponseFromNaver(HouseDetailActivity.this, address);
-                Geocode.getInstance().setOnDataReceiveCallback(new Geocode.OnDataReceiveCallback() {
+                Geocode.getInstance().setOnDataReceiveListener(new Geocode.OnDataReceiveListener() {
                     @Override
                     public void parseData(GeocodeResult result) {
                         GeocodeResult.Address address = result.addresses.get(0);

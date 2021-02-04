@@ -16,7 +16,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.ToggleButton;
@@ -26,18 +25,18 @@ import androidx.fragment.app.Fragment;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.internal.FlowLayout;
 
-public class InfoFragment extends Fragment {
+public class InfoFragment extends Fragment implements OnSaveDataListener {
     private final Handler handler = new Handler();
     private ToggleButtonGroup manageFeeGroup;
     private ToggleButtonGroup optionGroup;
     private TextView textViewAddress;
     private Dialog addressDialog;
+    private ViewGroup rootView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_info, container, false);
-
+        rootView = (ViewGroup) inflater.inflate(R.layout.fragment_info, container, false);
 
 
         // 주소 입력 초기화
@@ -53,19 +52,17 @@ public class InfoFragment extends Fragment {
         });
 
 
-
         // 매물 종류 초기화
         ArrayAdapter<String> arrayAdapter4 = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item);
-        
+
         Spinner spinnerPayment = rootView.findViewById(R.id.house_modify_spinner_paymentType);
         spinnerPayment.setAdapter(arrayAdapter4);
-
 
 
         // 계약 형태 초기화
         ArrayAdapter<String> arrayAdapter1 = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item);
         arrayAdapter1.addAll(getResources().getStringArray(R.array.houseType));
-        
+
         Spinner spinnerHouse = rootView.findViewById(R.id.house_modify_spinner_houseType);
         spinnerHouse.setAdapter(arrayAdapter1);
         spinnerHouse.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -81,7 +78,6 @@ public class InfoFragment extends Fragment {
                 arrayAdapter4.clear();
             }
         });
-
 
 
         // 관리비 초기화
@@ -112,7 +108,6 @@ public class InfoFragment extends Fragment {
         setAreaEditTexts(rootView);
 
 
-
         // 층 초기화
         EditText editTextFloor = rootView.findViewById(R.id.house_modify_editText_floor);
 
@@ -125,16 +120,14 @@ public class InfoFragment extends Fragment {
             }
         });
         checkBoxUnderground.setChecked(false);
-        
-        
-        
+
+
         // 구조 초기화
         ArrayAdapter<String> arrayAdapter2 = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item);
         arrayAdapter2.addAll(getResources().getStringArray(R.array.structure));
 
         Spinner spinnerStructure = rootView.findViewById(R.id.house_modify_spinner_structure);
         spinnerStructure.setAdapter(arrayAdapter2);
-
 
 
         // 옵션 정보 초기화
@@ -146,6 +139,50 @@ public class InfoFragment extends Fragment {
         }
 
         return rootView;
+    }
+
+    @Override
+    public void saveData() {
+        House.SerializedData data = new House.SerializedData();
+        data.houseNumber = "";
+
+        EditText price = rootView.findViewById(R.id.house_modify_editText_price);
+        data.price = price.getText().toString();
+
+        TextView address = rootView.findViewById(R.id.house_modify_textView_address);
+        data.address = address.getText().toString();
+
+        data.state = 0;
+
+        Spinner houseType = rootView.findViewById(R.id.house_modify_spinner_houseType);
+        data.houseType = (byte) houseType.getSelectedItemPosition();
+
+        Spinner paymentType = rootView.findViewById(R.id.house_modify_spinner_paymentType);
+        data.paymentType = (byte) paymentType.getSelectedItemPosition();
+
+//        data.deposit;
+//        data.monthlyRent;
+//
+//        data.isContainManageFee;
+
+        Spinner roomCount = rootView.findViewById(R.id.house_modify_spinner_structure);
+        data.roomCount = (byte) roomCount.getSelectedItemPosition();
+
+        CheckBox underground = rootView.findViewById(R.id.house_modify_checkBox_underground);
+        if (underground.isChecked()) {
+            data.floor = -1;
+
+        } else {
+            EditText floor = rootView.findViewById(R.id.house_modify_editText_floor);
+            data.floor = Byte.parseByte(floor.getText().toString());
+        }
+
+        EditText area = rootView.findViewById(R.id.house_modify_area_pyeong);
+        data.area = Float.parseFloat(area.getText().toString());
+
+//        data.extra;
+
+        SendData.getInstance().house = new House(data);
     }
 
     private void setAddressDialog() {

@@ -23,7 +23,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class ImageFragment extends Fragment {
+public class ImageFragment extends Fragment implements OnSaveDataListener {
     private static final int GALLERY_REQUEST_CODE = 1;
     private final ImageListAdapter imageListAdapter = new ImageListAdapter();
 
@@ -105,6 +105,11 @@ public class ImageFragment extends Fragment {
             default:
                 break;
         }
+    }
+
+    @Override
+    public void saveData() {
+        SendData.getInstance().imageUris = imageListAdapter.getItems();
     }
 
     public void showAlbum() {

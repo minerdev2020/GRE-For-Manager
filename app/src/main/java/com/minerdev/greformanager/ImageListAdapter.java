@@ -45,10 +45,6 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.View
         items.add(item);
     }
 
-    public void setItems(ArrayList<Uri> items) {
-        this.items = items;
-    }
-
     public Uri getItem(int position) {
         return items.get(position);
     }
@@ -59,6 +55,14 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.View
 
     public void removeItem(int position) {
         items.remove(position);
+    }
+
+    public ArrayList<Uri> getItems() {
+        return items;
+    }
+
+    public void setItems(ArrayList<Uri> items) {
+        this.items = items;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

@@ -79,7 +79,7 @@
                 android:paddingHorizontal="40dp">
 
                 <EditText
-                    android:id="@+id/house_modify_price"
+                    android:id="@+id/house_modify_editText_price"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
