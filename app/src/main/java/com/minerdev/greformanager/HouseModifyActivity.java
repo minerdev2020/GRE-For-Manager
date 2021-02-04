@@ -78,15 +78,15 @@ public class HouseModifyActivity extends AppCompatActivity {
         builder.setIcon(R.drawable.ic_round_help_24);
         builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
+            public void onClick(DialogInterface dialog, int which) {
                 HouseModifyActivity.super.finish();
             }
         });
 
         builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
             }
         });
 
@@ -172,7 +172,7 @@ public class HouseModifyActivity extends AppCompatActivity {
 
             }
         });
-        
+
         adapter.addFragment(new InfoFragment(), "매물 정보 입력");
         adapter.addFragment(new ImageFragment(), "매물 사진 선택");
         adapter.addFragment(new PreviewFragment(), "미리보기");
@@ -194,16 +194,15 @@ public class HouseModifyActivity extends AppCompatActivity {
         builder.setIcon(R.drawable.ic_round_help_24);
         builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
+            public void onClick(DialogInterface dialog, int which) {
                 sendData();
                 HouseModifyActivity.super.finish();
             }
         });
-
         builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
             }
         });
 

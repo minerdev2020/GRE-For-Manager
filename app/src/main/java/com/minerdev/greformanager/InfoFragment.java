@@ -10,9 +10,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -104,18 +107,25 @@ public class InfoFragment extends Fragment {
 
     private void setAddressDialog() {
         dialog = new Dialog(getContext());
+        dialog.setContentView(R.layout.dialog_address);
 
-        WebView webView = new WebView(getContext());
+        WebView webView = dialog.findViewById(R.id.address_dialog_button_webView);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.addJavascriptInterface(new AndroidBridge(), "GREApp");
-        webView.setWebChromeClient(new WebChromeClient());
         webView.loadUrl(getString(R.string.web_server_dns) + "/get_daum_address.php");
 
-        dialog.setContentView(webView);
         ViewGroup.LayoutParams params = dialog.getWindow().getAttributes();
         params.width = ViewGroup.LayoutParams.MATCH_PARENT;
         params.height = ViewGroup.LayoutParams.MATCH_PARENT;
         dialog.getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);
+
+        Button button_back = dialog.findViewById(R.id.address_dialog_button_back);
+        button_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
     }
 
     private void setAreaEditTexts(ViewGroup rootView) {

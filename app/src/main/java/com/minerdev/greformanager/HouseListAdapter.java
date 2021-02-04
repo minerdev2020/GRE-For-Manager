@@ -25,7 +25,7 @@ public class HouseListAdapter extends RecyclerView.Adapter<HouseListAdapter.View
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        itemView = inflater.inflate(R.layout.house_item, parent, false);
+        itemView = inflater.inflate(R.layout.item_house, parent, false);
         return new ViewHolder(itemView, listener);
     }
 

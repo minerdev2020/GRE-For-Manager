@@ -43,7 +43,7 @@
             <View style="@style/Divider" />
 
             <include
-                layout="@layout/house_detail_layout"
+                layout="@layout/part_house_detail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </LinearLayout>

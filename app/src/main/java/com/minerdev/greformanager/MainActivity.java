@@ -233,17 +233,25 @@ public class MainActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(MenuItem menuItem) {
                 drawerLayout.closeDrawers();
 
-                int id = menuItem.getItemId();
-                if (id == R.id.nav_menu_logout) {
-                    SharedPreferences sharedPreferences = getSharedPreferences("login", Activity.MODE_PRIVATE);
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                switch (menuItem.getItemId()) {
+                    case R.id.nav_menu_logout:
+                        SharedPreferences sharedPreferences = getSharedPreferences("login", Activity.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
 
-                    editor.clear();
-                    editor.commit();
+                        editor.clear();
+                        editor.commit();
 
-                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                    startActivity(intent);
-                    finish();
+                        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                        startActivity(intent);
+                        finish();
+                        break;
+
+                    case R.id.nav_menu_exit:
+                        finish();
+                        break;
+
+                    default:
+                        break;
                 }
 
                 return true;

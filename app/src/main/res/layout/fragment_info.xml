@@ -63,11 +63,11 @@
 
             <View style="@style/Divider" />
 
-            <include layout="@layout/house_info_layout" />
+            <include layout="@layout/part_house_info" />
 
             <View style="@style/Divider" />
 
-            <include layout="@layout/house_option_layout" />
+            <include layout="@layout/part_house_option" />
 
             <View style="@style/Divider" />
 
