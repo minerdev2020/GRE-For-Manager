@@ -40,7 +40,6 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
         rootView = (ViewGroup) inflater.inflate(R.layout.fragment_info, container, false);
 
 
-
         // 주소 입력 초기화
         textViewAddress = rootView.findViewById(R.id.house_modify_textView_address);
 
@@ -52,7 +51,6 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
                 addressDialog.show();
             }
         });
-
 
 
         // 계약 형태 초기화
@@ -84,7 +82,6 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
         });
 
 
-
         // 매물 종류 초기화
         ArrayAdapter<String> arrayAdapter1 = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item);
         arrayAdapter1.addAll(getResources().getStringArray(R.array.houseType));
@@ -103,6 +100,13 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
                 } else {
                     arrayAdapter4.clear();
                 }
+
+                String value = spinnerHouse.getSelectedItem().toString();
+                TableRow tableRow = rootView.findViewById(R.id.house_modify_tableRow_facility);
+                tableRow.setVisibility(value.equals("상가, 점포") ? View.VISIBLE : View.GONE);
+
+                CheckBox checkBox = rootView.findViewById(R.id.house_modify_checkBox_facility);
+                checkBox.setChecked(false);
             }
 
             @Override
@@ -110,7 +114,6 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
                 arrayAdapter4.clear();
             }
         });
-
 
 
         // 관리비 초기화
@@ -137,7 +140,7 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
         }
 
 
-        // 전용 면적 초기화
+        // 전용 면적, 임대 면적 초기화
         setAreaEditTexts(rootView);
 
 
@@ -161,6 +164,36 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
 
         Spinner spinnerStructure = rootView.findViewById(R.id.house_modify_spinner_structure);
         spinnerStructure.setAdapter(arrayAdapter2);
+
+
+        // 욕실 갯수 초기화
+        ArrayAdapter<String> arrayAdapter3 = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item);
+        arrayAdapter3.addAll(getResources().getStringArray(R.array.bathroom));
+
+        Spinner spinnerBathroom = rootView.findViewById(R.id.house_modify_spinner_bathroom);
+        spinnerBathroom.setAdapter(arrayAdapter3);
+
+
+        // 방향 초기화
+        ArrayAdapter<String> arrayAdapter5 = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item);
+        arrayAdapter5.addAll(getResources().getStringArray(R.array.direction));
+
+        Spinner spinnerDirection = rootView.findViewById(R.id.house_modify_spinner_direction);
+        spinnerDirection.setAdapter(arrayAdapter5);
+
+
+        // 입주 가능일 초기화
+        EditText editTextMoveDate = rootView.findViewById(R.id.house_modify_editText_move_date);
+
+        CheckBox checkBoxMoveNow = rootView.findViewById(R.id.house_modify_checkBox_move_now);
+        checkBoxMoveNow.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                editTextMoveDate.setEnabled(!isChecked);
+                editTextMoveDate.setText("");
+            }
+        });
+        checkBoxMoveNow.setChecked(false);
 
 
         // 옵션 정보 초기화
@@ -242,6 +275,7 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
     }
 
     private void setAreaEditTexts(ViewGroup rootView) {
+        // 전용 면적 초기화
         EditText editTextPyeong = rootView.findViewById(R.id.house_modify_area_pyeong);
         EditText editTextMeter = rootView.findViewById(R.id.house_modify_area_meter);
 
@@ -287,6 +321,63 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
                     } else {
                         float area = Float.parseFloat(temp);
                         editTextPyeong.setText(String.format("%.2f", area * 0.3025));
+                    }
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+
+        // 임대 면적 초기화
+        EditText editTextRentPyeong = rootView.findViewById(R.id.house_modify_rent_area_pyeong);
+        EditText editTextRentMeter = rootView.findViewById(R.id.house_modify_rent_area_meter);
+
+        editTextRentPyeong.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (editTextRentPyeong.hasFocus()) {
+                    String temp = s.toString();
+                    if (temp.equals("")) {
+                        editTextRentMeter.setText("");
+
+                    } else {
+                        float area = Float.parseFloat(temp);
+                        editTextRentMeter.setText(String.format("%.2f", area * 3.305));
+                    }
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        editTextRentMeter.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (editTextRentMeter.hasFocus()) {
+                    String temp = s.toString();
+                    if (temp.equals("")) {
+                        editTextRentPyeong.setText("");
+
+                    } else {
+                        float area = Float.parseFloat(temp);
+                        editTextRentPyeong.setText(String.format("%.2f", area * 0.3025));
                     }
                 }
             }
