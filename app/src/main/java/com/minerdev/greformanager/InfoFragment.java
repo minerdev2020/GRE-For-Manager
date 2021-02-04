@@ -17,6 +17,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -39,6 +40,7 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
         rootView = (ViewGroup) inflater.inflate(R.layout.fragment_info, container, false);
 
 
+
         // 주소 입력 초기화
         textViewAddress = rootView.findViewById(R.id.house_modify_textView_address);
 
@@ -52,14 +54,38 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
         });
 
 
-        // 매물 종류 초기화
+
+        // 계약 형태 초기화
         ArrayAdapter<String> arrayAdapter4 = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item);
 
         Spinner spinnerPayment = rootView.findViewById(R.id.house_modify_spinner_paymentType);
         spinnerPayment.setAdapter(arrayAdapter4);
+        spinnerPayment.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                TableRow tableRowDeposit = rootView.findViewById(R.id.house_modify_tableRow_deposit);
+                TableRow tableRowMonthlyRent = rootView.findViewById(R.id.house_modify_tableRow_monthly_rent);
+
+                String value = spinnerPayment.getSelectedItem().toString();
+                if (value.equals("월세") || value.equals("단기임대") || value.equals("임대")) {
+                    tableRowDeposit.setVisibility(View.VISIBLE);
+                    tableRowMonthlyRent.setVisibility(View.VISIBLE);
+
+                } else {
+                    tableRowDeposit.setVisibility(View.GONE);
+                    tableRowMonthlyRent.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
 
-        // 계약 형태 초기화
+
+        // 매물 종류 초기화
         ArrayAdapter<String> arrayAdapter1 = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item);
         arrayAdapter1.addAll(getResources().getStringArray(R.array.houseType));
 
@@ -68,9 +94,15 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
         spinnerHouse.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                arrayAdapter4.clear();
-                String temp = getResources().getStringArray(R.array.paymentType)[position];
-                arrayAdapter4.addAll(temp.split(" "));
+                if (position > 0) {
+                    arrayAdapter4.clear();
+                    String temp = getResources().getStringArray(R.array.paymentType)[position - 1];
+                    arrayAdapter4.addAll(temp.split(" "));
+                    spinnerPayment.setSelection(0);
+
+                } else {
+                    arrayAdapter4.clear();
+                }
             }
 
             @Override
@@ -78,6 +110,7 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
                 arrayAdapter4.clear();
             }
         });
+
 
 
         // 관리비 초기화

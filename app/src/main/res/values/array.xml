@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="houseType">
+        <item>선택</item>
         <item>주택</item>
         <item>오피스텔</item>
         <item>사무실</item>
@@ -9,14 +10,15 @@
     </string-array>
 
     <string-array name="paymentType">
-        <item>월세 전세 매매</item>
-        <item>월세 전세 매매</item>
-        <item>임대 매매</item>
-        <item>임대 매매</item>
-        <item>매매</item>
+        <item>선택 월세 전세 매매 단기임대</item>
+        <item>선택 월세 전세 매매 단기임대</item>
+        <item>선택 임대 매매</item>
+        <item>선택 임대 매매</item>
+        <item>선택 매매</item>
     </string-array>
 
     <string-array name="structure">
+        <item>선택</item>
         <item>오픈형 원룸</item>
         <item>분리형 원룸</item>
         <item>복층형 원룸</item>

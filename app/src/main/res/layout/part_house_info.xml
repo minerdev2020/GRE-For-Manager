@@ -93,6 +93,74 @@
             </LinearLayout>
         </TableRow>
 
+        <TableRow
+            android:id="@+id/house_modify_tableRow_deposit"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <TextView
+                style="@style/TextAppearance.AppCompat.Body1"
+                android:layout_width="@dimen/house_modify_text_width"
+                android:layout_height="@dimen/house_modify_widget_height"
+                android:gravity="center"
+                android:text="보증금" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:paddingHorizontal="40dp">
+
+                <EditText
+                    android:id="@+id/house_modify_editText_deposit"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="numberDecimal" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="만원" />
+            </LinearLayout>
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/house_modify_tableRow_monthly_rent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <TextView
+                style="@style/TextAppearance.AppCompat.Body1"
+                android:layout_width="@dimen/house_modify_text_width"
+                android:layout_height="@dimen/house_modify_widget_height"
+                android:gravity="center"
+                android:text="월세" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:paddingHorizontal="40dp">
+
+                <EditText
+                    android:id="@+id/house_modify_editText_monthly_rent"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="numberDecimal" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="만원" />
+            </LinearLayout>
+        </TableRow>
+
         <View style="@style/Divider" />
 
         <TableRow

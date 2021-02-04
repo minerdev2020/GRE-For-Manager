@@ -203,7 +203,7 @@ public class HouseModifyActivity extends AppCompatActivity {
         builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                SendData.getInstance().sendData();
+//                SendData.getInstance().sendData();
                 HouseModifyActivity.super.finish();
             }
         });
