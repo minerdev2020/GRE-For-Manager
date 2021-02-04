@@ -3,6 +3,14 @@ package com.minerdev.greformanager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.net.Uri;
+import android.widget.Toast;
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.google.gson.Gson;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -10,10 +18,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SendData {
     public ArrayList<Uri> imageUris = new ArrayList<>();
-    public House house;
+    public House.SerializedData house;
 
     private SendData() {
 
@@ -23,11 +33,73 @@ public class SendData {
         return SendData.SendDataHolder.INSTANCE;
     }
 
-    public void sendData() {
-        for (Uri uri : imageUris) {
+    public void sendData(Context context) {
+        String uri = context.getResources().getString(R.string.web_server_dns) + "/insertDB.php";
 
+        Gson gson = new Gson();
+        String json = gson.toJson(house);
+        sendJson(context, uri, json);
+
+        for (Uri imageUri : imageUris) {
+            sendImage(context, uri, imageUri);
         }
+    }
 
+    private void sendJson(Context context, String address, String json) {
+        StringRequest request = new StringRequest(Request.Method.POST, address,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Toast.makeText(context, "데이터 전송 성공.", Toast.LENGTH_SHORT).show();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("house_value", json);
+
+                return params;
+            }
+        };
+
+        // 이전 결과가 있더라도 새로 요청
+        request.setShouldCache(false);
+
+        AppHelper.requestQueue.add(request);
+    }
+
+    private void sendImage(Context context, String address, Uri imageUri) {
+        StringRequest request = new StringRequest(Request.Method.POST, address,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Toast.makeText(context, "데이터 전송 성공.", Toast.LENGTH_SHORT).show();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+        ) {
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                return super.getBody();
+            }
+        };
+
+        // 이전 결과가 있더라도 새로 요청
+        request.setShouldCache(false);
+
+        AppHelper.requestQueue.add(request);
     }
 
     private String createCopyAndReturnRealPath(Context context, Uri uri) {

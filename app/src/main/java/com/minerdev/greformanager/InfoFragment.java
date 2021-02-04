@@ -182,7 +182,7 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
 
 //        data.extra;
 
-        SendData.getInstance().house = new House(data);
+        SendData.getInstance().house = data;
     }
 
     private void setAddressDialog() {
