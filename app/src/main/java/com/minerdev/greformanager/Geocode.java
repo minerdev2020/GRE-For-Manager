@@ -20,7 +20,7 @@ public class Geocode {
     }
 
     public static Geocode getInstance() {
-        return GeocodeHolder.INSTANCE;
+        return Holder.INSTANCE;
     }
 
     public void setOnDataReceiveListener(OnDataReceiveListener listener) {
@@ -75,7 +75,7 @@ public class Geocode {
         void parseData(GeocodeResult result);
     }
 
-    private static class GeocodeHolder {
+    private static class Holder {
         public static final Geocode INSTANCE = new Geocode();
     }
 }

@@ -137,7 +137,6 @@ public class HouseModifyActivity extends AppCompatActivity {
                         button_save.setVisibility(View.GONE);
                         break;
 
-
                     case 2:
                         button_next.setVisibility(View.GONE);
                         button_save.setVisibility(View.VISIBLE);
@@ -166,7 +165,7 @@ public class HouseModifyActivity extends AppCompatActivity {
         builder.setMessage("저장하시겠습니까?");
         builder.setIcon(R.drawable.ic_round_help_24);
         builder.setPositiveButton("확인", (dialog, which) -> {
-//                SendData.getInstance().sendData();
+            SendData.getInstance().start(this);
             HouseModifyActivity.super.finish();
         });
         builder.setNegativeButton("취소", (dialog, which) -> dialog.dismiss());

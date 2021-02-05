@@ -3,6 +3,7 @@ package com.minerdev.greformanager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -28,19 +29,20 @@ public class SendData {
     }
 
     public static SendData getInstance() {
-        return SendData.SendDataHolder.INSTANCE;
+        return Holder.INSTANCE;
     }
 
-    public void sendData(Context context) {
+    public void start(Context context) {
         String uri = context.getResources().getString(R.string.web_server_dns) + "/insertDB.php";
 
         Gson gson = new Gson();
         String json = gson.toJson(house);
-        sendJson(context, uri, json);
-
-        for (Uri imageUri : imageUris) {
-            sendImage(context, uri, imageUri);
-        }
+        Log.d("SENDDATA", json);
+//        sendJson(context, uri, json);
+//
+//        for (Uri imageUri : imageUris) {
+//            sendImage(context, uri, imageUri);
+//        }
     }
 
     private void sendJson(Context context, String address, String json) {
@@ -113,7 +115,7 @@ public class SendData {
         return file.getAbsolutePath();
     }
 
-    private static class SendDataHolder {
+    private static class Holder {
         public static final SendData INSTANCE = new SendData();
     }
 }

@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Constants.getInstance().initialize(this);
 
         // 툴바 초기화
         Toolbar toolbar = findViewById(R.id.main_toolbar);

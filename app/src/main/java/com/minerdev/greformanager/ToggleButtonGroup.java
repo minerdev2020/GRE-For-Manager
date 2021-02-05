@@ -39,6 +39,10 @@ public class ToggleButtonGroup {
     }
 
     public ArrayList<ToggleButton> getCheckedToggleButtons() {
+        if (toggleButtonCheckedStates.size() == 0) {
+            return null;
+        }
+
         final ArrayList<ToggleButton> checkedToggleButtons = new ArrayList<>();
         for (ToggleButton button : toggleButtons) {
             if (button.isChecked()) {
@@ -50,20 +54,17 @@ public class ToggleButtonGroup {
     }
 
     public HashMap<String, Boolean> getToggleButtonCheckedStates() {
-        if (toggleButtonCheckedStates.size() != 0) {
-            for (Boolean state : toggleButtonCheckedStates.values()) {
-                if (state) {
-                    return toggleButtonCheckedStates;
-                }
-            }
-        }
+        if (toggleButtonCheckedStates.size() == 0) {
+            return null;
 
-        return null;
+        } else {
+            return toggleButtonCheckedStates;
+        }
     }
 
     public Boolean getToggleButtonCheckedState(String buttonText) {
         if (toggleButtonCheckedStates.size() == 0) {
-            return false;
+            return null;
 
         } else {
             Boolean result = toggleButtonCheckedStates.get(buttonText);
@@ -95,8 +96,11 @@ public class ToggleButtonGroup {
         toggleButton.setText(text);
         toggleButton.setTextOn(text);
         toggleButton.setTextOff(text);
+        toggleButton.setOnCheckedChangeListener((buttonView, isChecked) ->
+                toggleButtonCheckedStates.put(buttonView.getText().toString(), isChecked));
 
         toggleButtons.add(toggleButton);
+        toggleButtonCheckedStates.put(text, false);
     }
 
     public void addToggleButtons(String... texts) {
@@ -105,39 +109,15 @@ public class ToggleButtonGroup {
         }
     }
 
-    public void saveCheckedStates() {
-        for (ToggleButton button : toggleButtons) {
-            toggleButtonCheckedStates.put(button.getText().toString(), button.isChecked());
-        }
-    }
-
-    public void loadCheckedStates() {
-        for (ToggleButton button : toggleButtons) {
-            button.setChecked(getToggleButtonCheckedState(button.getText().toString()));
-        }
-    }
-
-    public void resetCheckedStates() {
-        for (ToggleButton button : toggleButtons) {
-            button.setChecked(false);
-        }
-
-        toggleButtonCheckedStates.clear();
-    }
-
-    public void initCheckedStates(HashMap<String, Boolean> checkedStates) {
-        if (checkedStates == null) {
-            toggleButtonCheckedStates.clear();
-        }
-
-        for (ToggleButton button : toggleButtons) {
-            if (checkedStates == null) {
-                button.setChecked(false);
-
-            } else {
-                button.setChecked(checkedStates.get(button.getText().toString()));
-                toggleButtonCheckedStates.put(button.getText().toString(), button.isChecked());
+    public boolean isAnyCheckedToggleButton() {
+        if (toggleButtonCheckedStates.size() != 0) {
+            for (Boolean state : toggleButtonCheckedStates.values()) {
+                if (state) {
+                    return true;
+                }
             }
         }
+
+        return false;
     }
 }

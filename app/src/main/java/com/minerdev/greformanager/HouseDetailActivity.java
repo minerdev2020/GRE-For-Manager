@@ -65,10 +65,10 @@ public class HouseDetailActivity extends AppCompatActivity {
         SwitchMaterial stateSwitch = findViewById(R.id.house_detail_switch);
         stateSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (stateSwitch.hasFocus()) {
-                house.state = (byte) (isChecked ? Constants.SOLD_OUT : Constants.SALE);
+                house.state = (byte) (isChecked ? Constants.getInstance().SOLD_OUT : Constants.getInstance().SALE);
             }
         });
-        stateSwitch.setChecked(house.state != Constants.SOLD_OUT);
+        stateSwitch.setChecked(house.state != Constants.getInstance().SOLD_OUT);
     }
 
     @Override

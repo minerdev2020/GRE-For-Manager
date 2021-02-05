@@ -84,11 +84,11 @@ public class HouseListAdapter extends RecyclerView.Adapter<HouseListAdapter.View
 
         }
 
-        public void setItem(House.SerializedData House) {
-            textView_payment.setText(House.paymentType);
-            textView_price.setText(House.price);
-            textView_house_info.setText("");
-            textView_description.setText("");
+        public void setItem(House.SerializedData house) {
+            textView_payment.setText(Constants.getInstance().PAYMENT_TYPE.get(house.houseType).get(house.paymentType));
+            textView_price.setText(String.valueOf(house.price));
+            textView_house_info.setText(Constants.getInstance().HOUSE_TYPE.get(house.houseType));
+            textView_description.setText(house.detailInfo);
             imageView_profile.setImageResource(R.drawable.house);
         }
     }

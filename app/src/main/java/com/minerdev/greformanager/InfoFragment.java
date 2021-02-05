@@ -358,15 +358,15 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
         data.houseNumber = editTextNumber.getText().toString();
         data.paymentType = (byte) spinnerPayment.getSelectedItemPosition();
         data.houseType = (byte) spinnerHouse.getSelectedItemPosition();
-        data.price = Integer.parseInt(editTextPrice.getText().toString());
-        data.deposit = Integer.parseInt(editTextDeposit.getText().toString());
-        data.monthlyRent = Integer.parseInt(editTextMonthlyRent.getText().toString());
-        data.premium = Integer.parseInt(editTextPremium.getText().toString());
-        data.manageFee = Integer.parseInt(editTextManageFee.getText().toString());
+        data.price = parseInt(editTextPrice.getText().toString());
+        data.deposit = parseInt(editTextDeposit.getText().toString());
+        data.monthlyRent = parseInt(editTextDeposit.getText().toString());
+        data.premium = parseInt(editTextPremium.getText().toString());
+        data.manageFee = parseInt(editTextManageFee.getText().toString());
         data.manageFeeContains = toggleButtonGroupManageFeeContains.getCheckedToggleButtonTextsInSingleLine();
-        data.areaMeter = Float.parseFloat(editTextAreaMeter.getText().toString());
-        data.rentAreaMeter = Float.parseFloat(editTextRentAreaMeter.getText().toString());
-        data.buildingFloor = (byte) Integer.parseInt(editTextBuildingFloor.getText().toString());
+        data.areaMeter = parseFloat(editTextAreaMeter.getText().toString());
+        data.rentAreaMeter = parseFloat(editTextRentAreaMeter.getText().toString());
+        data.buildingFloor = (byte) parseInt(editTextBuildingFloor.getText().toString());
 
         if (checkBoxUnderground.isChecked()) {
             data.floor = -1;
@@ -571,6 +571,24 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
         });
 
         datePickerDialog.show();
+    }
+
+    private int parseInt(String number) {
+        if (number == null || number.equals("")) {
+            return 0;
+
+        } else {
+            return Integer.parseInt(number);
+        }
+    }
+
+    private float parseFloat(String number) {
+        if (number == null || number.equals("")) {
+            return 0;
+
+        } else {
+            return Float.parseFloat(number);
+        }
     }
 
     public interface OnClickListener {
