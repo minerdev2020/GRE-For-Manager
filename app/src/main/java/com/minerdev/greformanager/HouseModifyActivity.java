@@ -12,10 +12,12 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 public class HouseModifyActivity extends AppCompatActivity {
-    private final SectionPageAdapter adapter = new SectionPageAdapter(getSupportFragmentManager());
+    private final SectionPageAdapter adapter = new SectionPageAdapter(getSupportFragmentManager(),
+            FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
 
     private NonSwipeViewPager viewPager;
     private Button button_next;

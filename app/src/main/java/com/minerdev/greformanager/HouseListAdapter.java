@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 public class HouseListAdapter extends RecyclerView.Adapter<HouseListAdapter.ViewHolder> {
-    private ArrayList<House> items = new ArrayList<>();
+    private ArrayList<House.SerializedData> items = new ArrayList<>();
     private OnItemClickListener listener;
     private View itemView;
 
@@ -31,7 +31,7 @@ public class HouseListAdapter extends RecyclerView.Adapter<HouseListAdapter.View
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        House item = items.get(position);
+        House.SerializedData item = items.get(position);
         holder.setItem(item);
     }
 
@@ -40,19 +40,19 @@ public class HouseListAdapter extends RecyclerView.Adapter<HouseListAdapter.View
         return items.size();
     }
 
-    public void addItem(House item) {
+    public void addItem(House.SerializedData item) {
         items.add(item);
     }
 
-    public void setItems(ArrayList<House> items) {
+    public void setItems(ArrayList<House.SerializedData> items) {
         this.items = items;
     }
 
-    public House getItem(int position) {
+    public House.SerializedData getItem(int position) {
         return items.get(position);
     }
 
-    public void setItem(int position, House item) {
+    public void setItem(int position, House.SerializedData item) {
         items.set(position, item);
     }
 
@@ -88,11 +88,11 @@ public class HouseListAdapter extends RecyclerView.Adapter<HouseListAdapter.View
 
         }
 
-        public void setItem(House House) {
-            textView_payment.setText(House.getPaymentType().getName());
-            textView_price.setText(House.getPrice());
-            textView_house_info.setText(House.getHouseType().getName());
-            textView_description.setText(House.getAddress());
+        public void setItem(House.SerializedData House) {
+            textView_payment.setText(House.paymentType);
+            textView_price.setText(House.price);
+            textView_house_info.setText("");
+            textView_description.setText("");
             imageView_profile.setImageResource(R.drawable.house);
         }
     }

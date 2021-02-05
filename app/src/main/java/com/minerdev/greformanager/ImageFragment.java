@@ -108,6 +108,11 @@ public class ImageFragment extends Fragment implements OnSaveDataListener {
     }
 
     @Override
+    public boolean checkData() {
+        return true;
+    }
+
+    @Override
     public void saveData() {
         SendData.getInstance().imageUris = imageListAdapter.getItems();
     }

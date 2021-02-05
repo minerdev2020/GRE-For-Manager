@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,6 +23,7 @@ import com.naver.maps.map.overlay.Marker;
 
 public class HouseDetailActivity extends AppCompatActivity {
     private final ImageAdapter adapter = new ImageAdapter(this);
+    private House.SerializedData house;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +34,7 @@ public class HouseDetailActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        readImages();
+        readData();
 
         ViewPager viewPager = findViewById(R.id.house_detail_viewPager_image);
         viewPager.setAdapter(adapter);
@@ -67,6 +70,17 @@ public class HouseDetailActivity extends AppCompatActivity {
                 });
             }
         });
+
+        Switch stateSwitch = findViewById(R.id.house_detail_switch);
+        stateSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (stateSwitch.hasFocus()) {
+                    house.state = (byte) (isChecked ? Constants.SOLD_OUT : Constants.SALE);
+                }
+            }
+        });
+        stateSwitch.setChecked(house.state != Constants.SOLD_OUT);
     }
 
     @Override
@@ -94,6 +108,10 @@ public class HouseDetailActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void readData() {
+        readImages();
     }
 
     private void readImages() {

@@ -47,7 +47,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="주소를 선택해주세요."/>
+                            android:hint="주소를 선택해주세요." />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/house_modify_materialButton_search"
@@ -64,15 +64,15 @@
 
             <View style="@style/Divider" />
 
-            <include layout="@layout/part_house_trade" />
+            <include layout="@layout/part_house_modify_trade" />
 
             <View style="@style/Divider" />
 
-            <include layout="@layout/part_house_info" />
+            <include layout="@layout/part_house_modify_info" />
 
             <View style="@style/Divider" />
 
-            <include layout="@layout/part_house_option" />
+            <include layout="@layout/part_house_modify_option" />
 
             <View style="@style/Divider" />
 
@@ -104,6 +104,10 @@
                         android:hint="매물에 대한 상세한 정보를 기입해 주세요." />
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
+
+            <View style="@style/Divider" />
+
+            <include layout="@layout/part_house_modify_manager" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

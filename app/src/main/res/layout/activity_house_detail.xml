@@ -50,7 +50,7 @@
     </ScrollView>
 
     <Switch
-        android:id="@+id/house_detail_switch1"
+        android:id="@+id/house_detail_switch"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="#FFEEEEEE"

@@ -24,8 +24,7 @@
         <item>복층형 원룸</item>
         <item>원룸</item>
         <item>투룸</item>
-        <item>쓰리룸</item>
-        <item>포룸 이상</item>
+        <item>쓰리룸 이상</item>
     </string-array>
 
     <string-array name="manage_fee">

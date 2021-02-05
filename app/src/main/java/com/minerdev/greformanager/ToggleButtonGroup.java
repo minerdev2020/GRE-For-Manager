@@ -83,7 +83,7 @@ public class ToggleButtonGroup {
             String buttonText = button.getText().toString();
             if (toggleButtonCheckedStates.get(buttonText)) {
                 if (!result.equals("")) {
-                    result += " | ";
+                    result += "|";
                 }
 
                 result += buttonText;

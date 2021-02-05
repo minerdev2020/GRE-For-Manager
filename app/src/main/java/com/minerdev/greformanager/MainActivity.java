@@ -26,20 +26,8 @@ import com.google.android.material.navigation.NavigationView;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-//    private static final String[] tabTitles = {"건물형태", "매물종류", "보증금", "월세금", "방 개수", "층수", "평수", "추가옵션"};
-//    private static final String[][] toggleButtonTitles = {
-//            {"빌라/주택", "오피스텔", "아파트", "상가/사무실"},
-//            {"월세", "전세", "매매", "단기임대"},
-//            null,
-//            null,
-//            {"원룸", "투룸", "쓰리룸 이상"},
-//            {"1층~5층", "6층 이상", "반지하", "옥탑", "복층"},
-//            {"5평 이하", "6~10평", "11평 이상"},
-//            {"신축", "풀옵션", "주차가능", "엘레베이터", "반려동물", "전세자금대출", "큰길가", "권리분석"}
-//    };
-
     private static final long FINISH_INTERVAL_TIME = 2000;
-    private static final ArrayList<House> items = new ArrayList<>();
+    private static final ArrayList<House.SerializedData> items = new ArrayList<>();
     private final HouseListAdapter saleAdapter = new HouseListAdapter();
     private final HouseListAdapter soldAdapter = new HouseListAdapter();
 
@@ -52,11 +40,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-
         // 툴바 초기화
         Toolbar toolbar = findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
-
 
 
         // 판매중 매물 RecyclerView 및 HouseListAdapter 초기화
@@ -67,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         saleAdapter.setOnItemClickListener(new HouseListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(HouseListAdapter.ViewHolder viewHolder, View view, int position) {
-                String address = saleAdapter.getItem(position).getAddress();
+                String address = saleAdapter.getItem(position).address;
 
                 Intent intent = new Intent(MainActivity.this, HouseDetailActivity.class);
                 intent.putExtra("address", address);
@@ -87,7 +73,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-
         // 판매완료 매물 RecyclerView 및 HouseListAdapter 초기화
         RecyclerView soldRecyclerView = findViewById(R.id.main_recyclerView_sold);
         LinearLayoutManager manager1 = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
@@ -96,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
         soldAdapter.setOnItemClickListener(new HouseListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(HouseListAdapter.ViewHolder viewHolder, View view, int position) {
-                String address = soldAdapter.getItem(position).getAddress();
+                String address = soldAdapter.getItem(position).address;
 
                 Intent intent = new Intent(MainActivity.this, HouseDetailActivity.class);
                 intent.putExtra("address", address);
@@ -116,27 +101,15 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-
         // NavigationView 초기화
         setNavigationView();
-
 
 
         // 매물 리스트 초기화 및 HouseListAdapter에 리스트 등록
         items.clear();
 
-        House.SerializedData serializedData = new House.SerializedData();
-        serializedData.uid = 0;
-        serializedData.address = "대구광역시 달성군 다사읍 달구벌대로174길 10-17";
-        serializedData.state = 0;
-        serializedData.price = "5억 4000";
-        serializedData.paymentType = 1;
-        serializedData.houseType = 1;
-        serializedData.houseNumber = "1";
+        readItems();
 
-        for (int i = 0; i < 12; i++) {
-            items.add(new House(serializedData));
-        }
         saleAdapter.setItems(items);
         soldAdapter.setItems(items);
     }
@@ -227,9 +200,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void rearrangeList(String keyword) {
-        ArrayList<House> temp = new ArrayList<>();
-        for (House i : items) {
-            if ((keyword == null || i.getHouseNumber().contains(keyword) || i.getAddress().contains(keyword))) {
+        ArrayList<House.SerializedData> temp = new ArrayList<>();
+        for (House.SerializedData i : items) {
+            if ((keyword == null || i.houseNumber.contains(keyword) || i.address.contains(keyword))) {
                 temp.add(i);
             }
         }
@@ -275,5 +248,9 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
+    }
+
+    private void readItems() {
+
     }
 }
