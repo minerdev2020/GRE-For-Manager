@@ -78,6 +78,7 @@ public class ImageFragment extends Fragment implements OnSaveDataListener {
         switch (requestCode) {
             case 101:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    showAlbum();
 
                 } else {
                     AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
