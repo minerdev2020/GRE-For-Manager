@@ -49,7 +49,7 @@
         </LinearLayout>
     </ScrollView>
 
-    <Switch
+    <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/house_detail_switch"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"

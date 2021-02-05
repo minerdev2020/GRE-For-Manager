@@ -7,8 +7,6 @@ import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
 
@@ -47,22 +45,12 @@ public class SendData {
 
     private void sendJson(Context context, String address, String json) {
         StringRequest request = new StringRequest(Request.Method.POST, address,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Toast.makeText(context, "데이터 전송 성공.", Toast.LENGTH_SHORT).show();
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                }
+                response -> Toast.makeText(context, "데이터 전송 성공.", Toast.LENGTH_SHORT).show(),
+                error -> Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show()
         ) {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
+                Map<String, String> params = new HashMap<>();
                 params.put("house_value", json);
 
                 return params;
@@ -77,18 +65,8 @@ public class SendData {
 
     private void sendImage(Context context, String address, Uri imageUri) {
         StringRequest request = new StringRequest(Request.Method.POST, address,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Toast.makeText(context, "데이터 전송 성공.", Toast.LENGTH_SHORT).show();
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                }
+                response -> Toast.makeText(context, "데이터 전송 성공.", Toast.LENGTH_SHORT).show(),
+                error -> Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show()
         ) {
             @Override
             public byte[] getBody() throws AuthFailureError {

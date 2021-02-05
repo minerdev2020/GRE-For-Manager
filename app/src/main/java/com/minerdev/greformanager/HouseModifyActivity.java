@@ -1,10 +1,8 @@
 package com.minerdev.greformanager;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 
@@ -41,29 +39,23 @@ public class HouseModifyActivity extends AppCompatActivity {
         }
 
         button_next = findViewById(R.id.house_modify_button_next);
-        button_next.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
+        button_next.setOnClickListener(v -> {
+            viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
 
-                if (getCurrentFocus() != null) {
-                    InputMethodManager manager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-                    manager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-                }
+            if (getCurrentFocus() != null) {
+                InputMethodManager manager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                manager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
             }
         });
 
         button_previous = findViewById(R.id.house_modify_button_previous);
         button_previous.setEnabled(false);
-        button_previous.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
+        button_previous.setOnClickListener(v -> {
+            viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
 
-                if (getCurrentFocus() != null) {
-                    InputMethodManager manager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-                    manager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-                }
+            if (getCurrentFocus() != null) {
+                InputMethodManager manager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                manager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
             }
         });
         setViewPager();
@@ -88,19 +80,9 @@ public class HouseModifyActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("저장하지 않고 돌아가시겠습니까?");
         builder.setIcon(R.drawable.ic_round_help_24);
-        builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                HouseModifyActivity.super.finish();
-            }
-        });
+        builder.setPositiveButton("확인", (dialog, which) -> HouseModifyActivity.super.finish());
 
-        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
+        builder.setNegativeButton("취소", (dialog, which) -> dialog.dismiss());
 
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
@@ -125,20 +107,17 @@ public class HouseModifyActivity extends AppCompatActivity {
                     case 0:
                         button_previous.setEnabled(false);
                         button_next.setText("다음");
-                        button_next.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
+                        button_next.setOnClickListener(v -> {
+                            viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
 
-                                if (getCurrentFocus() != null) {
-                                    InputMethodManager manager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-                                    manager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-                                }
+                            if (getCurrentFocus() != null) {
+                                InputMethodManager manager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                                manager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                            }
 
-                                if (adapter.getItem(position) instanceof OnSaveDataListener) {
-                                    OnSaveDataListener listener = (OnSaveDataListener) adapter.getItem(position);
-                                    listener.saveData();
-                                }
+                            if (adapter.getItem(position) instanceof OnSaveDataListener) {
+                                OnSaveDataListener listener = (OnSaveDataListener) adapter.getItem(position);
+                                listener.saveData();
                             }
                         });
                         break;
@@ -146,20 +125,17 @@ public class HouseModifyActivity extends AppCompatActivity {
                     case 1:
                         button_previous.setEnabled(true);
                         button_next.setText("다음");
-                        button_next.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
+                        button_next.setOnClickListener(v -> {
+                            viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
 
-                                if (getCurrentFocus() != null) {
-                                    InputMethodManager manager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-                                    manager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-                                }
+                            if (getCurrentFocus() != null) {
+                                InputMethodManager manager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                                manager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                            }
 
-                                if (adapter.getItem(position) instanceof OnSaveDataListener) {
-                                    OnSaveDataListener listener = (OnSaveDataListener) adapter.getItem(position);
-                                    listener.saveData();
-                                }
+                            if (adapter.getItem(position) instanceof OnSaveDataListener) {
+                                OnSaveDataListener listener = (OnSaveDataListener) adapter.getItem(position);
+                                listener.saveData();
                             }
                         });
                         break;
@@ -167,16 +143,13 @@ public class HouseModifyActivity extends AppCompatActivity {
 
                     case 2:
                         button_next.setText("저장");
-                        button_next.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                if (getCurrentFocus() != null) {
-                                    InputMethodManager manager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-                                    manager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-                                }
-
-                                askSave();
+                        button_next.setOnClickListener(v -> {
+                            if (getCurrentFocus() != null) {
+                                InputMethodManager manager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                                manager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                             }
+
+                            askSave();
                         });
                         break;
 
@@ -202,19 +175,11 @@ public class HouseModifyActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("저장하시겠습니까?");
         builder.setIcon(R.drawable.ic_round_help_24);
-        builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
+        builder.setPositiveButton("확인", (dialog, which) -> {
 //                SendData.getInstance().sendData();
-                HouseModifyActivity.super.finish();
-            }
+            HouseModifyActivity.super.finish();
         });
-        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
+        builder.setNegativeButton("취소", (dialog, which) -> dialog.dismiss());
 
         AlertDialog alertDialog = builder.create();
         alertDialog.show();

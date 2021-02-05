@@ -15,7 +15,6 @@ import java.util.ArrayList;
 public class HouseListAdapter extends RecyclerView.Adapter<HouseListAdapter.ViewHolder> {
     private ArrayList<House.SerializedData> items = new ArrayList<>();
     private OnItemClickListener listener;
-    private View itemView;
 
     public void setOnItemClickListener(OnItemClickListener clickListener) {
         listener = clickListener;
@@ -25,7 +24,7 @@ public class HouseListAdapter extends RecyclerView.Adapter<HouseListAdapter.View
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        itemView = inflater.inflate(R.layout.item_house, parent, false);
+        View itemView = inflater.inflate(R.layout.item_house, parent, false);
         return new ViewHolder(itemView, listener);
     }
 
@@ -61,11 +60,11 @@ public class HouseListAdapter extends RecyclerView.Adapter<HouseListAdapter.View
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        private TextView textView_payment;
-        private TextView textView_price;
-        private TextView textView_house_info;
-        private TextView textView_description;
-        private ImageView imageView_profile;
+        private final TextView textView_payment;
+        private final TextView textView_price;
+        private final TextView textView_house_info;
+        private final TextView textView_description;
+        private final ImageView imageView_profile;
 
         public ViewHolder(@NonNull View itemView, final OnItemClickListener clickListener) {
             super(itemView);
@@ -77,12 +76,9 @@ public class HouseListAdapter extends RecyclerView.Adapter<HouseListAdapter.View
             imageView_profile = itemView.findViewById(R.id.houseItem_imageView_profile);
 
             LinearLayout linearLayout = itemView.findViewById(R.id.houseItem_layout);
-            linearLayout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (clickListener != null) {
-                        clickListener.onItemClick(ViewHolder.this, itemView, getAdapterPosition());
-                    }
+            linearLayout.setOnClickListener(v -> {
+                if (clickListener != null) {
+                    clickListener.onItemClick(ViewHolder.this, itemView, getAdapterPosition());
                 }
             });
 

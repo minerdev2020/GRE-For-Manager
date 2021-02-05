@@ -5,19 +5,16 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.CompoundButton;
-import android.widget.Switch;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
 
+import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.naver.maps.geometry.LatLng;
 import com.naver.maps.map.CameraUpdate;
 import com.naver.maps.map.MapFragment;
-import com.naver.maps.map.NaverMap;
-import com.naver.maps.map.OnMapReadyCallback;
 import com.naver.maps.map.UiSettings;
 import com.naver.maps.map.overlay.Marker;
 
@@ -45,39 +42,30 @@ public class HouseDetailActivity extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction().add(R.id.map, mapFragment).commit();
         }
 
-        mapFragment.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(@NonNull NaverMap naverMap) {
-                naverMap.setLiteModeEnabled(true);
+        mapFragment.getMapAsync(naverMap -> {
+            naverMap.setLiteModeEnabled(true);
 
-                UiSettings uiSettings = naverMap.getUiSettings();
-                uiSettings.setZoomControlEnabled(false);
-                uiSettings.setAllGesturesEnabled(false);
+            UiSettings uiSettings = naverMap.getUiSettings();
+            uiSettings.setZoomControlEnabled(false);
+            uiSettings.setAllGesturesEnabled(false);
 
-                Intent intent = getIntent();
-                String address = intent.getStringExtra("address");
+            Intent intent = getIntent();
+            String address = intent.getStringExtra("address");
 
-                Geocode.getInstance().getQueryResponseFromNaver(HouseDetailActivity.this, address);
-                Geocode.getInstance().setOnDataReceiveListener(new Geocode.OnDataReceiveListener() {
-                    @Override
-                    public void parseData(GeocodeResult result) {
-                        GeocodeResult.Address address = result.addresses.get(0);
-                        LatLng latLng = new LatLng(Double.parseDouble(address.y), Double.parseDouble(address.x));
-                        naverMap.moveCamera(CameraUpdate.scrollAndZoomTo(latLng, 16));
-                        Marker marker = new Marker(latLng);
-                        marker.setMap(naverMap);
-                    }
-                });
-            }
+            Geocode.getInstance().getQueryResponseFromNaver(HouseDetailActivity.this, address);
+            Geocode.getInstance().setOnDataReceiveListener(result -> {
+                GeocodeResult.Address address1 = result.addresses.get(0);
+                LatLng latLng = new LatLng(Double.parseDouble(address1.y), Double.parseDouble(address1.x));
+                naverMap.moveCamera(CameraUpdate.scrollAndZoomTo(latLng, 16));
+                Marker marker = new Marker(latLng);
+                marker.setMap(naverMap);
+            });
         });
 
-        Switch stateSwitch = findViewById(R.id.house_detail_switch);
-        stateSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (stateSwitch.hasFocus()) {
-                    house.state = (byte) (isChecked ? Constants.SOLD_OUT : Constants.SALE);
-                }
+        SwitchMaterial stateSwitch = findViewById(R.id.house_detail_switch);
+        stateSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (stateSwitch.hasFocus()) {
+                house.state = (byte) (isChecked ? Constants.SOLD_OUT : Constants.SALE);
             }
         });
         stateSwitch.setChecked(house.state != Constants.SOLD_OUT);

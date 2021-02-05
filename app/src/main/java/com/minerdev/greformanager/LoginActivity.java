@@ -5,14 +5,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.InputFilter;
-import android.text.Spanned;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -45,7 +43,7 @@ public class LoginActivity extends AppCompatActivity {
             finish();
         }
 
-        if(AppHelper.requestQueue == null)
+        if (AppHelper.requestQueue == null)
             AppHelper.requestQueue = Volley.newRequestQueue(getApplicationContext());
     }
 
@@ -70,7 +68,7 @@ public class LoginActivity extends AppCompatActivity {
                 SharedPreferences.Editor editor = sharedPreferences.edit();
 
                 editor.putString("id", id);
-                editor.commit();
+                editor.apply();
 
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(intent);
@@ -88,70 +86,53 @@ public class LoginActivity extends AppCompatActivity {
 
     private boolean checkLoginStatus() {
         SharedPreferences sharedPreferences = getSharedPreferences("login", Activity.MODE_PRIVATE);
-        if (sharedPreferences != null && sharedPreferences.contains("id")) {
-            return true;
-
-        } else {
-            return false;
-        }
+        return sharedPreferences != null && sharedPreferences.contains("id");
     }
 
     private void setupButtons() {
         Button button_login = findViewById(R.id.login_button_login);
-        button_login.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                EditText editText_id = findViewById(R.id.login_editText_id);
-                EditText editText_pw = findViewById(R.id.login_editText_pw);
-                String user_id = editText_id.getText().toString();
+        button_login.setOnClickListener(view -> {
+            EditText editText_id = findViewById(R.id.login_editText_id);
+            EditText editText_pw = findViewById(R.id.login_editText_pw);
+            String user_id = editText_id.getText().toString();
 
-                tryLogin(view, user_id, editText_pw.getText().toString());
-            }
+            tryLogin(view, user_id, editText_pw.getText().toString());
         });
     }
 
     private void setupEditTexts() {
         TextInputEditText editText_id = findViewById(R.id.login_editText_id);
-        editText_id.setFilters(new InputFilter[]{new InputFilter() {
-            @Override
-            public CharSequence filter(CharSequence charSequence, int i, int i1, Spanned spanned, int i2, int i3) {
-                Pattern pattern = Pattern.compile("^[a-zA-Z0-9]*$");
-                if (charSequence.equals("") || pattern.matcher(charSequence).matches()) {
-                    return charSequence;
-                }
-
-                return "";
+        editText_id.setFilters(new InputFilter[]{(charSequence, i, i1, spanned, i2, i3) -> {
+            Pattern pattern = Pattern.compile("^[a-zA-Z0-9]*$");
+            if (charSequence.equals("") || pattern.matcher(charSequence).matches()) {
+                return charSequence;
             }
+
+            return "";
         }, new InputFilter.LengthFilter(8)});
 
         TextInputEditText editText_pw = findViewById(R.id.login_editText_pw);
-        editText_pw.setFilters(new InputFilter[]{new InputFilter() {
-            @Override
-            public CharSequence filter(CharSequence charSequence, int i, int i1, Spanned spanned, int i2, int i3) {
-                Pattern pattern = Pattern.compile("^[a-zA-Z0-9]*$");
-                if (charSequence.equals("") || pattern.matcher(charSequence).matches()) {
-                    return charSequence;
-                }
-
-                return "";
+        editText_pw.setFilters(new InputFilter[]{(charSequence, i, i1, spanned, i2, i3) -> {
+            Pattern pattern = Pattern.compile("^[a-zA-Z0-9]*$");
+            if (charSequence.equals("") || pattern.matcher(charSequence).matches()) {
+                return charSequence;
             }
+
+            return "";
         }, new InputFilter.LengthFilter(8)});
 
-        editText_pw.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                if (keyEvent != null && keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER || i == EditorInfo.IME_ACTION_DONE) {
-                    InputMethodManager manager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-                    manager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        editText_pw.setOnEditorActionListener((textView, i, keyEvent) -> {
+            if (keyEvent != null && keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER || i == EditorInfo.IME_ACTION_DONE) {
+                InputMethodManager manager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                manager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 
-                    Button button_login = findViewById(R.id.login_button_login);
-                    button_login.performClick();
+                Button button_login = findViewById(R.id.login_button_login);
+                button_login.performClick();
 
-                    return true;
-                }
-
-                return false;
+                return true;
             }
+
+            return false;
         });
     }
 }

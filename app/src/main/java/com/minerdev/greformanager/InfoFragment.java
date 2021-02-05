@@ -9,13 +9,13 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -31,8 +31,6 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.internal.FlowLayout;
 
 public class InfoFragment extends Fragment implements OnSaveDataListener {
-    private static House.SerializedData data = new House.SerializedData();
-
     private final Handler handler = new Handler();
     private ViewGroup rootView;
     private ToggleButtonGroup toggleButtonGroupManageFeeContains;
@@ -82,12 +80,7 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
 
         // 주소 입력 초기화
         MaterialButton buttonSearchAddress = rootView.findViewById(R.id.house_modify_materialButton_search);
-        buttonSearchAddress.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showAddressDialog();
-            }
-        });
+        buttonSearchAddress.setOnClickListener(v -> showAddressDialog());
 
 
         // 계약 형태 초기화
@@ -158,7 +151,7 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
 
                 // 시설 유무 초기화
                 String value = spinnerHouse.getSelectedItem().toString();
-                checkBoxFacility.setEnabled(value.equals("상가, 점포") ? true : false);
+                checkBoxFacility.setEnabled(value.equals("상가, 점포"));
                 checkBoxFacility.setChecked(false);
 
 
@@ -187,37 +180,31 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
 
 
         // 관리비 초기화
-        checkBoxManageFee.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                editTextManageFee.setEnabled(!isChecked);
-                editTextManageFee.setText("");
+        FlowLayout flowLayoutManageFee = rootView.findViewById(R.id.house_modify_flowLayout_manage_fee);
+        checkBoxManageFee.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            editTextManageFee.setEnabled(!isChecked);
+            editTextManageFee.setText("");
 
-                FlowLayout layout = rootView.findViewById(R.id.house_modify_flowLayout_manage_fee);
-                layout.setVisibility(isChecked ? View.GONE : View.VISIBLE);
-            }
+            flowLayoutManageFee.setVisibility(isChecked ? View.GONE : View.VISIBLE);
         });
         checkBoxManageFee.setChecked(true);
 
         toggleButtonGroupManageFeeContains = new ToggleButtonGroup(getContext(), "관리비 항목");
         toggleButtonGroupManageFeeContains.addToggleButtons(getResources().getStringArray(R.array.manage_fee));
-        FlowLayout flowLayoutManageFee = rootView.findViewById(R.id.house_modify_flowLayout_manage_fee);
+
         for (ToggleButton toggleButton : toggleButtonGroupManageFeeContains.getToggleButtons()) {
             flowLayoutManageFee.addView(toggleButton);
         }
 
 
         // 전용 면적, 임대 면적 초기화
-        setAreaEditTexts(rootView);
+        setAreaEditTexts();
 
 
         // 층 초기화
-        checkBoxUnderground.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                editTextFloor.setEnabled(!isChecked);
-                editTextFloor.setText("");
-            }
+        checkBoxUnderground.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            editTextFloor.setEnabled(!isChecked);
+            editTextFloor.setText("");
         });
         checkBoxUnderground.setChecked(false);
 
@@ -245,41 +232,18 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
 
         // 준공년월 초기화
         ImageButton imageButtonBuilt = rootView.findViewById(R.id.house_modify_imageButton_built_date);
-        imageButtonBuilt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDatePickerDialog(new OnClickListener() {
-                    @Override
-                    public void onClick(View v, String result) {
-                        textViewBuiltDate.setText(result);
-                    }
-                });
-            }
-        });
+        imageButtonBuilt.setOnClickListener(v -> showDatePickerDialog((v1, result) -> textViewBuiltDate.setText(result)));
 
 
         // 입주 가능일 초기화
         ImageButton imageButtonMove = rootView.findViewById(R.id.house_modify_imageButton_move_date);
-        imageButtonMove.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDatePickerDialog(new OnClickListener() {
-                    @Override
-                    public void onClick(View v, String result) {
-                        textViewMoveDate.setText(result);
-                    }
-                });
-            }
-        });
+        imageButtonMove.setOnClickListener(v -> showDatePickerDialog((v12, result) -> textViewMoveDate.setText(result)));
 
-        checkBoxMoveNow.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                textViewMoveDate.setEnabled(!isChecked);
-                textViewMoveDate.setText("");
+        checkBoxMoveNow.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            textViewMoveDate.setEnabled(!isChecked);
+            textViewMoveDate.setText("");
 
-                imageButtonMove.setEnabled(!isChecked);
-            }
+            imageButtonMove.setEnabled(!isChecked);
         });
         checkBoxMoveNow.setChecked(false);
 
@@ -456,7 +420,7 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
         textViewMoveDate = rootView.findViewById(R.id.house_modify_textView_move_date);
     }
 
-    private void setAreaEditTexts(ViewGroup rootView) {
+    private void setAreaEditTexts() {
         // 전용 면적 초기화
         editTextAreaPyeong.addTextChangedListener(new TextWatcher() {
             @Override
@@ -574,18 +538,13 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
         webView.addJavascriptInterface(new AndroidBridge(), "GREApp");
         webView.loadUrl(getString(R.string.web_server_dns) + "/get_daum_address.php");
 
-        ViewGroup.LayoutParams params = addressDialog.getWindow().getAttributes();
+        WindowManager.LayoutParams params = addressDialog.getWindow().getAttributes();
         params.width = ViewGroup.LayoutParams.MATCH_PARENT;
         params.height = ViewGroup.LayoutParams.MATCH_PARENT;
-        addressDialog.getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);
+        addressDialog.getWindow().setAttributes(params);
 
         Button buttonBack = addressDialog.findViewById(R.id.address_dialog_button_back);
-        buttonBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addressDialog.dismiss();
-            }
-        });
+        buttonBack.setOnClickListener(v -> addressDialog.dismiss());
 
         addressDialog.show();
     }
@@ -595,25 +554,17 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
         datePickerDialog.setContentView(R.layout.dialog_date_picker);
 
         Button buttonBack = datePickerDialog.findViewById(R.id.date_picker_dialog_button_back);
-        buttonBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                datePickerDialog.dismiss();
-            }
-        });
+        buttonBack.setOnClickListener(v -> datePickerDialog.dismiss());
 
         Button buttonSelect = datePickerDialog.findViewById(R.id.date_picker_dialog_button_select);
-        buttonSelect.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DatePicker datePicker = datePickerDialog.findViewById(R.id.date_picker_dialog_datePicker);
-                String date = datePicker.getYear() + "." + datePicker.getMonth() + "." + datePicker.getDayOfMonth();
-                if (listener != null) {
-                    listener.onClick(v, date);
-                }
-
-                datePickerDialog.dismiss();
+        buttonSelect.setOnClickListener(v -> {
+            DatePicker datePicker = datePickerDialog.findViewById(R.id.date_picker_dialog_datePicker);
+            String date = datePicker.getYear() + "." + datePicker.getMonth() + "." + datePicker.getDayOfMonth();
+            if (listener != null) {
+                listener.onClick(v, date);
             }
+
+            datePickerDialog.dismiss();
         });
 
         datePickerDialog.show();
@@ -626,12 +577,9 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
     private class AndroidBridge {
         @JavascriptInterface
         public void setAddress(final String arg1, final String arg2, final String arg3) {
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    textViewAddress.setText(String.format("(%s) %s %s", arg1, arg2, arg3));
-                    addressDialog.dismiss();
-                }
+            handler.post(() -> {
+                textViewAddress.setText(String.format("(%s) %s %s", arg1, arg2, arg3));
+                addressDialog.dismiss();
             });
         }
     }

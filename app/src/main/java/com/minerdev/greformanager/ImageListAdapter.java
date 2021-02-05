@@ -66,13 +66,8 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.View
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        private ImageView imageView;
-        private TextView textView;
-        private ImageButton imageButton_delete;
-        private ImageButton imageButton_thumbnail;
-        private ImageButton imageButton_up;
-        private ImageButton imageButton_down;
-
+        private final ImageView imageView;
+        private final TextView textView;
 
         public ViewHolder(@NonNull View itemView, final OnItemClickListener clickListener) {
             super(itemView);
@@ -80,43 +75,31 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.View
             imageView = itemView.findViewById(R.id.imageItem_imageView);
             textView = itemView.findViewById(R.id.imageItem_textView_thumbnail);
 
-            imageButton_delete = itemView.findViewById(R.id.imageItem_imageButton_delete);
-            imageButton_delete.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (clickListener != null) {
-                        clickListener.onDeleteButtonClick(ViewHolder.this, itemView, getAdapterPosition());
-                    }
+            ImageButton imageButton_delete = itemView.findViewById(R.id.imageItem_imageButton_delete);
+            imageButton_delete.setOnClickListener(v -> {
+                if (clickListener != null) {
+                    clickListener.onDeleteButtonClick(ViewHolder.this, itemView, getAdapterPosition());
                 }
             });
 
-            imageButton_thumbnail = itemView.findViewById(R.id.imageItem_imageButton_thumbnail);
-            imageButton_thumbnail.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (clickListener != null) {
-                        clickListener.onThumbnailButtonClick(ViewHolder.this, itemView, getAdapterPosition());
-                    }
+            ImageButton imageButton_thumbnail = itemView.findViewById(R.id.imageItem_imageButton_thumbnail);
+            imageButton_thumbnail.setOnClickListener(v -> {
+                if (clickListener != null) {
+                    clickListener.onThumbnailButtonClick(ViewHolder.this, itemView, getAdapterPosition());
                 }
             });
 
-            imageButton_up = itemView.findViewById(R.id.imageItem_imageButton_up);
-            imageButton_up.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (clickListener != null) {
-                        clickListener.onUpButtonClick(ViewHolder.this, itemView, getAdapterPosition());
-                    }
+            ImageButton imageButton_up = itemView.findViewById(R.id.imageItem_imageButton_up);
+            imageButton_up.setOnClickListener(v -> {
+                if (clickListener != null) {
+                    clickListener.onUpButtonClick(ViewHolder.this, itemView, getAdapterPosition());
                 }
             });
 
-            imageButton_down = itemView.findViewById(R.id.imageItem_imageButton_down);
-            imageButton_down.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (clickListener != null) {
-                        clickListener.onDownButtonClick(ViewHolder.this, itemView, getAdapterPosition());
-                    }
+            ImageButton imageButton_down = itemView.findViewById(R.id.imageItem_imageButton_down);
+            imageButton_down.setOnClickListener(v -> {
+                if (clickListener != null) {
+                    clickListener.onDownButtonClick(ViewHolder.this, itemView, getAdapterPosition());
                 }
             });
         }

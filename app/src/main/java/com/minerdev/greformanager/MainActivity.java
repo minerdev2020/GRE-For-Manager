@@ -50,26 +50,19 @@ public class MainActivity extends AppCompatActivity {
         LinearLayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         saleRecyclerView.setLayoutManager(manager);
         saleRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        saleAdapter.setOnItemClickListener(new HouseListAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(HouseListAdapter.ViewHolder viewHolder, View view, int position) {
-                String address = saleAdapter.getItem(position).address;
+        saleAdapter.setOnItemClickListener((viewHolder, view, position) -> {
+            String address = saleAdapter.getItem(position).address;
 
-                Intent intent = new Intent(MainActivity.this, HouseDetailActivity.class);
-                intent.putExtra("address", address);
-                startActivity(intent);
-            }
+            Intent intent = new Intent(MainActivity.this, HouseDetailActivity.class);
+            intent.putExtra("address", address);
+            startActivity(intent);
         });
         saleRecyclerView.setAdapter(saleAdapter);
 
         ImageButton imageButton = findViewById(R.id.main_imageButton_sale_expand);
-        imageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                RecyclerView recyclerView = findViewById(R.id.main_recyclerView_sale);
-                recyclerView.setVisibility(recyclerView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
-                imageButton.setImageResource(recyclerView.getVisibility() == View.VISIBLE ? R.drawable.ic_round_expand_less_24 : R.drawable.ic_round_expand_more_24);
-            }
+        imageButton.setOnClickListener(v -> {
+            saleRecyclerView.setVisibility(saleRecyclerView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+            imageButton.setImageResource(saleRecyclerView.getVisibility() == View.VISIBLE ? R.drawable.ic_round_expand_less_24 : R.drawable.ic_round_expand_more_24);
         });
 
 
@@ -78,26 +71,19 @@ public class MainActivity extends AppCompatActivity {
         LinearLayoutManager manager1 = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         soldRecyclerView.setLayoutManager(manager1);
         soldRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        soldAdapter.setOnItemClickListener(new HouseListAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(HouseListAdapter.ViewHolder viewHolder, View view, int position) {
-                String address = soldAdapter.getItem(position).address;
+        soldAdapter.setOnItemClickListener((viewHolder, view, position) -> {
+            String address = soldAdapter.getItem(position).address;
 
-                Intent intent = new Intent(MainActivity.this, HouseDetailActivity.class);
-                intent.putExtra("address", address);
-                startActivity(intent);
-            }
+            Intent intent = new Intent(MainActivity.this, HouseDetailActivity.class);
+            intent.putExtra("address", address);
+            startActivity(intent);
         });
         soldRecyclerView.setAdapter(soldAdapter);
 
         ImageButton imageButton1 = findViewById(R.id.main_imageButton_sold_expand);
-        imageButton1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                RecyclerView recyclerView = findViewById(R.id.main_recyclerView_sold);
-                recyclerView.setVisibility(recyclerView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
-                imageButton1.setImageResource(recyclerView.getVisibility() == View.VISIBLE ? R.drawable.ic_round_expand_less_24 : R.drawable.ic_round_expand_more_24);
-            }
+        imageButton1.setOnClickListener(v -> {
+            soldRecyclerView.setVisibility(soldRecyclerView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+            imageButton1.setImageResource(soldRecyclerView.getVisibility() == View.VISIBLE ? R.drawable.ic_round_expand_less_24 : R.drawable.ic_round_expand_more_24);
         });
 
 
@@ -135,19 +121,16 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
-        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
-            @Override
-            public boolean onClose() {
-                searchView.onActionViewCollapsed();
+        searchView.setOnCloseListener(() -> {
+            searchView.onActionViewCollapsed();
 
-                saleAdapter.setItems(items);
-                saleAdapter.notifyDataSetChanged();
+            saleAdapter.setItems(items);
+            saleAdapter.notifyDataSetChanged();
 
-                soldAdapter.setItems(items);
-                soldAdapter.notifyDataSetChanged();
+            soldAdapter.setItems(items);
+            soldAdapter.notifyDataSetChanged();
 
-                return true;
-            }
+            return true;
         });
 
         return super.onCreateOptionsMenu(menu);
@@ -219,34 +202,31 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout.lockSwipe(GravityCompat.END);
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(MenuItem menuItem) {
-                drawerLayout.closeDrawers();
+        navigationView.setNavigationItemSelectedListener(menuItem -> {
+            drawerLayout.closeDrawers();
 
-                switch (menuItem.getItemId()) {
-                    case R.id.nav_menu_logout:
-                        SharedPreferences sharedPreferences = getSharedPreferences("login", Activity.MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
+            switch (menuItem.getItemId()) {
+                case R.id.nav_menu_logout:
+                    SharedPreferences sharedPreferences = getSharedPreferences("login", Activity.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
 
-                        editor.clear();
-                        editor.commit();
+                    editor.clear();
+                    editor.apply();
 
-                        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                        startActivity(intent);
-                        finish();
-                        break;
+                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                    finish();
+                    break;
 
-                    case R.id.nav_menu_exit:
-                        finish();
-                        break;
+                case R.id.nav_menu_exit:
+                    finish();
+                    break;
 
-                    default:
-                        break;
-                }
-
-                return true;
+                default:
+                    break;
             }
+
+            return true;
         });
     }
 

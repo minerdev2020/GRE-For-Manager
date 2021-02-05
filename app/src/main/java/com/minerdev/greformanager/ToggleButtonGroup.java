@@ -10,7 +10,7 @@ import java.util.HashMap;
 public class ToggleButtonGroup {
     private final ArrayList<ToggleButton> toggleButtons;
     private final HashMap<String, Boolean> toggleButtonCheckedStates;
-    private Context context;
+    private final Context context;
     private String title;
 
     public ToggleButtonGroup(Context context, String title) {
@@ -52,7 +52,7 @@ public class ToggleButtonGroup {
     public HashMap<String, Boolean> getToggleButtonCheckedStates() {
         if (toggleButtonCheckedStates.size() != 0) {
             for (Boolean state : toggleButtonCheckedStates.values()) {
-                if (state == true) {
+                if (state) {
                     return toggleButtonCheckedStates;
                 }
             }
@@ -67,30 +67,24 @@ public class ToggleButtonGroup {
 
         } else {
             Boolean result = toggleButtonCheckedStates.get(buttonText);
-
-            if (result == null || result == false) {
-                return false;
-
-            } else {
-                return true;
-            }
+            return result != null && result;
         }
     }
 
     public String getCheckedToggleButtonTextsInSingleLine() {
-        String result = "";
+        StringBuilder result = new StringBuilder();
         for (ToggleButton button : toggleButtons) {
             String buttonText = button.getText().toString();
             if (toggleButtonCheckedStates.get(buttonText)) {
-                if (!result.equals("")) {
-                    result += "|";
+                if (!result.toString().equals("")) {
+                    result.append("|");
                 }
 
-                result += buttonText;
+                result.append(buttonText);
             }
         }
 
-        return result;
+        return result.toString();
     }
 
     public void addToggleButton(String text) {

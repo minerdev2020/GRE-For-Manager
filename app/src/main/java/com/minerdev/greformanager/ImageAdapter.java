@@ -1,7 +1,6 @@
 package com.minerdev.greformanager;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -13,7 +12,7 @@ import java.util.ArrayList;
 
 public class ImageAdapter extends PagerAdapter {
     private final ArrayList<Integer> imageList = new ArrayList<>();
-    private Context context;
+    private final Context context;
 
     public ImageAdapter(Context context) {
         this.context = context;

@@ -5,8 +5,6 @@ import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
 
@@ -32,32 +30,24 @@ public class Geocode {
     public void getQueryResponseFromNaver(Context context, String address) {
         String apiURL = context.getString(R.string.naver_open_api_geocode) + "?query=" + address;
         StringRequest request = new StringRequest(Request.Method.GET, apiURL,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try {
-                            Gson gson = new Gson();
-                            result = gson.fromJson(response, GeocodeResult.class);
+                response -> {
+                    try {
+                        Gson gson = new Gson();
+                        result = gson.fromJson(response, GeocodeResult.class);
 
-                            if (result != null) {
-                                listener.parseData(result);
-                            }
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                        if (result != null) {
+                            listener.parseData(result);
                         }
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                }
+                error -> Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show()
         ) {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
+                Map<String, String> params = new HashMap<>();
 
                 return params;
             }
@@ -67,7 +57,7 @@ public class Geocode {
                 String client_id = context.getString(R.string.client_id);
                 String client_secret = context.getString(R.string.client_secret);
 
-                Map<String, String> params = new HashMap<String, String>();
+                Map<String, String> params = new HashMap<>();
                 params.put(context.getString(R.string.api_key_id_header), client_id);
                 params.put(context.getString(R.string.api_key_header), client_secret);
 

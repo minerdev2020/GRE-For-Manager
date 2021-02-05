@@ -1,8 +1,8 @@
 package com.minerdev.greformanager;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -39,20 +39,17 @@ public class ImageFragment extends Fragment implements OnSaveDataListener {
         recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
 
         ImageButton imageButton = rootView.findViewById(R.id.house_modify_imageButton_add);
-        imageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int permissionChecked = ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE);
-                if (permissionChecked != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 101);
+        imageButton.setOnClickListener(v -> {
+            int permissionChecked = ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE);
+            if (permissionChecked != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 101);
+
+            } else {
+                if (imageListAdapter.getItemCount() < 9) {
+                    showAlbum();
 
                 } else {
-                    if (imageListAdapter.getItemCount() < 9) {
-                        showAlbum();
-
-                    } else {
-                        Toast.makeText(getContext(), "사진은 최대 9장까지 업로드가 가능합니다.", Toast.LENGTH_SHORT).show();
-                    }
+                    Toast.makeText(getContext(), "사진은 최대 9장까지 업로드가 가능합니다.", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -64,7 +61,7 @@ public class ImageFragment extends Fragment implements OnSaveDataListener {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == GALLERY_REQUEST_CODE) {
-            if (resultCode == getActivity().RESULT_OK && data != null && data.getData() != null) {
+            if (resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
                 Uri selectedImageUri = data.getData();
                 if (selectedImageUri == null) {
                     return;
@@ -86,18 +83,12 @@ public class ImageFragment extends Fragment implements OnSaveDataListener {
                     AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
                     alertDialog.setTitle("앱 권한");
                     alertDialog.setMessage("해당 앱의 원활한 기능을 이용하시려면 애플리케이션 정보>권한에서 '저장공간' 권한을 허용해 주십시오.");
-                    alertDialog.setPositiveButton("권한설정", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).setData(Uri.parse("package:" + getContext().getPackageName()));
-                            startActivity(intent);
-                            dialog.cancel();
-                        }
+                    alertDialog.setPositiveButton("권한설정", (dialog, which) -> {
+                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).setData(Uri.parse("package:" + getContext().getPackageName()));
+                        startActivity(intent);
+                        dialog.cancel();
                     });
-                    alertDialog.setNegativeButton("취소", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
-                    });
+                    alertDialog.setNegativeButton("취소", (dialog, which) -> dialog.cancel());
                     alertDialog.show();
                 }
                 break;
