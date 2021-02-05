@@ -101,7 +101,7 @@ public class ImageFragment extends Fragment implements OnSaveDataListener {
 
     @Override
     public boolean checkData() {
-        return true;
+        return imageListAdapter.getItemCount() > 0;
     }
 
     @Override

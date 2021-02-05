@@ -1,5 +1,6 @@
 package com.minerdev.greformanager;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.os.Handler;
@@ -420,6 +421,7 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
         textViewMoveDate = rootView.findViewById(R.id.house_modify_textView_move_date);
     }
 
+    @SuppressLint("DefaultLocale")
     private void setAreaEditTexts() {
         // 전용 면적 초기화
         editTextAreaPyeong.addTextChangedListener(new TextWatcher() {
@@ -529,6 +531,7 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
         });
     }
 
+    @SuppressLint("SetJavaScriptEnabled")
     private void showAddressDialog() {
         addressDialog = new Dialog(getContext());
         addressDialog.setContentView(R.layout.dialog_address);

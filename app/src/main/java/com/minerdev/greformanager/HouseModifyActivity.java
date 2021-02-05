@@ -3,8 +3,10 @@ package com.minerdev.greformanager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -20,6 +22,7 @@ public class HouseModifyActivity extends AppCompatActivity {
     private NonSwipeViewPager viewPager;
     private Button button_next;
     private Button button_previous;
+    private Button button_save;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,24 +43,44 @@ public class HouseModifyActivity extends AppCompatActivity {
 
         button_next = findViewById(R.id.house_modify_button_next);
         button_next.setOnClickListener(v -> {
-            viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
-
             if (getCurrentFocus() != null) {
                 InputMethodManager manager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
                 manager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+            }
+
+            int current = viewPager.getCurrentItem();
+            OnSaveDataListener listener = (OnSaveDataListener) adapter.getItem(current);
+            if (listener.checkData()) {
+                listener.saveData();
+                viewPager.setCurrentItem(current + 1);
+
+            } else {
+                Toast.makeText(getApplicationContext(), "error", Toast.LENGTH_SHORT).show();
             }
         });
 
         button_previous = findViewById(R.id.house_modify_button_previous);
         button_previous.setEnabled(false);
         button_previous.setOnClickListener(v -> {
-            viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
-
             if (getCurrentFocus() != null) {
                 InputMethodManager manager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
                 manager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
             }
+
+            viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
         });
+
+        button_save = findViewById(R.id.house_modify_button_save);
+        button_save.setVisibility(View.GONE);
+        button_save.setOnClickListener(v -> {
+            if (getCurrentFocus() != null) {
+                InputMethodManager manager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                manager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+            }
+
+            askSave();
+        });
+
         setViewPager();
     }
 
@@ -106,51 +129,18 @@ public class HouseModifyActivity extends AppCompatActivity {
                 switch (position) {
                     case 0:
                         button_previous.setEnabled(false);
-                        button_next.setText("다음");
-                        button_next.setOnClickListener(v -> {
-                            viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
-
-                            if (getCurrentFocus() != null) {
-                                InputMethodManager manager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-                                manager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-                            }
-
-                            if (adapter.getItem(position) instanceof OnSaveDataListener) {
-                                OnSaveDataListener listener = (OnSaveDataListener) adapter.getItem(position);
-                                listener.saveData();
-                            }
-                        });
                         break;
 
                     case 1:
                         button_previous.setEnabled(true);
-                        button_next.setText("다음");
-                        button_next.setOnClickListener(v -> {
-                            viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
-
-                            if (getCurrentFocus() != null) {
-                                InputMethodManager manager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-                                manager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-                            }
-
-                            if (adapter.getItem(position) instanceof OnSaveDataListener) {
-                                OnSaveDataListener listener = (OnSaveDataListener) adapter.getItem(position);
-                                listener.saveData();
-                            }
-                        });
+                        button_next.setVisibility(View.VISIBLE);
+                        button_save.setVisibility(View.GONE);
                         break;
 
 
                     case 2:
-                        button_next.setText("저장");
-                        button_next.setOnClickListener(v -> {
-                            if (getCurrentFocus() != null) {
-                                InputMethodManager manager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-                                manager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-                            }
-
-                            askSave();
-                        });
+                        button_next.setVisibility(View.GONE);
+                        button_save.setVisibility(View.VISIBLE);
                         break;
 
                     default:
