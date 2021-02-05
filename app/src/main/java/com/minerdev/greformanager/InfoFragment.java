@@ -15,7 +15,9 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -30,9 +32,12 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
     private final Handler handler = new Handler();
     private ToggleButtonGroup manageFeeGroup;
     private ToggleButtonGroup optionGroup;
+    private ViewGroup rootView;
+
     private TextView textViewAddress;
     private Dialog addressDialog;
-    private ViewGroup rootView;
+    private Spinner spinnerPayment;
+    private Spinner spinnerHouse;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -47,32 +52,47 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
         buttonSearchAddress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setAddressDialog();
-                addressDialog.show();
+                showAddressDialog();
             }
         });
 
 
         // 계약 형태 초기화
-        ArrayAdapter<String> arrayAdapter4 = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<String> arrayAdapterPayment = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item);
 
-        Spinner spinnerPayment = rootView.findViewById(R.id.house_modify_spinner_paymentType);
-        spinnerPayment.setAdapter(arrayAdapter4);
+        spinnerPayment = rootView.findViewById(R.id.house_modify_spinner_paymentType);
+        spinnerPayment.setAdapter(arrayAdapterPayment);
         spinnerPayment.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                TableRow tableRowPrice = rootView.findViewById(R.id.house_modify_tableRow_price);
                 TableRow tableRowDeposit = rootView.findViewById(R.id.house_modify_tableRow_deposit);
                 TableRow tableRowMonthlyRent = rootView.findViewById(R.id.house_modify_tableRow_monthly_rent);
+                TableRow tableRowMonthlyPremium = rootView.findViewById(R.id.house_modify_tableRow_premium);
 
                 String value = spinnerPayment.getSelectedItem().toString();
                 if (value.equals("월세") || value.equals("단기임대") || value.equals("임대")) {
+                    tableRowPrice.setVisibility(View.GONE);
                     tableRowDeposit.setVisibility(View.VISIBLE);
                     tableRowMonthlyRent.setVisibility(View.VISIBLE);
 
                 } else {
+                    tableRowPrice.setVisibility(View.VISIBLE);
                     tableRowDeposit.setVisibility(View.GONE);
                     tableRowMonthlyRent.setVisibility(View.GONE);
                 }
+
+                String houseValue = spinnerHouse.getSelectedItem().toString();
+                tableRowMonthlyPremium.setVisibility(houseValue.equals("상가, 점포") && value.equals("임대") ? View.VISIBLE : View.GONE);
+
+                EditText editTextPrice = rootView.findViewById(R.id.house_modify_editText_price);
+                EditText editTextDeposit = rootView.findViewById(R.id.house_modify_editText_deposit);
+                EditText editTextMonthlyRent = rootView.findViewById(R.id.house_modify_editText_monthly_rent);
+                EditText editTextPremium = rootView.findViewById(R.id.house_modify_editText_premium);
+                editTextPrice.setText("");
+                editTextDeposit.setText("");
+                editTextMonthlyRent.setText("");
+                editTextPremium.setText("");
             }
 
             @Override
@@ -83,35 +103,33 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
 
 
         // 매물 종류 초기화
-        ArrayAdapter<String> arrayAdapter1 = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item);
-        arrayAdapter1.addAll(getResources().getStringArray(R.array.houseType));
+        ArrayAdapter<String> arrayAdapterHouse = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item);
+        arrayAdapterHouse.addAll(getResources().getStringArray(R.array.houseType));
 
-        Spinner spinnerHouse = rootView.findViewById(R.id.house_modify_spinner_houseType);
-        spinnerHouse.setAdapter(arrayAdapter1);
+        spinnerHouse = rootView.findViewById(R.id.house_modify_spinner_houseType);
+        spinnerHouse.setAdapter(arrayAdapterHouse);
         spinnerHouse.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (position > 0) {
-                    arrayAdapter4.clear();
+                    arrayAdapterPayment.clear();
                     String temp = getResources().getStringArray(R.array.paymentType)[position - 1];
-                    arrayAdapter4.addAll(temp.split(" "));
+                    arrayAdapterPayment.addAll(temp.split(" "));
                     spinnerPayment.setSelection(0);
 
                 } else {
-                    arrayAdapter4.clear();
+                    arrayAdapterPayment.clear();
                 }
 
                 String value = spinnerHouse.getSelectedItem().toString();
-                TableRow tableRow = rootView.findViewById(R.id.house_modify_tableRow_facility);
-                tableRow.setVisibility(value.equals("상가, 점포") ? View.VISIBLE : View.GONE);
-
                 CheckBox checkBox = rootView.findViewById(R.id.house_modify_checkBox_facility);
+                checkBox.setEnabled(value.equals("상가, 점포") ? true : false);
                 checkBox.setChecked(false);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                arrayAdapter4.clear();
+                arrayAdapterPayment.clear();
             }
         });
 
@@ -159,38 +177,70 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
 
 
         // 구조 초기화
-        ArrayAdapter<String> arrayAdapter2 = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item);
-        arrayAdapter2.addAll(getResources().getStringArray(R.array.structure));
+        ArrayAdapter<String> arrayAdapterStructure = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item);
+        arrayAdapterStructure.addAll(getResources().getStringArray(R.array.structure));
 
         Spinner spinnerStructure = rootView.findViewById(R.id.house_modify_spinner_structure);
-        spinnerStructure.setAdapter(arrayAdapter2);
+        spinnerStructure.setAdapter(arrayAdapterStructure);
 
 
         // 욕실 갯수 초기화
-        ArrayAdapter<String> arrayAdapter3 = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item);
-        arrayAdapter3.addAll(getResources().getStringArray(R.array.bathroom));
+        ArrayAdapter<String> arrayAdapterBathroom = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item);
+        arrayAdapterBathroom.addAll(getResources().getStringArray(R.array.bathroom));
 
         Spinner spinnerBathroom = rootView.findViewById(R.id.house_modify_spinner_bathroom);
-        spinnerBathroom.setAdapter(arrayAdapter3);
+        spinnerBathroom.setAdapter(arrayAdapterBathroom);
 
 
         // 방향 초기화
-        ArrayAdapter<String> arrayAdapter5 = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item);
-        arrayAdapter5.addAll(getResources().getStringArray(R.array.direction));
+        ArrayAdapter<String> arrayAdapterDirection = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item);
+        arrayAdapterDirection.addAll(getResources().getStringArray(R.array.direction));
 
         Spinner spinnerDirection = rootView.findViewById(R.id.house_modify_spinner_direction);
-        spinnerDirection.setAdapter(arrayAdapter5);
+        spinnerDirection.setAdapter(arrayAdapterDirection);
 
 
         // 입주 가능일 초기화
-        EditText editTextMoveDate = rootView.findViewById(R.id.house_modify_editText_move_date);
+        TextView textViewBuilt = rootView.findViewById(R.id.house_modify_textView_built_date);
+
+        ImageButton imageButtonBuilt = rootView.findViewById(R.id.house_modify_imageButton_built_date);
+        imageButtonBuilt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDatePickerDialog(new OnClickListener() {
+                    @Override
+                    public void onClick(View v, String result) {
+                        textViewBuilt.setText(result);
+                    }
+                });
+            }
+        });
+
+
+        // 입주 가능일 초기화
+        TextView textViewMove = rootView.findViewById(R.id.house_modify_textView_move_date);
+
+        ImageButton imageButtonMove = rootView.findViewById(R.id.house_modify_imageButton_move_date);
+        imageButtonMove.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDatePickerDialog(new OnClickListener() {
+                    @Override
+                    public void onClick(View v, String result) {
+                        textViewMove.setText(result);
+                    }
+                });
+            }
+        });
 
         CheckBox checkBoxMoveNow = rootView.findViewById(R.id.house_modify_checkBox_move_now);
         checkBoxMoveNow.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                editTextMoveDate.setEnabled(!isChecked);
-                editTextMoveDate.setText("");
+                textViewMove.setEnabled(!isChecked);
+                textViewMove.setText("");
+
+                imageButtonMove.setEnabled(!isChecked);
             }
         });
         checkBoxMoveNow.setChecked(false);
@@ -249,29 +299,6 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
 //        data.extra;
 
         SendData.getInstance().house = data;
-    }
-
-    private void setAddressDialog() {
-        addressDialog = new Dialog(getContext());
-        addressDialog.setContentView(R.layout.dialog_address);
-
-        WebView webView = addressDialog.findViewById(R.id.address_dialog_button_webView);
-        webView.getSettings().setJavaScriptEnabled(true);
-        webView.addJavascriptInterface(new AndroidBridge(), "GREApp");
-        webView.loadUrl(getString(R.string.web_server_dns) + "/get_daum_address.php");
-
-        ViewGroup.LayoutParams params = addressDialog.getWindow().getAttributes();
-        params.width = ViewGroup.LayoutParams.MATCH_PARENT;
-        params.height = ViewGroup.LayoutParams.MATCH_PARENT;
-        addressDialog.getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);
-
-        Button button_back = addressDialog.findViewById(R.id.address_dialog_button_back);
-        button_back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addressDialog.dismiss();
-            }
-        });
     }
 
     private void setAreaEditTexts(ViewGroup rootView) {
@@ -387,6 +414,64 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
 
             }
         });
+    }
+
+    private void showAddressDialog() {
+        addressDialog = new Dialog(getContext());
+        addressDialog.setContentView(R.layout.dialog_address);
+
+        WebView webView = addressDialog.findViewById(R.id.address_dialog_button_webView);
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.addJavascriptInterface(new AndroidBridge(), "GREApp");
+        webView.loadUrl(getString(R.string.web_server_dns) + "/get_daum_address.php");
+
+        ViewGroup.LayoutParams params = addressDialog.getWindow().getAttributes();
+        params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+        params.height = ViewGroup.LayoutParams.MATCH_PARENT;
+        addressDialog.getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);
+
+        Button buttonBack = addressDialog.findViewById(R.id.address_dialog_button_back);
+        buttonBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addressDialog.dismiss();
+            }
+        });
+
+        addressDialog.show();
+    }
+
+    private void showDatePickerDialog(OnClickListener listener) {
+        Dialog datePickerDialog = new Dialog(getContext());
+        datePickerDialog.setContentView(R.layout.dialog_date_picker);
+
+        Button buttonBack = datePickerDialog.findViewById(R.id.date_picker_dialog_button_back);
+        buttonBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                datePickerDialog.dismiss();
+            }
+        });
+
+        Button buttonSelect = datePickerDialog.findViewById(R.id.date_picker_dialog_button_select);
+        buttonSelect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatePicker datePicker = datePickerDialog.findViewById(R.id.date_picker_dialog_datePicker);
+                String date = datePicker.getYear() + "." + datePicker.getMonth() + "." + datePicker.getDayOfMonth();
+                if (listener != null) {
+                    listener.onClick(v, date);
+                }
+
+                datePickerDialog.dismiss();
+            }
+        });
+
+        datePickerDialog.show();
+    }
+
+    public interface OnClickListener {
+        void onClick(View v, String result);
     }
 
     private class AndroidBridge {

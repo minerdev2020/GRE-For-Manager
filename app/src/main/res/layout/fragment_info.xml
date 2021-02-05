@@ -25,7 +25,7 @@
                     style="@style/TextAppearance.AppCompat.Menu"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="주소 입력" />
+                    android:text="주소 등록" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -46,7 +46,8 @@
                             style="@style/TextAppearance.AppCompat.Body1"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1" />
+                            android:layout_weight="1"
+                            android:text="주소를 선택해주세요."/>
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/house_modify_materialButton_search"
@@ -60,6 +61,10 @@
 
                 </LinearLayout>
             </LinearLayout>
+
+            <View style="@style/Divider" />
+
+            <include layout="@layout/part_house_trade" />
 
             <View style="@style/Divider" />
 
