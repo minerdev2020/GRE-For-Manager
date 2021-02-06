@@ -27,7 +27,7 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     static final long FINISH_INTERVAL_TIME = 2000;
-    static final ArrayList<House.SerializedData> items = new ArrayList<>();
+    static final ArrayList<House.ParcelableData> items = new ArrayList<>();
     final HouseListAdapter saleAdapter = new HouseListAdapter();
     final HouseListAdapter soldAdapter = new HouseListAdapter();
 
@@ -52,10 +52,8 @@ public class MainActivity extends AppCompatActivity {
         saleRecyclerView.setLayoutManager(manager);
         saleRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         saleAdapter.setOnItemClickListener((viewHolder, view, position) -> {
-            String address = saleAdapter.getItem(position).address;
-
             Intent intent = new Intent(MainActivity.this, HouseDetailActivity.class);
-            intent.putExtra("address", address);
+            intent.putExtra("house_value", saleAdapter.getItem(position));
             startActivity(intent);
         });
         saleRecyclerView.setAdapter(saleAdapter);
@@ -66,6 +64,11 @@ public class MainActivity extends AppCompatActivity {
             imageButton.setImageResource(saleRecyclerView.getVisibility() == View.VISIBLE ? R.drawable.ic_round_expand_less_24 : R.drawable.ic_round_expand_more_24);
         });
 
+        ReceiveData.getInstance().start(this, list -> {
+            saleAdapter.setItems(list);
+            saleAdapter.notifyDataSetChanged();
+        });
+
 
         // 판매완료 매물 RecyclerView 및 HouseListAdapter 초기화
         RecyclerView soldRecyclerView = findViewById(R.id.main_recyclerView_sold);
@@ -73,10 +76,8 @@ public class MainActivity extends AppCompatActivity {
         soldRecyclerView.setLayoutManager(manager1);
         soldRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         soldAdapter.setOnItemClickListener((viewHolder, view, position) -> {
-            String address = soldAdapter.getItem(position).address;
-
             Intent intent = new Intent(MainActivity.this, HouseDetailActivity.class);
-            intent.putExtra("address", address);
+            intent.putExtra("house_value", soldAdapter.getItem(position));
             startActivity(intent);
         });
         soldRecyclerView.setAdapter(soldAdapter);
@@ -184,9 +185,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void rearrangeList(String keyword) {
-        ArrayList<House.SerializedData> temp = new ArrayList<>();
-        for (House.SerializedData i : items) {
-            if ((keyword == null || i.houseNumber.contains(keyword) || i.address.contains(keyword))) {
+        ArrayList<House.ParcelableData> temp = new ArrayList<>();
+        for (House.ParcelableData i : items) {
+            if ((keyword == null || i.house_number.contains(keyword) || i.address.contains(keyword))) {
                 temp.add(i);
             }
         }

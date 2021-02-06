@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,12 +21,15 @@ import com.naver.maps.map.overlay.Marker;
 
 public class HouseDetailActivity extends AppCompatActivity {
     final ImageAdapter adapter = new ImageAdapter(this);
-    House.SerializedData house;
+    House.ParcelableData house;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_house_detail);
+
+        Intent intent = getIntent();
+        house = intent.getParcelableExtra("house_value");
 
         Toolbar toolbar = findViewById(R.id.house_detail_toolbar);
         setSupportActionBar(toolbar);
@@ -49,13 +53,10 @@ public class HouseDetailActivity extends AppCompatActivity {
             uiSettings.setZoomControlEnabled(false);
             uiSettings.setAllGesturesEnabled(false);
 
-            Intent intent = getIntent();
-            String address = intent.getStringExtra("address");
-
-            Geocode.getInstance().getQueryResponseFromNaver(HouseDetailActivity.this, address);
+            Geocode.getInstance().getQueryResponseFromNaver(HouseDetailActivity.this, house.address.substring(8));
             Geocode.getInstance().setOnDataReceiveListener(result -> {
-                GeocodeResult.Address address1 = result.addresses.get(0);
-                LatLng latLng = new LatLng(Double.parseDouble(address1.y), Double.parseDouble(address1.x));
+                GeocodeResult.Address address = result.addresses.get(0);
+                LatLng latLng = new LatLng(Double.parseDouble(address.y), Double.parseDouble(address.x));
                 naverMap.moveCamera(CameraUpdate.scrollAndZoomTo(latLng, 16));
                 Marker marker = new Marker(latLng);
                 marker.setMap(naverMap);
@@ -68,7 +69,7 @@ public class HouseDetailActivity extends AppCompatActivity {
                 house.state = (byte) (isChecked ? Constants.getInstance().SOLD_OUT : Constants.getInstance().SALE);
             }
         });
-        stateSwitch.setChecked(house.state != Constants.getInstance().SOLD_OUT);
+        stateSwitch.setChecked(house.state == Constants.getInstance().SOLD_OUT);
     }
 
     @Override
@@ -100,6 +101,24 @@ public class HouseDetailActivity extends AppCompatActivity {
 
     void readData() {
         readImages();
+
+        TextView address = findViewById(R.id.house_detail_textView_address);
+        address.setText(house.address);
+
+        TextView price = findViewById(R.id.house_detail_textView_price);
+        price.setText(String.valueOf(house.price));
+
+        TextView payment = findViewById(R.id.house_detail_textView_paymentType);
+        payment.setText(Constants.getInstance().PAYMENT_TYPE.get(house.house_type).get(house.payment_type));
+
+        TextView number = findViewById(R.id.house_detail_textView_number);
+        number.setText(house.house_number);
+
+        TextView detail = findViewById(R.id.house_detail_textView_detail_info);
+        detail.setText(house.detail_info);
+
+        TextView brief = findViewById(R.id.house_detail_textView_brief_info);
+        brief.setText(Constants.getInstance().HOUSE_TYPE.get(house.house_type));
     }
 
     void readImages() {

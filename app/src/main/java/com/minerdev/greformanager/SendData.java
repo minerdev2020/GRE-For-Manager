@@ -22,7 +22,7 @@ import java.util.Map;
 
 public class SendData {
     public ArrayList<Uri> imageUris = new ArrayList<>();
-    public House.SerializedData house;
+    public House.ParcelableData house;
 
     SendData() {
 
@@ -33,8 +33,7 @@ public class SendData {
     }
 
     public void start(Context context) {
-        //String uri = context.getResources().getString(R.string.web_server_dns) + "/insertDB.php";
-        String uri = "http://192.168.35.141/insertDB.php";
+        String uri = context.getResources().getString(R.string.web_server_dns) + "/insertDB.php";
 
         Gson gson = new Gson();
         String json = gson.toJson(house);

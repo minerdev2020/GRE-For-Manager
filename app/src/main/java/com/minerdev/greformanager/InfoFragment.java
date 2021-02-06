@@ -66,7 +66,7 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
                 v -> showDatePickerDialog((v1, result) -> binding.houseModifyTextViewMoveDate.setText(result))
         );
 
-        
+
         // 관리비 초기화
         toggleButtonGroupManageFeeContains = new ToggleButtonGroup(getContext(), "관리비 항목");
         toggleButtonGroupManageFeeContains.addToggleButtons(getResources().getStringArray(R.array.manage_fee));
@@ -140,7 +140,8 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
             return false;
         }
 
-        if (binding.houseModifyEditTextFloor.getText().toString().equals("")) {
+        if (!binding.houseModifyCheckBoxUnderground.isChecked()
+                && binding.houseModifyEditTextFloor.getText().toString().equals("")) {
             return false;
         }
 
@@ -180,22 +181,22 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
 
     @Override
     public void saveData() {
-        House.SerializedData data = new House.SerializedData();
+        House.ParcelableData data = new House.ParcelableData();
 
         data.address = binding.houseModifyTextViewAddress.getText().toString();
-        data.houseNumber = binding.houseModifyEditTextNumber.getText().toString();
-        data.paymentType = (byte) binding.houseModifySpinnerPaymentType.getSelectedItemPosition();
-        data.houseType = (byte) binding.houseModifySpinnerHouseType.getSelectedItemPosition();
-        data.facility = binding.houseModifyCheckBoxFacility.isChecked();
+        data.house_number = binding.houseModifyEditTextNumber.getText().toString();
+        data.house_type = (byte) binding.houseModifySpinnerHouseType.getSelectedItemPosition();
+        data.facility = (byte) (binding.houseModifyCheckBoxFacility.isChecked() ? 1 : 0);
+        data.payment_type = (byte) binding.houseModifySpinnerPaymentType.getSelectedItemPosition();
         data.price = parseInt(binding.houseModifyEditTextPrice.getText().toString());
         data.deposit = parseInt(binding.houseModifyEditTextDeposit.getText().toString());
-        data.monthlyRent = parseInt(binding.houseModifyEditTextMonthlyRent.getText().toString());
+        data.monthly_rent = parseInt(binding.houseModifyEditTextMonthlyRent.getText().toString());
         data.premium = parseInt(binding.houseModifyEditTextPremium.getText().toString());
-        data.manageFee = parseInt(binding.houseModifyEditTextManageFee.getText().toString());
-        data.manageFeeContains = toggleButtonGroupManageFeeContains.getCheckedToggleButtonTextsInSingleLine();
-        data.areaMeter = parseFloat(binding.houseModifyEditTextAreaMeter.getText().toString());
-        data.rentAreaMeter = parseFloat(binding.houseModifyEditTextRentAreaMeter.getText().toString());
-        data.buildingFloor = (byte) parseInt(binding.houseModifyEditTextBuildingFloor.getText().toString());
+        data.manage_fee = parseInt(binding.houseModifyEditTextManageFee.getText().toString());
+        data.manage_fee_contains = toggleButtonGroupManageFeeContains.getCheckedToggleButtonTextsInSingleLine();
+        data.area_meter = parseFloat(binding.houseModifyEditTextAreaMeter.getText().toString());
+        data.rent_area_meter = parseFloat(binding.houseModifyEditTextRentAreaMeter.getText().toString());
+        data.building_floor = (byte) parseInt(binding.houseModifyEditTextBuildingFloor.getText().toString());
 
         if (binding.houseModifyCheckBoxUnderground.isChecked()) {
             data.floor = -1;
@@ -206,12 +207,12 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
 
         data.structure = (byte) binding.houseModifySpinnerStructure.getSelectedItemPosition();
         data.bathroom = (byte) binding.houseModifySpinnerBathroom.getSelectedItemPosition();
-        data.bathroomLocation = (byte) binding.houseModifyRadioGroup.getCheckedRadioButtonId();
+        data.bathroom_location = (byte) binding.houseModifyRadioGroup.getCheckedRadioButtonId();
         data.direction = (byte) binding.houseModifySpinnerDirection.getSelectedItemId();
-        data.builtDate = binding.houseModifyTextViewBuiltDate.getText().toString();
-        data.moveDate = binding.houseModifyTextViewMoveDate.getText().toString();
+        data.built_date = binding.houseModifyTextViewBuiltDate.getText().toString();
+        data.move_date = binding.houseModifyTextViewMoveDate.getText().toString();
         data.options = toggleButtonGroupOptions.getCheckedToggleButtonTextsInSingleLine();
-        data.detailInfo = binding.houseModifyDetailInfo.getText().toString();
+        data.detail_info = binding.houseModifyDetailInfo.getText().toString();
         data.phone = binding.houseModifyEditTextPhone.getText().toString();
 
         SendData.getInstance().house = data;

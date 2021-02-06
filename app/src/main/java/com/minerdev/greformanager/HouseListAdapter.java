@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 public class HouseListAdapter extends RecyclerView.Adapter<HouseListAdapter.ViewHolder> {
-    ArrayList<House.SerializedData> items = new ArrayList<>();
+    ArrayList<House.ParcelableData> items = new ArrayList<>();
     OnItemClickListener listener;
 
     public void setOnItemClickListener(OnItemClickListener clickListener) {
@@ -30,7 +30,7 @@ public class HouseListAdapter extends RecyclerView.Adapter<HouseListAdapter.View
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        House.SerializedData item = items.get(position);
+        House.ParcelableData item = items.get(position);
         holder.setItem(item);
     }
 
@@ -39,19 +39,19 @@ public class HouseListAdapter extends RecyclerView.Adapter<HouseListAdapter.View
         return items.size();
     }
 
-    public void addItem(House.SerializedData item) {
+    public void addItem(House.ParcelableData item) {
         items.add(item);
     }
 
-    public void setItems(ArrayList<House.SerializedData> items) {
+    public void setItems(ArrayList<House.ParcelableData> items) {
         this.items = items;
     }
 
-    public House.SerializedData getItem(int position) {
+    public House.ParcelableData getItem(int position) {
         return items.get(position);
     }
 
-    public void setItem(int position, House.SerializedData item) {
+    public void setItem(int position, House.ParcelableData item) {
         items.set(position, item);
     }
 
@@ -84,11 +84,11 @@ public class HouseListAdapter extends RecyclerView.Adapter<HouseListAdapter.View
 
         }
 
-        public void setItem(House.SerializedData house) {
-            textView_payment.setText(Constants.getInstance().PAYMENT_TYPE.get(house.houseType).get(house.paymentType));
+        public void setItem(House.ParcelableData house) {
+            textView_payment.setText(Constants.getInstance().PAYMENT_TYPE.get(house.house_type).get(house.payment_type));
             textView_price.setText(String.valueOf(house.price));
-            textView_house_info.setText(Constants.getInstance().HOUSE_TYPE.get(house.houseType));
-            textView_description.setText(house.detailInfo);
+            textView_house_info.setText(Constants.getInstance().HOUSE_TYPE.get(house.house_type));
+            textView_description.setText(house.detail_info);
             imageView_profile.setImageResource(R.drawable.house);
         }
     }

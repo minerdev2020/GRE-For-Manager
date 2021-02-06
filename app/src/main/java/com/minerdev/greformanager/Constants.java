@@ -22,12 +22,9 @@ public class Constants {
 
     public void initialize(Context context) {
         Collections.addAll(HOUSE_TYPE, context.getResources().getStringArray(R.array.houseType));
-        HOUSE_TYPE.remove(0);
-
         String[] temp = context.getResources().getStringArray(R.array.paymentType);
         for (int i = 0; i < HOUSE_TYPE.size() - 1; i++) {
             ArrayList<String> list = new ArrayList<>(Arrays.asList(temp[i].split(" ")));
-            list.remove(0);
             PAYMENT_TYPE.add(list);
         }
     }
