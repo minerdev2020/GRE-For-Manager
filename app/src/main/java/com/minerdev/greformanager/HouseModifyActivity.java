@@ -23,6 +23,40 @@ public class HouseModifyActivity extends AppCompatActivity {
     private Button button_next;
     private Button button_previous;
     private Button button_save;
+    private ViewPager.OnPageChangeListener onPageChangeListener = new ViewPager.OnPageChangeListener() {
+        @Override
+        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+        }
+
+        @Override
+        public void onPageSelected(int position) {
+            switch (position) {
+                case 0:
+                    button_previous.setEnabled(false);
+                    break;
+
+                case 1:
+                    button_previous.setEnabled(true);
+                    button_next.setVisibility(View.VISIBLE);
+                    button_save.setVisibility(View.GONE);
+                    break;
+
+                case 2:
+                    button_next.setVisibility(View.GONE);
+                    button_save.setVisibility(View.VISIBLE);
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        @Override
+        public void onPageScrollStateChanged(int state) {
+
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,44 +76,18 @@ public class HouseModifyActivity extends AppCompatActivity {
         }
 
         button_next = findViewById(R.id.house_modify_button_next);
-        button_next.setOnClickListener(v -> {
-            if (getCurrentFocus() != null) {
-                InputMethodManager manager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-                manager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-            }
-
-            int current = viewPager.getCurrentItem();
-            OnSaveDataListener listener = (OnSaveDataListener) adapter.getItem(current);
-            if (listener.checkData()) {
-                listener.saveData();
-                viewPager.setCurrentItem(current + 1);
-
-            } else {
-                Toast.makeText(getApplicationContext(), "error", Toast.LENGTH_SHORT).show();
-            }
-        });
+        button_next.setOnClickListener(v -> toNextPage());
 
         button_previous = findViewById(R.id.house_modify_button_previous);
         button_previous.setEnabled(false);
         button_previous.setOnClickListener(v -> {
-            if (getCurrentFocus() != null) {
-                InputMethodManager manager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-                manager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-            }
-
+            hideKeyboard();
             viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
         });
 
         button_save = findViewById(R.id.house_modify_button_save);
         button_save.setVisibility(View.GONE);
-        button_save.setOnClickListener(v -> {
-            if (getCurrentFocus() != null) {
-                InputMethodManager manager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-                manager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-            }
-
-            askSave();
-        });
+        button_save.setOnClickListener(v -> askSave());
 
         setViewPager();
     }
@@ -118,40 +126,7 @@ public class HouseModifyActivity extends AppCompatActivity {
 
     public void setViewPager() {
         viewPager = findViewById(R.id.house_modify_viewPager);
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                switch (position) {
-                    case 0:
-                        button_previous.setEnabled(false);
-                        break;
-
-                    case 1:
-                        button_previous.setEnabled(true);
-                        button_next.setVisibility(View.VISIBLE);
-                        button_save.setVisibility(View.GONE);
-                        break;
-
-                    case 2:
-                        button_next.setVisibility(View.GONE);
-                        button_save.setVisibility(View.VISIBLE);
-                        break;
-
-                    default:
-                        break;
-                }
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
+        viewPager.addOnPageChangeListener(onPageChangeListener);
 
         adapter.addFragment(new InfoFragment(), "매물 정보 입력");
         adapter.addFragment(new ImageFragment(), "매물 사진 선택");
@@ -160,7 +135,30 @@ public class HouseModifyActivity extends AppCompatActivity {
         viewPager.setAdapter(adapter);
     }
 
+    private void hideKeyboard() {
+        if (getCurrentFocus() != null) {
+            InputMethodManager manager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+            manager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        }
+    }
+
+    private void toNextPage() {
+        hideKeyboard();
+
+        int current = viewPager.getCurrentItem();
+        OnSaveDataListener listener = (OnSaveDataListener) adapter.getItem(current);
+        if (listener.checkData()) {
+            listener.saveData();
+            viewPager.setCurrentItem(current + 1);
+
+        } else {
+            Toast.makeText(getApplicationContext(), "error", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private void askSave() {
+        hideKeyboard();
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("저장하시겠습니까?");
         builder.setIcon(R.drawable.ic_round_help_24);
