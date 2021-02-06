@@ -9,6 +9,7 @@ public class House {
         public String houseNumber;
         public byte paymentType;
         public byte houseType;
+        public boolean facility;
         public int price;
         public int deposit;
         public int monthlyRent;

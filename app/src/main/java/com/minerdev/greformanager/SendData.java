@@ -33,13 +33,14 @@ public class SendData {
     }
 
     public void start(Context context) {
-        String uri = context.getResources().getString(R.string.web_server_dns) + "/insertDB.php";
+        //String uri = context.getResources().getString(R.string.web_server_dns) + "/insertDB.php";
+        String uri = "http://192.168.35.141/insertDB.php";
 
         Gson gson = new Gson();
         String json = gson.toJson(house);
         Log.d("SENDDATA", json);
-//        sendJson(context, uri, json);
-//
+        sendJson(context, uri, json);
+
 //        for (Uri imageUri : imageUris) {
 //            sendImage(context, uri, imageUri);
 //        }
