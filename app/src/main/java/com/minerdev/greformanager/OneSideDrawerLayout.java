@@ -9,8 +9,8 @@ import androidx.annotation.Nullable;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 public class OneSideDrawerLayout extends DrawerLayout {
-    private Boolean isSwipeOpenEnabled = true;
-    private int drawerGravity;
+    Boolean isSwipeOpenEnabled = true;
+    int drawerGravity;
 
     public OneSideDrawerLayout(@NonNull Context context) {
         super(context);

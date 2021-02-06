@@ -24,7 +24,7 @@ public class SendData {
     public ArrayList<Uri> imageUris = new ArrayList<>();
     public House.SerializedData house;
 
-    private SendData() {
+    SendData() {
 
     }
 
@@ -45,7 +45,7 @@ public class SendData {
 //        }
     }
 
-    private void sendJson(Context context, String address, String json) {
+    void sendJson(Context context, String address, String json) {
         StringRequest request = new StringRequest(Request.Method.POST, address,
                 response -> Toast.makeText(context, "데이터 전송 성공.", Toast.LENGTH_SHORT).show(),
                 error -> Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show()
@@ -65,7 +65,7 @@ public class SendData {
         AppHelper.requestQueue.add(request);
     }
 
-    private void sendImage(Context context, String address, Uri imageUri) {
+    void sendImage(Context context, String address, Uri imageUri) {
         StringRequest request = new StringRequest(Request.Method.POST, address,
                 response -> Toast.makeText(context, "데이터 전송 성공.", Toast.LENGTH_SHORT).show(),
                 error -> Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show()
@@ -82,7 +82,7 @@ public class SendData {
         AppHelper.requestQueue.add(request);
     }
 
-    private String createCopyAndReturnRealPath(Context context, Uri uri) {
+    String createCopyAndReturnRealPath(Context context, Uri uri) {
         final ContentResolver contentResolver = context.getContentResolver();
 
         if (contentResolver == null) {
@@ -115,7 +115,7 @@ public class SendData {
         return file.getAbsolutePath();
     }
 
-    private static class Holder {
+    static class Holder {
         public static final SendData INSTANCE = new SendData();
     }
 }

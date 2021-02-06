@@ -16,111 +16,65 @@ import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.DatePicker;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.RadioGroup;
-import android.widget.Spinner;
-import android.widget.TableRow;
-import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
-import com.google.android.material.button.MaterialButton;
-import com.google.android.material.internal.FlowLayout;
+import com.minerdev.greformanager.databinding.FragmentInfoBinding;
 
 public class InfoFragment extends Fragment implements OnSaveDataListener {
-    private final Handler handler = new Handler();
-    private ViewGroup rootView;
-    private ToggleButtonGroup toggleButtonGroupManageFeeContains;
-    private ToggleButtonGroup toggleButtonGroupOptions;
-    private Dialog addressDialog;
+    final Handler handler = new Handler();
 
-    private CheckBox checkBoxFacility;
-    private CheckBox checkBoxManageFee;
-    private CheckBox checkBoxMoveNow;
-    private CheckBox checkBoxUnderground;
+    ToggleButtonGroup toggleButtonGroupManageFeeContains;
+    ToggleButtonGroup toggleButtonGroupOptions;
+    Dialog addressDialog;
 
-    private EditText editTextAreaMeter;
-    private EditText editTextAreaPyeong;
-    private EditText editTextBuildingFloor;
-    private EditText editTextDeposit;
-    private EditText editTextFloor;
-    private EditText editTextNumber;
-    private EditText editTextManageFee;
-    private EditText editTextMonthlyRent;
-    private EditText editTextPhone;
-    private EditText editTextPrice;
-    private EditText editTextPremium;
-    private EditText editTextRentAreaPyeong;
-    private EditText editTextRentAreaMeter;
-
-    private RadioGroup radioGroupLocation;
-
-    private Spinner spinnerBathroom;
-    private Spinner spinnerDirection;
-    private Spinner spinnerHouse;
-    private Spinner spinnerPayment;
-    private Spinner spinnerStructure;
-
-    private TextView textViewAddress;
-    private TextView textViewBuiltDate;
-    private TextView textViewMoveDate;
+    FragmentInfoBinding binding;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        rootView = (ViewGroup) inflater.inflate(R.layout.fragment_info, container, false);
-
-
-        // 뷰 불러오기
-        setViews();
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_info, container, false);
 
 
         // 주소 입력 초기화
-        MaterialButton buttonSearchAddress = rootView.findViewById(R.id.house_modify_materialButton_search);
-        buttonSearchAddress.setOnClickListener(v -> showAddressDialog());
+        binding.houseModifyMaterialButtonSearch.setOnClickListener(v -> showAddressDialog());
 
 
         // 계약 형태 초기화
         ArrayAdapter<String> arrayAdapterPayment = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item);
 
-        spinnerPayment.setAdapter(arrayAdapterPayment);
-        spinnerPayment.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        binding.houseModifySpinnerPaymentType.setAdapter(arrayAdapterPayment);
+        binding.houseModifySpinnerPaymentType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 // 가격, 보증금, 월세 초기화
                 // ('계약 형태'가 '월세', '단기임대' 혹은 '임대'일때만 '보증금'와 '월세' 항목이 보임,
                 // 그 외의 상황에는 '가격' 항목이 보임)
-                TableRow tableRowPrice = rootView.findViewById(R.id.house_modify_tableRow_price);
-                TableRow tableRowDeposit = rootView.findViewById(R.id.house_modify_tableRow_deposit);
-                TableRow tableRowMonthlyRent = rootView.findViewById(R.id.house_modify_tableRow_monthly_rent);
-
-                String value = spinnerPayment.getSelectedItem().toString();
+                String value = binding.houseModifySpinnerPaymentType.getSelectedItem().toString();
                 if (value.equals("월세") || value.equals("단기임대") || value.equals("임대")) {
-                    tableRowPrice.setVisibility(View.GONE);
-                    tableRowDeposit.setVisibility(View.VISIBLE);
-                    tableRowMonthlyRent.setVisibility(View.VISIBLE);
+                    binding.houseModifyTableRowPrice.setVisibility(View.GONE);
+                    binding.houseModifyTableRowDeposit.setVisibility(View.VISIBLE);
+                    binding.houseModifyTableRowMonthlyRent.setVisibility(View.VISIBLE);
 
                 } else {
-                    tableRowPrice.setVisibility(View.VISIBLE);
-                    tableRowDeposit.setVisibility(View.GONE);
-                    tableRowMonthlyRent.setVisibility(View.GONE);
+                    binding.houseModifyTableRowPrice.setVisibility(View.VISIBLE);
+                    binding.houseModifyTableRowDeposit.setVisibility(View.GONE);
+                    binding.houseModifyTableRowMonthlyRent.setVisibility(View.GONE);
                 }
 
-                editTextPrice.setText("");
-                editTextDeposit.setText("");
-                editTextMonthlyRent.setText("");
+                binding.houseModifyEditTextPrice.setText("");
+                binding.houseModifyEditTextDeposit.setText("");
+                binding.houseModifyEditTextMonthlyRent.setText("");
 
 
                 // 권리금 초기화 ('매물 종류'가 '상가, 점포'이면서 '계약 형태'가 '임대'일때만 '권리금' 항목이 보임)
-                String houseValue = spinnerHouse.getSelectedItem().toString();
-                TableRow tableRowPremium = rootView.findViewById(R.id.house_modify_tableRow_premium);
-                tableRowPremium.setVisibility(houseValue.equals("상가, 점포") && value.equals("임대") ? View.VISIBLE : View.GONE);
+                String houseValue = binding.houseModifySpinnerHouseType.getSelectedItem().toString();
+                binding.houseModifyTableRowPremium.setVisibility(houseValue.equals("상가, 점포") && value.equals("임대") ? View.VISIBLE : View.GONE);
 
-                editTextPremium.setText("");
+                binding.houseModifyEditTextPremium.setText("");
             }
 
             @Override
@@ -134,8 +88,8 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
         ArrayAdapter<String> arrayAdapterHouse = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item);
         arrayAdapterHouse.addAll(getResources().getStringArray(R.array.houseType));
 
-        spinnerHouse.setAdapter(arrayAdapterHouse);
-        spinnerHouse.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        binding.houseModifySpinnerHouseType.setAdapter(arrayAdapterHouse);
+        binding.houseModifySpinnerHouseType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 // 계약 종류 초기화
@@ -143,7 +97,7 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
                     arrayAdapterPayment.clear();
                     String temp = getResources().getStringArray(R.array.paymentType)[position - 1];
                     arrayAdapterPayment.addAll(temp.split(" "));
-                    spinnerPayment.setSelection(0);
+                    binding.houseModifySpinnerPaymentType.setSelection(0);
 
                 } else {
                     arrayAdapterPayment.clear();
@@ -151,26 +105,23 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
 
 
                 // 시설 유무 초기화
-                String value = spinnerHouse.getSelectedItem().toString();
-                checkBoxFacility.setEnabled(value.equals("상가, 점포"));
-                checkBoxFacility.setChecked(false);
+                String value = binding.houseModifySpinnerHouseType.getSelectedItem().toString();
+                binding.houseModifyCheckBoxFacility.setEnabled(value.equals("상가, 점포"));
+                binding.houseModifyCheckBoxFacility.setChecked(false);
 
 
                 // 구조 초기화 ('매물 종류'가 '주택'이나 '오피스텔'일때만 '구조' 항목이 보임)
                 final int visibility = value.equals("주택") || value.equals("오피스텔") ? View.VISIBLE : View.GONE;
-                TableRow tableRowStructure = rootView.findViewById(R.id.house_modify_tableRow_structure);
-                tableRowStructure.setVisibility(visibility);
+                binding.houseModifyTableRowStructure.setVisibility(visibility);
 
-                View view1 = rootView.findViewById(R.id.house_modify_view);
-                view1.setVisibility(visibility);
+                binding.houseModifyView.setVisibility(visibility);
 
-                spinnerStructure.setSelection(0);
+                binding.houseModifySpinnerStructure.setSelection(0);
 
 
                 // 화장실 위치 초기화 ('매물 종류'가 '사무실'이나 '상가, 점포'일때만 '화장실 위치' 항목이 보임)
-                TableRow tableRowLocation = rootView.findViewById(R.id.house_modify_tableRow_location);
-                tableRowLocation.setVisibility(value.equals("사무실") || value.equals("상가, 점포") ? View.VISIBLE : View.GONE);
-                radioGroupLocation.clearCheck();
+                binding.houseModifyTableRowLocation.setVisibility(value.equals("사무실") || value.equals("상가, 점포") ? View.VISIBLE : View.GONE);
+                binding.houseModifyRadioGroup.clearCheck();
             }
 
             @Override
@@ -181,20 +132,19 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
 
 
         // 관리비 초기화
-        FlowLayout flowLayoutManageFee = rootView.findViewById(R.id.house_modify_flowLayout_manage_fee);
-        checkBoxManageFee.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            editTextManageFee.setEnabled(!isChecked);
-            editTextManageFee.setText("");
+        binding.houseModifyCheckBoxManageFee.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            binding.houseModifyEditTextManageFee.setEnabled(!isChecked);
+            binding.houseModifyEditTextManageFee.setText("");
 
-            flowLayoutManageFee.setVisibility(isChecked ? View.GONE : View.VISIBLE);
+            binding.houseModifyFlowLayoutManageFee.setVisibility(isChecked ? View.GONE : View.VISIBLE);
         });
-        checkBoxManageFee.setChecked(true);
+        binding.houseModifyCheckBoxManageFee.setChecked(true);
 
         toggleButtonGroupManageFeeContains = new ToggleButtonGroup(getContext(), "관리비 항목");
         toggleButtonGroupManageFeeContains.addToggleButtons(getResources().getStringArray(R.array.manage_fee));
 
         for (ToggleButton toggleButton : toggleButtonGroupManageFeeContains.getToggleButtons()) {
-            flowLayoutManageFee.addView(toggleButton);
+            binding.houseModifyFlowLayoutManageFee.addView(toggleButton);
         }
 
 
@@ -203,147 +153,154 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
 
 
         // 층 초기화
-        checkBoxUnderground.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            editTextFloor.setEnabled(!isChecked);
-            editTextFloor.setText("");
+        binding.houseModifyCheckBoxUnderground.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            binding.houseModifyEditTextFloor.setEnabled(!isChecked);
+            binding.houseModifyEditTextFloor.setText("");
         });
-        checkBoxUnderground.setChecked(false);
+        binding.houseModifyCheckBoxUnderground.setChecked(false);
 
 
         // 구조 초기화
         ArrayAdapter<String> arrayAdapterStructure = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item);
         arrayAdapterStructure.addAll(getResources().getStringArray(R.array.structure));
 
-        spinnerStructure.setAdapter(arrayAdapterStructure);
+        binding.houseModifySpinnerStructure.setAdapter(arrayAdapterStructure);
 
 
         // 욕실 갯수 초기화
         ArrayAdapter<String> arrayAdapterBathroom = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item);
         arrayAdapterBathroom.addAll(getResources().getStringArray(R.array.bathroom));
 
-        spinnerBathroom.setAdapter(arrayAdapterBathroom);
+        binding.houseModifySpinnerBathroom.setAdapter(arrayAdapterBathroom);
 
 
         // 방향 초기화
         ArrayAdapter<String> arrayAdapterDirection = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item);
         arrayAdapterDirection.addAll(getResources().getStringArray(R.array.direction));
 
-        spinnerDirection.setAdapter(arrayAdapterDirection);
+        binding.houseModifySpinnerDirection.setAdapter(arrayAdapterDirection);
 
 
         // 준공년월 초기화
-        ImageButton imageButtonBuilt = rootView.findViewById(R.id.house_modify_imageButton_built_date);
-        imageButtonBuilt.setOnClickListener(v -> showDatePickerDialog((v1, result) -> textViewBuiltDate.setText(result)));
+        binding.houseModifyImageButtonBuiltDate.setOnClickListener(
+                v -> showDatePickerDialog(
+                        (v1, result) -> binding.houseModifyTextViewBuiltDate.setText(result)
+                )
+        );
 
 
         // 입주 가능일 초기화
-        ImageButton imageButtonMove = rootView.findViewById(R.id.house_modify_imageButton_move_date);
-        imageButtonMove.setOnClickListener(v -> showDatePickerDialog((v12, result) -> textViewMoveDate.setText(result)));
+        binding.houseModifyImageButtonMoveDate.setOnClickListener(
+                v -> showDatePickerDialog(
+                        (v12, result) -> binding.houseModifyTextViewMoveDate.setText(result)
+                )
+        );
 
-        checkBoxMoveNow.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            textViewMoveDate.setEnabled(!isChecked);
-            textViewMoveDate.setText("");
+        binding.houseModifyCheckBoxMoveNow.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            binding.houseModifyTextViewMoveDate.setEnabled(!isChecked);
+            binding.houseModifyTextViewMoveDate.setText("");
 
-            imageButtonMove.setEnabled(!isChecked);
+            binding.houseModifyImageButtonMoveDate.setEnabled(!isChecked);
         });
-        checkBoxMoveNow.setChecked(false);
+        binding.houseModifyCheckBoxMoveNow.setChecked(false);
 
 
         // 옵션 정보 초기화
         toggleButtonGroupOptions = new ToggleButtonGroup(getContext(), "옵션 항목");
         toggleButtonGroupOptions.addToggleButtons(getResources().getStringArray(R.array.option));
-        FlowLayout flowLayoutOption = rootView.findViewById(R.id.house_modify_flowLayout_option);
         for (ToggleButton toggleButton : toggleButtonGroupOptions.getToggleButtons()) {
-            flowLayoutOption.addView(toggleButton);
+            binding.houseModifyFlowLayoutOption.addView(toggleButton);
         }
 
 
         // 담당자 정보 초기화
-        editTextPhone.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
+        binding.houseModifyEditTextPhone.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
 
-        return rootView;
+        return binding.getRoot();
     }
 
     @Override
     public boolean checkData() {
-        if (textViewAddress.getText().toString().equals("")) {
+        if (binding.houseModifyTextViewAddress.getText().toString().equals("")) {
             return false;
         }
 
-        if (editTextNumber.getText().toString().equals("")) {
+        if (binding.houseModifyEditTextNumber.getText().toString().equals("")) {
             return false;
         }
 
-        if (spinnerPayment.getSelectedItemId() == 0) {
+        if (binding.houseModifySpinnerPaymentType.getSelectedItemId() == 0) {
             return false;
         }
 
-        if (spinnerHouse.getSelectedItemId() == 0) {
+        if (binding.houseModifySpinnerHouseType.getSelectedItemId() == 0) {
             return false;
         }
 
-        TableRow tableRowPrice = rootView.findViewById(R.id.house_modify_tableRow_price);
-        if (tableRowPrice.getVisibility() == View.VISIBLE && editTextPrice.getText().toString().equals("")) {
+        if (binding.houseModifyTableRowPrice.getVisibility() == View.VISIBLE
+                && binding.houseModifyEditTextPrice.getText().toString().equals("")) {
+            return false;
+
+        } else if (binding.houseModifyEditTextPrice.getVisibility() == View.GONE
+                && (binding.houseModifyEditTextDeposit.getText().toString().equals("")
+                || binding.houseModifyEditTextMonthlyRent.getText().toString().equals(""))) {
             return false;
         }
 
-        if (tableRowPrice.getVisibility() == View.GONE
-                && (editTextDeposit.getText().toString().equals("") || editTextMonthlyRent.getText().toString().equals(""))) {
+        if (binding.houseModifyTableRowPremium.getVisibility() == View.VISIBLE
+                && binding.houseModifyEditTextPremium.getText().toString().equals("")) {
             return false;
         }
 
-        TableRow tableRowPremium = rootView.findViewById(R.id.house_modify_tableRow_premium);
-        if (tableRowPremium.getVisibility() == View.VISIBLE && editTextPremium.getText().toString().equals("")) {
+        if (binding.houseModifyCheckBoxManageFee.isChecked()
+                && binding.houseModifyEditTextManageFee.getText().toString().equals("")) {
             return false;
         }
 
-        if (checkBoxManageFee.isChecked() && editTextManageFee.getText().toString().equals("")) {
+        if (binding.houseModifyEditTextAreaMeter.getText().toString().equals("")) {
             return false;
         }
 
-        if (editTextAreaMeter.getText().toString().equals("")) {
+        if (binding.houseModifyEditTextRentAreaMeter.getText().toString().equals("")) {
             return false;
         }
 
-        if (editTextRentAreaMeter.getText().toString().equals("")) {
+        if (binding.houseModifyEditTextBuildingFloor.getText().toString().equals("")) {
             return false;
         }
 
-        if (editTextBuildingFloor.getText().toString().equals("")) {
+        if (binding.houseModifyEditTextFloor.getText().toString().equals("")) {
             return false;
         }
 
-        if (editTextFloor.getText().toString().equals("")) {
+        if (binding.houseModifyTableRowStructure.getVisibility() == View.VISIBLE
+                && binding.houseModifySpinnerStructure.getSelectedItemId() == 0) {
             return false;
         }
 
-        TableRow tableRowStructure = rootView.findViewById(R.id.house_modify_tableRow_structure);
-        if (tableRowStructure.getVisibility() == View.VISIBLE && spinnerStructure.getSelectedItemId() == 0) {
+        if (binding.houseModifySpinnerBathroom.getSelectedItemId() == 0) {
             return false;
         }
 
-        if (spinnerBathroom.getSelectedItemId() == 0) {
+        if (binding.houseModifyTableRowLocation.getVisibility() == View.VISIBLE
+                && binding.houseModifyRadioGroup.getCheckedRadioButtonId() == -1) {
             return false;
         }
 
-        TableRow tableRowLocation = rootView.findViewById(R.id.house_modify_tableRow_location);
-        if (tableRowLocation.getVisibility() == View.VISIBLE && radioGroupLocation.getCheckedRadioButtonId() == -1) {
+        if (binding.houseModifySpinnerDirection.getSelectedItemId() == 0) {
             return false;
         }
 
-        if (spinnerDirection.getSelectedItemId() == 0) {
+        if (binding.houseModifyTextViewBuiltDate.getText().toString().equals("")) {
             return false;
         }
 
-        if (textViewBuiltDate.getText().toString().equals("")) {
+        if (!binding.houseModifyCheckBoxMoveNow.isChecked()
+                && binding.houseModifyTextViewMoveDate.getText().toString().equals("")) {
             return false;
         }
 
-        if (!checkBoxMoveNow.isChecked() && textViewMoveDate.getText().toString().equals("")) {
-            return false;
-        }
-
-        if (editTextPhone.getText().toString().equals("")) {
+        if (binding.houseModifyEditTextPhone.getText().toString().equals("")) {
             return false;
         }
 
@@ -354,77 +311,44 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
     public void saveData() {
         House.SerializedData data = new House.SerializedData();
 
-        data.address = textViewAddress.getText().toString();
-        data.houseNumber = editTextNumber.getText().toString();
-        data.paymentType = (byte) spinnerPayment.getSelectedItemPosition();
-        data.houseType = (byte) spinnerHouse.getSelectedItemPosition();
-        data.price = parseInt(editTextPrice.getText().toString());
-        data.deposit = parseInt(editTextDeposit.getText().toString());
-        data.monthlyRent = parseInt(editTextDeposit.getText().toString());
-        data.premium = parseInt(editTextPremium.getText().toString());
-        data.manageFee = parseInt(editTextManageFee.getText().toString());
+        data.address = binding.houseModifyTextViewAddress.getText().toString();
+        data.houseNumber = binding.houseModifyEditTextNumber.getText().toString();
+        data.paymentType = (byte) binding.houseModifySpinnerPaymentType.getSelectedItemPosition();
+        data.houseType = (byte) binding.houseModifySpinnerHouseType.getSelectedItemPosition();
+        data.price = parseInt(binding.houseModifyEditTextPrice.getText().toString());
+        data.deposit = parseInt(binding.houseModifyEditTextDeposit.getText().toString());
+        data.monthlyRent = parseInt(binding.houseModifyEditTextMonthlyRent.getText().toString());
+        data.premium = parseInt(binding.houseModifyEditTextPremium.getText().toString());
+        data.manageFee = parseInt(binding.houseModifyEditTextManageFee.getText().toString());
         data.manageFeeContains = toggleButtonGroupManageFeeContains.getCheckedToggleButtonTextsInSingleLine();
-        data.areaMeter = parseFloat(editTextAreaMeter.getText().toString());
-        data.rentAreaMeter = parseFloat(editTextRentAreaMeter.getText().toString());
-        data.buildingFloor = (byte) parseInt(editTextBuildingFloor.getText().toString());
+        data.areaMeter = parseFloat(binding.houseModifyEditTextAreaMeter.getText().toString());
+        data.rentAreaMeter = parseFloat(binding.houseModifyEditTextRentAreaMeter.getText().toString());
+        data.buildingFloor = (byte) parseInt(binding.houseModifyEditTextBuildingFloor.getText().toString());
 
-        if (checkBoxUnderground.isChecked()) {
+        if (binding.houseModifyCheckBoxUnderground.isChecked()) {
             data.floor = -1;
 
         } else {
-            data.floor = Byte.parseByte(editTextFloor.getText().toString());
+            data.floor = Byte.parseByte(binding.houseModifyEditTextFloor.getText().toString());
         }
 
-        data.structure = (byte) spinnerStructure.getSelectedItemPosition();
-        data.bathroom = (byte) spinnerBathroom.getSelectedItemPosition();
-        data.bathroomLocation = (byte) radioGroupLocation.getCheckedRadioButtonId();
-        data.direction = (byte) spinnerDirection.getSelectedItemId();
-        data.builtDate = textViewBuiltDate.getText().toString();
-        data.moveDate = textViewMoveDate.getText().toString();
+        data.structure = (byte) binding.houseModifySpinnerStructure.getSelectedItemPosition();
+        data.bathroom = (byte) binding.houseModifySpinnerBathroom.getSelectedItemPosition();
+        data.bathroomLocation = (byte) binding.houseModifyRadioGroup.getCheckedRadioButtonId();
+        data.direction = (byte) binding.houseModifySpinnerDirection.getSelectedItemId();
+        data.builtDate = binding.houseModifyTextViewBuiltDate.getText().toString();
+        data.moveDate = binding.houseModifyTextViewMoveDate.getText().toString();
         data.options = toggleButtonGroupOptions.getCheckedToggleButtonTextsInSingleLine();
-        data.detailInfo = editTextPhone.getText().toString();
-        data.phone = editTextPhone.getText().toString();
+        data.detailInfo = binding.houseModifyDetailInfo.getText().toString();
+        data.phone = binding.houseModifyEditTextPhone.getText().toString();
 
         SendData.getInstance().house = data;
     }
 
-    private void setViews() {
-        checkBoxFacility = rootView.findViewById(R.id.house_modify_checkBox_facility);
-        checkBoxManageFee = rootView.findViewById(R.id.house_modify_checkBox_manage_fee);
-        checkBoxMoveNow = rootView.findViewById(R.id.house_modify_checkBox_move_now);
-        checkBoxUnderground = rootView.findViewById(R.id.house_modify_checkBox_underground);
-
-        editTextAreaMeter = rootView.findViewById(R.id.house_modify_area_meter);
-        editTextAreaPyeong = rootView.findViewById(R.id.house_modify_area_pyeong);
-        editTextBuildingFloor = rootView.findViewById(R.id.house_modify_editText_building_floor);
-        editTextDeposit = rootView.findViewById(R.id.house_modify_editText_deposit);
-        editTextFloor = rootView.findViewById(R.id.house_modify_editText_floor);
-        editTextManageFee = rootView.findViewById(R.id.house_modify_editText_manage_fee);
-        editTextMonthlyRent = rootView.findViewById(R.id.house_modify_editText_monthly_rent);
-        editTextNumber = rootView.findViewById(R.id.house_modify_editText_number);
-        editTextPhone = rootView.findViewById(R.id.house_modify_editText_phone);
-        editTextPrice = rootView.findViewById(R.id.house_modify_editText_price);
-        editTextPremium = rootView.findViewById(R.id.house_modify_editText_premium);
-        editTextRentAreaPyeong = rootView.findViewById(R.id.house_modify_rent_area_pyeong);
-        editTextRentAreaMeter = rootView.findViewById(R.id.house_modify_rent_area_meter);
-
-        radioGroupLocation = rootView.findViewById(R.id.house_modify_radioGroup);
-
-        spinnerBathroom = rootView.findViewById(R.id.house_modify_spinner_bathroom);
-        spinnerDirection = rootView.findViewById(R.id.house_modify_spinner_direction);
-        spinnerHouse = rootView.findViewById(R.id.house_modify_spinner_houseType);
-        spinnerPayment = rootView.findViewById(R.id.house_modify_spinner_paymentType);
-        spinnerStructure = rootView.findViewById(R.id.house_modify_spinner_structure);
-
-        textViewAddress = rootView.findViewById(R.id.house_modify_textView_address);
-        textViewBuiltDate = rootView.findViewById(R.id.house_modify_textView_built_date);
-        textViewMoveDate = rootView.findViewById(R.id.house_modify_textView_move_date);
-    }
-
     @SuppressLint("DefaultLocale")
-    private void setAreaEditTexts() {
+    void setAreaEditTexts() {
         // 전용 면적 초기화
-        editTextAreaPyeong.addTextChangedListener(new TextWatcher() {
+        binding.houseModifyEditTextAreaPyeong.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -432,14 +356,14 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (editTextAreaPyeong.hasFocus()) {
+                if (binding.houseModifyEditTextAreaPyeong.hasFocus()) {
                     String temp = s.toString();
                     if (temp.equals("")) {
-                        editTextAreaMeter.setText("");
+                        binding.houseModifyEditTextAreaMeter.setText("");
 
                     } else {
                         float area = Float.parseFloat(temp);
-                        editTextAreaMeter.setText(String.format("%.2f", area * 3.305));
+                        binding.houseModifyEditTextAreaMeter.setText(String.format("%.2f", area * 3.305));
                     }
                 }
             }
@@ -450,7 +374,7 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
             }
         });
 
-        editTextAreaMeter.addTextChangedListener(new TextWatcher() {
+        binding.houseModifyEditTextAreaMeter.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -458,14 +382,14 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (editTextAreaMeter.hasFocus()) {
+                if (binding.houseModifyEditTextAreaMeter.hasFocus()) {
                     String temp = s.toString();
                     if (temp.equals("")) {
-                        editTextAreaPyeong.setText("");
+                        binding.houseModifyEditTextAreaPyeong.setText("");
 
                     } else {
                         float area = Float.parseFloat(temp);
-                        editTextAreaPyeong.setText(String.format("%.2f", area * 0.3025));
+                        binding.houseModifyEditTextAreaPyeong.setText(String.format("%.2f", area * 0.3025));
                     }
                 }
             }
@@ -478,7 +402,7 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
 
 
         // 임대 면적 초기화
-        editTextRentAreaPyeong.addTextChangedListener(new TextWatcher() {
+        binding.houseModifyEditTextRentAreaPyeong.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -486,14 +410,14 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (editTextRentAreaPyeong.hasFocus()) {
+                if (binding.houseModifyEditTextRentAreaPyeong.hasFocus()) {
                     String temp = s.toString();
                     if (temp.equals("")) {
-                        editTextRentAreaMeter.setText("");
+                        binding.houseModifyEditTextRentAreaMeter.setText("");
 
                     } else {
                         float area = Float.parseFloat(temp);
-                        editTextRentAreaMeter.setText(String.format("%.2f", area * 3.305));
+                        binding.houseModifyEditTextRentAreaMeter.setText(String.format("%.2f", area * 3.305));
                     }
                 }
             }
@@ -504,7 +428,7 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
             }
         });
 
-        editTextRentAreaMeter.addTextChangedListener(new TextWatcher() {
+        binding.houseModifyEditTextRentAreaMeter.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -512,14 +436,14 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (editTextRentAreaMeter.hasFocus()) {
+                if (binding.houseModifyEditTextRentAreaMeter.hasFocus()) {
                     String temp = s.toString();
                     if (temp.equals("")) {
-                        editTextRentAreaPyeong.setText("");
+                        binding.houseModifyEditTextRentAreaPyeong.setText("");
 
                     } else {
                         float area = Float.parseFloat(temp);
-                        editTextRentAreaPyeong.setText(String.format("%.2f", area * 0.3025));
+                        binding.houseModifyEditTextRentAreaPyeong.setText(String.format("%.2f", area * 0.3025));
                     }
                 }
             }
@@ -532,7 +456,7 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
     }
 
     @SuppressLint("SetJavaScriptEnabled")
-    private void showAddressDialog() {
+    void showAddressDialog() {
         addressDialog = new Dialog(getContext());
         addressDialog.setContentView(R.layout.dialog_address);
 
@@ -552,7 +476,7 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
         addressDialog.show();
     }
 
-    private void showDatePickerDialog(OnClickListener listener) {
+    void showDatePickerDialog(OnClickListener listener) {
         Dialog datePickerDialog = new Dialog(getContext());
         datePickerDialog.setContentView(R.layout.dialog_date_picker);
 
@@ -573,7 +497,7 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
         datePickerDialog.show();
     }
 
-    private int parseInt(String number) {
+    int parseInt(String number) {
         if (number == null || number.equals("")) {
             return 0;
 
@@ -582,7 +506,7 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
         }
     }
 
-    private float parseFloat(String number) {
+    float parseFloat(String number) {
         if (number == null || number.equals("")) {
             return 0;
 
@@ -595,11 +519,11 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
         void onClick(View v, String result);
     }
 
-    private class AndroidBridge {
+    class AndroidBridge {
         @JavascriptInterface
         public void setAddress(final String arg1, final String arg2, final String arg3) {
             handler.post(() -> {
-                textViewAddress.setText(String.format("(%s) %s %s", arg1, arg2, arg3));
+                binding.houseModifyTextViewAddress.setText(String.format("(%s) %s %s", arg1, arg2, arg3));
                 addressDialog.dismiss();
             });
         }

@@ -8,8 +8,8 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import java.util.ArrayList;
 
 public class SectionPageAdapter extends FragmentPagerAdapter {
-    private final ArrayList<Fragment> fragmentList = new ArrayList<>();
-    private final ArrayList<String> fragmentTitleList = new ArrayList<>();
+    final ArrayList<Fragment> fragmentList = new ArrayList<>();
+    final ArrayList<String> fragmentTitleList = new ArrayList<>();
 
     public SectionPageAdapter(@NonNull FragmentManager fm, int behavior) {
         super(fm, behavior);

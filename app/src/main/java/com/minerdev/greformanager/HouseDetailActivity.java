@@ -19,8 +19,8 @@ import com.naver.maps.map.UiSettings;
 import com.naver.maps.map.overlay.Marker;
 
 public class HouseDetailActivity extends AppCompatActivity {
-    private final ImageAdapter adapter = new ImageAdapter(this);
-    private House.SerializedData house;
+    final ImageAdapter adapter = new ImageAdapter(this);
+    House.SerializedData house;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,11 +98,11 @@ public class HouseDetailActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void readData() {
+    void readData() {
         readImages();
     }
 
-    private void readImages() {
+    void readImages() {
         adapter.addImage(R.drawable.house);
         adapter.addImage(R.drawable.house);
         adapter.addImage(R.drawable.house);

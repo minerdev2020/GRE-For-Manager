@@ -26,13 +26,13 @@ import com.google.android.material.navigation.NavigationView;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-    private static final long FINISH_INTERVAL_TIME = 2000;
-    private static final ArrayList<House.SerializedData> items = new ArrayList<>();
-    private final HouseListAdapter saleAdapter = new HouseListAdapter();
-    private final HouseListAdapter soldAdapter = new HouseListAdapter();
+    static final long FINISH_INTERVAL_TIME = 2000;
+    static final ArrayList<House.SerializedData> items = new ArrayList<>();
+    final HouseListAdapter saleAdapter = new HouseListAdapter();
+    final HouseListAdapter soldAdapter = new HouseListAdapter();
 
-    private long backPressedTime = 0;
-    private OneSideDrawerLayout drawerLayout;
+    long backPressedTime = 0;
+    OneSideDrawerLayout drawerLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -183,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void rearrangeList(String keyword) {
+    void rearrangeList(String keyword) {
         ArrayList<House.SerializedData> temp = new ArrayList<>();
         for (House.SerializedData i : items) {
             if ((keyword == null || i.houseNumber.contains(keyword) || i.address.contains(keyword))) {
@@ -198,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
         soldAdapter.notifyDataSetChanged();
     }
 
-    private void setNavigationView() {
+    void setNavigationView() {
         drawerLayout = findViewById(R.id.drawer_layout);
         drawerLayout.lockSwipe(GravityCompat.END);
 
@@ -231,7 +231,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void readItems() {
+    void readItems() {
 
     }
 }

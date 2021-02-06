@@ -12,7 +12,7 @@ public class Constants {
     public final ArrayList<String> HOUSE_TYPE = new ArrayList<>();
     public final ArrayList<ArrayList<String>> PAYMENT_TYPE = new ArrayList<>();
 
-    private Constants() {
+    Constants() {
 
     }
 
@@ -32,7 +32,7 @@ public class Constants {
         }
     }
 
-    private static class Holder {
+    static class Holder {
         public static final Constants INSTANCE = new Constants();
     }
 }

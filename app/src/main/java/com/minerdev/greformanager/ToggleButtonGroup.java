@@ -8,10 +8,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ToggleButtonGroup {
-    private final ArrayList<ToggleButton> toggleButtons;
-    private final HashMap<String, Boolean> toggleButtonCheckedStates;
-    private final Context context;
-    private String title;
+    final ArrayList<ToggleButton> toggleButtons;
+    final HashMap<String, Boolean> toggleButtonCheckedStates;
+    final Context context;
+    String title;
 
     public ToggleButtonGroup(Context context, String title) {
         this.context = context;

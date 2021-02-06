@@ -11,8 +11,8 @@ import androidx.viewpager.widget.PagerAdapter;
 import java.util.ArrayList;
 
 public class ImageAdapter extends PagerAdapter {
-    private final ArrayList<Integer> imageList = new ArrayList<>();
-    private final Context context;
+    final ArrayList<Integer> imageList = new ArrayList<>();
+    final Context context;
 
     public ImageAdapter(Context context) {
         this.context = context;
