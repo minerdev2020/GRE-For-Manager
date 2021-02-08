@@ -40,9 +40,9 @@ public class SendData {
         Log.d("SENDDATA", json);
         sendJson(context, uri, json);
 
-//        for (Uri imageUri : imageUris) {
-//            sendImage(context, uri, imageUri);
-//        }
+        for (Uri imageUri : imageUris) {
+            sendImage(context, uri, imageUri);
+        }
     }
 
     void sendJson(Context context, String address, String json) {

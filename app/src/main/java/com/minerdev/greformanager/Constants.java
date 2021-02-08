@@ -9,8 +9,14 @@ import java.util.Collections;
 public class Constants {
     public final int SALE = 0;
     public final int SOLD_OUT = 1;
-    public final ArrayList<String> HOUSE_TYPE = new ArrayList<>();
+    public final float PYEONG_TO_METER = 3.305f;
+    public final float METER_TO_PYEONG = 0.3025f;
+
     public final ArrayList<ArrayList<String>> PAYMENT_TYPE = new ArrayList<>();
+    public final ArrayList<String> HOUSE_TYPE = new ArrayList<>();
+    public final ArrayList<String> STRUCTURE = new ArrayList<>();
+    public final ArrayList<String> DIRECTION = new ArrayList<>();
+    public final ArrayList<String> BATHROOM = new ArrayList<>();
 
     Constants() {
 
@@ -27,6 +33,10 @@ public class Constants {
             ArrayList<String> list = new ArrayList<>(Arrays.asList(temp[i].split(" ")));
             PAYMENT_TYPE.add(list);
         }
+
+        Collections.addAll(STRUCTURE, context.getResources().getStringArray(R.array.structure));
+        Collections.addAll(DIRECTION, context.getResources().getStringArray(R.array.direction));
+        Collections.addAll(BATHROOM, context.getResources().getStringArray(R.array.bathroom));
     }
 
     static class Holder {

@@ -5,14 +5,15 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.TextView;
+import android.view.View;
+import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.viewpager.widget.ViewPager;
+import androidx.databinding.BindingConversion;
+import androidx.databinding.DataBindingUtil;
 
-import com.google.android.material.switchmaterial.SwitchMaterial;
+import com.minerdev.greformanager.databinding.ActivityHouseDetailBinding;
 import com.naver.maps.geometry.LatLng;
 import com.naver.maps.map.CameraUpdate;
 import com.naver.maps.map.MapFragment;
@@ -21,55 +22,49 @@ import com.naver.maps.map.overlay.Marker;
 
 public class HouseDetailActivity extends AppCompatActivity {
     final ImageAdapter adapter = new ImageAdapter(this);
-    House.ParcelableData house;
+    public House house;
+
+    ActivityHouseDetailBinding binding;
+
+    @BindingConversion
+    public static int convertBooleanToVisibility(boolean visible) {
+        return visible ? View.VISIBLE : View.GONE;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_house_detail);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_house_detail);
+        binding.setActivity(this);
 
         Intent intent = getIntent();
-        house = intent.getParcelableExtra("house_value");
+        House.ParcelableData data = intent.getParcelableExtra("house_value");
+        house = new House(data);
 
-        Toolbar toolbar = findViewById(R.id.house_detail_toolbar);
-        setSupportActionBar(toolbar);
+        setSupportActionBar(binding.houseDetailToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        readData();
+        readImages();
 
-        ViewPager viewPager = findViewById(R.id.house_detail_viewPager_image);
-        viewPager.setAdapter(adapter);
+        binding.houseDetailViewPagerImage.setAdapter(adapter);
 
-        MapFragment mapFragment = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-        if (mapFragment == null) {
-            mapFragment = MapFragment.newInstance();
-            getSupportFragmentManager().beginTransaction().add(R.id.map, mapFragment).commit();
+        setMapFragment();
+
+        binding.houseDetailSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            house.setState(isChecked);
+        });
+
+        ToggleButtonGroup toggleButtonGroupManageFee = new ToggleButtonGroup(this, "ManageFee");
+        toggleButtonGroupManageFee.addToggleButtons(house.getManageFeeContains().split("\\|"));
+        for (ToggleButton toggleButton : toggleButtonGroupManageFee.getToggleButtons()) {
+            binding.houseDetailFlowLayoutManageFee.addView(toggleButton);
         }
 
-        mapFragment.getMapAsync(naverMap -> {
-            naverMap.setLiteModeEnabled(true);
-
-            UiSettings uiSettings = naverMap.getUiSettings();
-            uiSettings.setZoomControlEnabled(false);
-            uiSettings.setAllGesturesEnabled(false);
-
-            Geocode.getInstance().getQueryResponseFromNaver(HouseDetailActivity.this, house.address.substring(8));
-            Geocode.getInstance().setOnDataReceiveListener(result -> {
-                GeocodeResult.Address address = result.addresses.get(0);
-                LatLng latLng = new LatLng(Double.parseDouble(address.y), Double.parseDouble(address.x));
-                naverMap.moveCamera(CameraUpdate.scrollAndZoomTo(latLng, 16));
-                Marker marker = new Marker(latLng);
-                marker.setMap(naverMap);
-            });
-        });
-
-        SwitchMaterial stateSwitch = findViewById(R.id.house_detail_switch);
-        stateSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (stateSwitch.hasFocus()) {
-                house.state = (byte) (isChecked ? Constants.getInstance().SOLD_OUT : Constants.getInstance().SALE);
-            }
-        });
-        stateSwitch.setChecked(house.state == Constants.getInstance().SOLD_OUT);
+        ToggleButtonGroup toggleButtonGroupOptions = new ToggleButtonGroup(this, "Options");
+        toggleButtonGroupOptions.addToggleButtons(house.getOptions().split("\\|"));
+        for (ToggleButton toggleButton : toggleButtonGroupOptions.getToggleButtons()) {
+            binding.houseDetailFlowLayoutOptions.addView(toggleButton);
+        }
     }
 
     @Override
@@ -99,26 +94,29 @@ public class HouseDetailActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    void readData() {
-        readImages();
+    void setMapFragment() {
+        MapFragment mapFragment = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        if (mapFragment == null) {
+            mapFragment = MapFragment.newInstance();
+            getSupportFragmentManager().beginTransaction().add(R.id.map, mapFragment).commit();
+        }
 
-        TextView address = findViewById(R.id.house_detail_textView_address);
-        address.setText(house.address);
+        mapFragment.getMapAsync(naverMap -> {
+            naverMap.setLiteModeEnabled(true);
 
-        TextView price = findViewById(R.id.house_detail_textView_price);
-        price.setText(String.valueOf(house.price));
+            UiSettings uiSettings = naverMap.getUiSettings();
+            uiSettings.setZoomControlEnabled(false);
+            uiSettings.setAllGesturesEnabled(false);
 
-        TextView payment = findViewById(R.id.house_detail_textView_paymentType);
-        payment.setText(Constants.getInstance().PAYMENT_TYPE.get(house.house_type).get(house.payment_type));
-
-        TextView number = findViewById(R.id.house_detail_textView_number);
-        number.setText(house.house_number);
-
-        TextView detail = findViewById(R.id.house_detail_textView_detail_info);
-        detail.setText(house.detail_info);
-
-        TextView brief = findViewById(R.id.house_detail_textView_brief_info);
-        brief.setText(Constants.getInstance().HOUSE_TYPE.get(house.house_type));
+            Geocode.getInstance().getQueryResponseFromNaver(HouseDetailActivity.this, house.getAddress().substring(8));
+            Geocode.getInstance().setOnDataReceiveListener(result -> {
+                GeocodeResult.Address address = result.addresses.get(0);
+                LatLng latLng = new LatLng(Double.parseDouble(address.y), Double.parseDouble(address.x));
+                naverMap.moveCamera(CameraUpdate.scrollAndZoomTo(latLng, 16));
+                Marker marker = new Marker(latLng);
+                marker.setMap(naverMap);
+            });
+        });
     }
 
     void readImages() {

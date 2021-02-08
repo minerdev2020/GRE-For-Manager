@@ -5,7 +5,7 @@
     <data>
 
         <variable
-            name="infoFragment"
+            name="fragment"
             type="com.minerdev.greformanager.InfoFragment" />
     </data>
 
@@ -182,9 +182,9 @@
                         <View style="@style/Divider" />
 
                         <TableRow
-                            android:id="@+id/house_modify_tableRow_price"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent">
+                            android:layout_height="match_parent"
+                            android:visibility='@{!(fragment.paymentType.equals("월세") || fragment.paymentType.equals("단기임대") || fragment.paymentType.equals("임대"))}'>
 
                             <TextView
                                 style="@style/TextAppearance.AppCompat.Body1"
@@ -215,10 +215,9 @@
                         </TableRow>
 
                         <TableRow
-                            android:id="@+id/house_modify_tableRow_deposit"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:visibility="gone">
+                            android:visibility='@{fragment.paymentType.equals("월세") || fragment.paymentType.equals("단기임대") || fragment.paymentType.equals("임대")}'>
 
                             <TextView
                                 style="@style/TextAppearance.AppCompat.Body1"
@@ -252,7 +251,7 @@
                             android:id="@+id/house_modify_tableRow_monthly_rent"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:visibility="gone">
+                            android:visibility='@{fragment.paymentType.equals("월세") || fragment.paymentType.equals("단기임대") || fragment.paymentType.equals("임대")}'>
 
                             <TextView
                                 style="@style/TextAppearance.AppCompat.Body1"
@@ -283,10 +282,9 @@
                         </TableRow>
 
                         <TableRow
-                            android:id="@+id/house_modify_tableRow_premium"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:visibility="gone">
+                            android:visibility='@{fragment.houseType.equals("상가, 점포") &amp;&amp; fragment.paymentType.equals("임대")}'>
 
                             <TextView
                                 style="@style/TextAppearance.AppCompat.Body1"
@@ -340,7 +338,7 @@
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
-                                    android:enabled="false"
+                                    android:enabled="@{!houseModifyCheckBoxManageFee.isChecked()}"
                                     android:inputType="numberSigned" />
 
                                 <TextView
@@ -364,7 +362,8 @@
 
                         <TableRow
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent">
+                            android:layout_height="match_parent"
+                            android:visibility="@{houseModifyCheckBoxManageFee.isChecked()}">
 
                             <LinearLayout
                                 android:layout_width="wrap_content"
@@ -375,8 +374,7 @@
                                 <com.google.android.material.internal.FlowLayout
                                     android:id="@+id/house_modify_flowLayout_manage_fee"
                                     android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:visibility="gone" />
+                                    android:layout_height="match_parent" />
                             </LinearLayout>
                         </TableRow>
 
@@ -558,6 +556,7 @@
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
+                                    android:enabled="@{houseModifyCheckBoxUnderground.isChecked()}"
                                     android:inputType="numberSigned" />
 
                                 <TextView
@@ -581,10 +580,9 @@
                         <View style="@style/Divider" />
 
                         <TableRow
-                            android:id="@+id/house_modify_tableRow_structure"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:visibility="gone">
+                            android:visibility='@{fragment.houseType.equals("주택") || fragment.houseType.equals("오피스텔")}'>
 
                             <TextView
                                 style="@style/TextAppearance.AppCompat.Body1"
@@ -609,9 +607,8 @@
                         </TableRow>
 
                         <View
-                            android:id="@+id/house_modify_view"
                             style="@style/Divider"
-                            android:visibility="gone" />
+                            android:visibility='@{fragment.houseType.equals("주택") || fragment.houseType.equals("오피스텔")}' />
 
                         <TableRow
                             android:layout_width="match_parent"
@@ -640,10 +637,9 @@
                         </TableRow>
 
                         <TableRow
-                            android:id="@+id/house_modify_tableRow_location"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:visibility="gone">
+                            android:visibility='@{fragment.houseType.equals("사무실") || fragment.houseType.equals("상가, 점포")}'>
 
                             <TextView
                                 style="@style/TextAppearance.AppCompat.Body1"

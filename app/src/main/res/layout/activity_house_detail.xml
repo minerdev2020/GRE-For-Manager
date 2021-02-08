@@ -3,6 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+
+        <variable
+            name="activity"
+            type="com.minerdev.greformanager.HouseDetailActivity" />
+    </data>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -67,7 +74,7 @@
                                 style="@style/TextAppearance.AppCompat.Title"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="전세"
+                                android:text="@{activity.house.paymentType}"
                                 android:textColor="#FFFF0000" />
 
                             <Space
@@ -79,7 +86,7 @@
                                 style="@style/TextAppearance.AppCompat.Headline"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="1억5000" />
+                                android:text="@{activity.house.price}" />
                         </LinearLayout>
 
                         <LinearLayout
@@ -103,7 +110,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
-                                android:text="001001001"
+                                android:text="@{activity.house.houseNumber}"
                                 android:textSize="10sp" />
                         </LinearLayout>
 
@@ -112,7 +119,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:text="대구시 달성군 다사읍 달구벌대로174길 10-17" />
+                            android:text="@{activity.house.address}" />
                     </LinearLayout>
 
                     <View style="@style/Divider" />
@@ -130,10 +137,53 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:text="55평 | 관리비 10만원 | 반듯한 원룸" />
+                            android:text="@{activity.house.briefInfo}" />
                     </LinearLayout>
 
                     <View style="@style/Divider" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="5dp"
+                        android:paddingVertical="10dp"
+                        android:visibility='@{!activity.house.manageFee.equals("0")}'>
+
+                        <TextView
+                            style="@style/TextAppearance.AppCompat.Menu"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="관리비 정보" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="10dp">
+
+                            <TextView
+                                style="@style/TextAppearance.AppCompat.Menu"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text='@{"관리비 : " + activity.house.manageFee + "만원"}' />
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center">
+
+                                <com.google.android.material.internal.FlowLayout
+                                    android:id="@+id/house_detail_flowLayout_manage_fee"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <View
+                        style="@style/Divider"
+                        android:visibility='@{!activity.house.manageFee.equals("0")}' />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -149,40 +199,241 @@
                             android:text="매물 정보" />
 
                         <TableLayout
-                            android:id="@+id/house_detail_tableLayout_house_info"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical"
                             android:padding="10dp"
                             android:stretchColumns="1">
 
-                            <TableRow android:layout_marginBottom="5dp">
+                            <View style="@style/Divider" />
+
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent">
 
                                 <TextView
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:text="매물 정보" />
+                                    style="@style/TextAppearance.AppCompat.Body1"
+                                    android:layout_width="@dimen/house_modify_text_width"
+                                    android:layout_height="@dimen/house_modify_widget_height"
+                                    android:gravity="center"
+                                    android:text="전용 면적" />
 
                                 <TextView
-                                    android:layout_width="match_parent"
+                                    android:id="@+id/house_detail_textView_area"
+                                    style="@style/TextAppearance.AppCompat.Body1"
+                                    android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_gravity="center"
-                                    android:text="매물 정보" />
+                                    android:gravity="center"
+                                    android:text="@{activity.house.areaMeter}" />
                             </TableRow>
 
-                            <TableRow>
+                            <View style="@style/Divider" />
+
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent">
 
                                 <TextView
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:text="매물 정보" />
+                                    style="@style/TextAppearance.AppCompat.Body1"
+                                    android:layout_width="@dimen/house_modify_text_width"
+                                    android:layout_height="@dimen/house_modify_widget_height"
+                                    android:gravity="center"
+                                    android:text="임대 면적" />
 
                                 <TextView
-                                    android:layout_width="match_parent"
+                                    android:id="@+id/house_detail_textView_rent_area"
+                                    style="@style/TextAppearance.AppCompat.Body1"
+                                    android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_gravity="center"
-                                    android:text="매물 정보" />
+                                    android:gravity="center"
+                                    android:text="@{activity.house.rentAreaMeter}" />
                             </TableRow>
+
+                            <View style="@style/Divider" />
+
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent">
+
+                                <TextView
+                                    style="@style/TextAppearance.AppCompat.Body1"
+                                    android:layout_width="@dimen/house_modify_text_width"
+                                    android:layout_height="@dimen/house_modify_widget_height"
+                                    android:gravity="center"
+                                    android:text="건물 층수" />
+
+                                <TextView
+                                    android:id="@+id/house_detail_textView_building_floor"
+                                    style="@style/TextAppearance.AppCompat.Body1"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center"
+                                    android:text="@{activity.house.buildingFloor}" />
+
+                            </TableRow>
+
+                            <View style="@style/Divider" />
+
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent">
+
+                                <TextView
+                                    style="@style/TextAppearance.AppCompat.Body1"
+                                    android:layout_width="@dimen/house_modify_text_width"
+                                    android:layout_height="@dimen/house_modify_widget_height"
+                                    android:gravity="center"
+                                    android:text="해당 층" />
+
+                                <TextView
+                                    android:id="@+id/house_detail_textView_floor"
+                                    style="@style/TextAppearance.AppCompat.Body1"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center"
+                                    android:text="@{activity.house.floor}" />
+                            </TableRow>
+
+                            <View style="@style/Divider" />
+
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:visibility='@{activity.house.houseType.equals("주택") || activity.house.houseType.equals("오피스텔")}'>
+
+                                <TextView
+                                    style="@style/TextAppearance.AppCompat.Body1"
+                                    android:layout_width="@dimen/house_modify_text_width"
+                                    android:layout_height="@dimen/house_modify_widget_height"
+                                    android:gravity="center"
+                                    android:text="구조" />
+
+                                <TextView
+                                    android:id="@+id/house_detail_textView_structure"
+                                    style="@style/TextAppearance.AppCompat.Body1"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center"
+                                    android:text="@{activity.house.structure}" />
+                            </TableRow>
+
+                            <View
+                                style="@style/Divider"
+                                android:visibility='@{activity.house.houseType.equals("주택") || activity.house.houseType.equals("오피스텔")}' />
+
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent">
+
+                                <TextView
+                                    style="@style/TextAppearance.AppCompat.Body1"
+                                    android:layout_width="@dimen/house_modify_text_width"
+                                    android:layout_height="@dimen/house_modify_widget_height"
+                                    android:gravity="center"
+                                    android:text="화장실 갯수" />
+
+                                <TextView
+                                    android:id="@+id/house_detail_textView_bathroom"
+                                    style="@style/TextAppearance.AppCompat.Body1"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center"
+                                    android:text="@{activity.house.bathroom}" />
+                            </TableRow>
+
+                            <View style="@style/Divider" />
+
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:visibility='@{activity.house.houseType.equals("사무실") || activity.house.houseType.equals("상가, 점포")}'>
+
+                                <TextView
+                                    style="@style/TextAppearance.AppCompat.Body1"
+                                    android:layout_width="@dimen/house_modify_text_width"
+                                    android:layout_height="@dimen/house_modify_widget_height"
+                                    android:gravity="center"
+                                    android:text="화장실 위치" />
+
+                                <TextView
+                                    android:id="@+id/house_detail_textView_bathroom_location"
+                                    style="@style/TextAppearance.AppCompat.Body1"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center"
+                                    android:text="@{activity.house.bathroomLocation}" />
+                            </TableRow>
+
+                            <View
+                                style="@style/Divider"
+                                android:visibility='@{activity.house.houseType.equals("사무실") || activity.house.houseType.equals("상가, 점포")}' />
+
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent">
+
+                                <TextView
+                                    style="@style/TextAppearance.AppCompat.Body1"
+                                    android:layout_width="@dimen/house_modify_text_width"
+                                    android:layout_height="@dimen/house_modify_widget_height"
+                                    android:gravity="center"
+                                    android:text="방향" />
+
+                                <TextView
+                                    android:id="@+id/house_detail_textView_direction"
+                                    style="@style/TextAppearance.AppCompat.Body1"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center"
+                                    android:text="@{activity.house.direction}" />
+                            </TableRow>
+
+                            <View style="@style/Divider" />
+
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent">
+
+                                <TextView
+                                    style="@style/TextAppearance.AppCompat.Body1"
+                                    android:layout_width="@dimen/house_modify_text_width"
+                                    android:layout_height="@dimen/house_modify_widget_height"
+                                    android:gravity="center"
+                                    android:text="준공년월" />
+
+
+                                <TextView
+                                    android:id="@+id/house_detail_textView_built_date"
+                                    style="@style/TextAppearance.AppCompat.Body1"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center"
+                                    android:text="@{activity.house.builtDate}" />
+                            </TableRow>
+
+                            <View style="@style/Divider" />
+
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent">
+
+                                <TextView
+                                    style="@style/TextAppearance.AppCompat.Body1"
+                                    android:layout_width="@dimen/house_modify_text_width"
+                                    android:layout_height="@dimen/house_modify_widget_height"
+                                    android:gravity="center"
+                                    android:text="입주가능일" />
+
+                                <TextView
+                                    android:id="@+id/house_detail_textView_move_date"
+                                    style="@style/TextAppearance.AppCompat.Body1"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center"
+                                    android:text="@{activity.house.moveDate}" />
+                            </TableRow>
+
+                            <View style="@style/Divider" />
+
                         </TableLayout>
                     </LinearLayout>
 
@@ -201,42 +452,18 @@
                             android:layout_height="wrap_content"
                             android:text="옵션 정보" />
 
-                        <TableLayout
-                            android:id="@+id/house_detail_tableLayout_option_info"
-                            android:layout_width="match_parent"
+                        <LinearLayout
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_gravity="center"
                             android:orientation="vertical"
-                            android:padding="10dp"
-                            android:stretchColumns="1">
+                            android:padding="10dp">
 
-                            <TableRow android:layout_marginBottom="5dp">
-
-                                <TextView
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:text="옵션 정보" />
-
-                                <TextView
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center"
-                                    android:text="옵션 정보" />
-                            </TableRow>
-
-                            <TableRow>
-
-                                <TextView
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:text="옵션 정보" />
-
-                                <TextView
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center"
-                                    android:text="옵션 정보" />
-                            </TableRow>
-                        </TableLayout>
+                            <com.google.android.material.internal.FlowLayout
+                                android:id="@+id/house_detail_flowLayout_options"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent" />
+                        </LinearLayout>
                     </LinearLayout>
 
                     <View style="@style/Divider" />
@@ -279,10 +506,12 @@
 
                         <TextView
                             android:id="@+id/house_detail_textView_detail_info"
+                            style="@style/TextAppearance.AppCompat.Body1"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="200dp"
+                            android:gravity="left|top"
                             android:padding="10dp"
-                            android:text="상세한 설명." />
+                            android:text="@{activity.house.detailIfo}" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
@@ -293,6 +522,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="#FFEEEEEE"
+            android:checked="@{activity.house.state}"
             android:elevation="10dp"
             android:paddingHorizontal="20dp"
             android:text="판매 완료"
