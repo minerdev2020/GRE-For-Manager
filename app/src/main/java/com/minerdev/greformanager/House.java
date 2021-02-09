@@ -150,7 +150,11 @@ public class House {
     }
 
     public String getBriefInfo() {
-        return "전용 면적: " + getAreaPyeong() + "평 | 관리비: " + getManageFee() + "만원 | 구조: " + getStructure();
+        return "전용 면적: " + getAreaPyeong() + " | 관리비: " + getManageFee() + "만원 | 구조: " + getStructure();
+    }
+
+    public String getHouseInfo() {
+        return getHouseType() + " | 관리비 " + getManageFee() + "만원 | " + getStructure() + " | " + getFloor();
     }
 
     private String parsePrice(int price) {

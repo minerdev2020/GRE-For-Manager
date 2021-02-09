@@ -42,7 +42,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="5dp"
-                    android:text="5억 1000 생기면 좋겠다"
+                    android:text="5억 1000"
                     android:textSize="20sp" />
             </LinearLayout>
 
@@ -52,7 +52,7 @@
                 android:layout_height="wrap_content"
                 android:singleLine="true"
                 android:text="house info | house info | house info"
-                android:textSize="15sp" />
+                android:textSize="12sp" />
 
             <TextView
                 android:id="@+id/houseItem_textView_description"
@@ -60,7 +60,7 @@
                 android:layout_height="wrap_content"
                 android:singleLine="true"
                 android:text="description description description description description"
-                android:textSize="15sp" />
+                android:textSize="12sp" />
 
             <TextView
                 android:id="@+id/houseItem_textView_upload_time"

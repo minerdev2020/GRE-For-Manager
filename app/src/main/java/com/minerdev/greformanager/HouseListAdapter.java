@@ -85,10 +85,12 @@ public class HouseListAdapter extends RecyclerView.Adapter<HouseListAdapter.View
         }
 
         public void setItem(House.ParcelableData house) {
-            textView_payment.setText(Constants.getInstance().PAYMENT_TYPE.get(house.house_type).get(house.payment_type));
-            textView_price.setText(String.valueOf(house.price));
-            textView_house_info.setText(Constants.getInstance().HOUSE_TYPE.get(house.house_type));
-            textView_description.setText(house.detail_info);
+            House house1 = new House(house);
+
+            textView_payment.setText(house1.getPaymentType());
+            textView_price.setText(house1.getPrice());
+            textView_house_info.setText(house1.getHouseInfo());
+            textView_description.setText(house1.getDetailIfo());
             imageView_profile.setImageResource(R.drawable.house);
         }
     }
