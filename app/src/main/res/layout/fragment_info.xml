@@ -333,7 +333,7 @@
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
-                                    android:enabled="@{!houseModifyCheckBoxManageFee.isChecked()}"
+                                    android:enabled="false"
                                     android:inputType="numberSigned" />
 
                                 <TextView
@@ -551,7 +551,6 @@
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
-                                    android:enabled="@{houseModifyCheckBoxUnderground.isChecked()}"
                                     android:inputType="numberSigned" />
 
                                 <TextView

@@ -280,6 +280,7 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
         // 관리비 초기화
         binding.houseModifyCheckBoxManageFee.setOnCheckedChangeListener((buttonView, isChecked) -> {
             binding.houseModifyEditTextManageFee.setText("");
+            binding.houseModifyEditTextManageFee.setEnabled(!isChecked);
             binding.houseModifyFlowLayoutManageFee.setVisibility(isChecked ? View.GONE : View.VISIBLE);
         });
 
