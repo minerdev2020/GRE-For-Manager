@@ -18,7 +18,7 @@ public class Constants {
     public final ArrayList<String> DIRECTION = new ArrayList<>();
     public final ArrayList<String> BATHROOM = new ArrayList<>();
 
-    Constants() {
+    private Constants() {
 
     }
 
@@ -39,7 +39,7 @@ public class Constants {
         Collections.addAll(BATHROOM, context.getResources().getStringArray(R.array.bathroom));
     }
 
-    static class Holder {
+    private static class Holder {
         public static final Constants INSTANCE = new Constants();
     }
 }

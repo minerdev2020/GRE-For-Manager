@@ -16,14 +16,14 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 public class HouseModifyActivity extends AppCompatActivity {
-    final SectionPageAdapter adapter = new SectionPageAdapter(getSupportFragmentManager(),
+    private final SectionPageAdapter adapter = new SectionPageAdapter(getSupportFragmentManager(),
             FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
 
-    NonSwipeViewPager viewPager;
-    Button button_next;
-    Button button_previous;
-    Button button_save;
-    ViewPager.OnPageChangeListener onPageChangeListener = new ViewPager.OnPageChangeListener() {
+    private NonSwipeViewPager viewPager;
+    private Button button_next;
+    private Button button_previous;
+    private Button button_save;
+    private ViewPager.OnPageChangeListener onPageChangeListener = new ViewPager.OnPageChangeListener() {
         @Override
         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
@@ -135,14 +135,14 @@ public class HouseModifyActivity extends AppCompatActivity {
         viewPager.setAdapter(adapter);
     }
 
-    void hideKeyboard() {
+    private void hideKeyboard() {
         if (getCurrentFocus() != null) {
             InputMethodManager manager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
             manager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         }
     }
 
-    void toNextPage() {
+    private void toNextPage() {
         hideKeyboard();
 
         int current = viewPager.getCurrentItem();
@@ -156,7 +156,7 @@ public class HouseModifyActivity extends AppCompatActivity {
         }
     }
 
-    void askSave() {
+    private void askSave() {
         hideKeyboard();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);

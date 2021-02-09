@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ReceiveData {
-    ReceiveData() {
+    private ReceiveData() {
 
     }
 
@@ -27,7 +27,7 @@ public class ReceiveData {
         receiveJson(context, uri, listener);
     }
 
-    void receiveJson(Context context, String address, OnReceiveListener listener) {
+    private void receiveJson(Context context, String address, OnReceiveListener listener) {
         StringRequest request = new StringRequest(Request.Method.POST, address,
                 response -> {
                     Toast.makeText(context, "데이터 요청 성공.", Toast.LENGTH_SHORT).show();
@@ -63,7 +63,7 @@ public class ReceiveData {
         AppHelper.requestQueue.add(request);
     }
 
-    static class Holder {
+    private static class Holder {
         public static final ReceiveData INSTANCE = new ReceiveData();
     }
 

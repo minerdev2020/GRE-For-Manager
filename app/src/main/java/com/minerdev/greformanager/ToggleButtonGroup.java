@@ -8,10 +8,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ToggleButtonGroup {
-    final ArrayList<ToggleButton> toggleButtons;
-    final HashMap<String, Boolean> toggleButtonCheckedStates;
-    final Context context;
-    String title;
+    private final ArrayList<ToggleButton> toggleButtons;
+    private final HashMap<String, Boolean> toggleButtonCheckedStates;
+    private final Context context;
+    private String title;
 
     public ToggleButtonGroup(Context context, String title) {
         this.context = context;
@@ -69,6 +69,20 @@ public class ToggleButtonGroup {
         } else {
             Boolean result = toggleButtonCheckedStates.get(buttonText);
             return result != null && result;
+        }
+    }
+
+    public void setToggleButtonCheckedState(String buttonText, boolean checked) {
+        if (toggleButtonCheckedStates.size() == 0) {
+            return;
+
+        } else {
+            for (ToggleButton button : toggleButtons) {
+                if (button.getText().equals(buttonText)) {
+                    button.setChecked(checked);
+                    return;
+                }
+            }
         }
     }
 

@@ -22,10 +22,10 @@ import com.google.android.material.textfield.TextInputEditText;
 import java.util.regex.Pattern;
 
 public class LoginActivity extends AppCompatActivity {
-    static final long FINISH_INTERVAL_TIME = 2000;
-    long backPressedTime = 0;
+    private static final long FINISH_INTERVAL_TIME = 2000;
+    private long backPressedTime = 0;
 
-    EditText editText_pw;
+    private EditText editText_pw;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +61,7 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    void tryLogin(View view, String id, String pw) {
+    private void tryLogin(View view, String id, String pw) {
         if (!id.isEmpty() && !pw.isEmpty()) {
             if (id.equals("root") && pw.equals("admin")) {
                 SharedPreferences sharedPreferences = getSharedPreferences("login", Activity.MODE_PRIVATE);
@@ -84,12 +84,12 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    boolean checkLoginStatus() {
+    private boolean checkLoginStatus() {
         SharedPreferences sharedPreferences = getSharedPreferences("login", Activity.MODE_PRIVATE);
         return sharedPreferences != null && sharedPreferences.contains("id");
     }
 
-    void setupButtons() {
+    private void setupButtons() {
         Button button_login = findViewById(R.id.login_button_login);
         button_login.setOnClickListener(view -> {
             EditText editText_id = findViewById(R.id.login_editText_id);
@@ -100,7 +100,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    void setupEditTexts() {
+    private void setupEditTexts() {
         TextInputEditText editText_id = findViewById(R.id.login_editText_id);
         editText_id.setFilters(new InputFilter[]{(charSequence, i, i1, spanned, i2, i3) -> {
             Pattern pattern = Pattern.compile("^[a-zA-Z0-9]*$");

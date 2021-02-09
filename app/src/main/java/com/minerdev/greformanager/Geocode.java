@@ -12,10 +12,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Geocode {
-    GeocodeResult result;
-    OnDataReceiveListener listener;
+    private GeocodeResult result;
+    private OnDataReceiveListener listener;
 
-    Geocode() {
+    private Geocode() {
 
     }
 
@@ -75,7 +75,7 @@ public class Geocode {
         void parseData(GeocodeResult result);
     }
 
-    static class Holder {
+    private static class Holder {
         public static final Geocode INSTANCE = new Geocode();
     }
 }

@@ -24,8 +24,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class ImageFragment extends Fragment implements OnSaveDataListener {
-    static final int GALLERY_REQUEST_CODE = 1;
-    final ImageListAdapter imageListAdapter = new ImageListAdapter();
+    private static final int GALLERY_REQUEST_CODE = 1;
+    private final ImageListAdapter imageListAdapter = new ImageListAdapter();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

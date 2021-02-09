@@ -13,8 +13,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 public class HouseListAdapter extends RecyclerView.Adapter<HouseListAdapter.ViewHolder> {
-    ArrayList<House.ParcelableData> items = new ArrayList<>();
-    OnItemClickListener listener;
+    private ArrayList<House.ParcelableData> items = new ArrayList<>();
+    private OnItemClickListener listener;
 
     public void setOnItemClickListener(OnItemClickListener clickListener) {
         listener = clickListener;
@@ -60,11 +60,11 @@ public class HouseListAdapter extends RecyclerView.Adapter<HouseListAdapter.View
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        final TextView textView_payment;
-        final TextView textView_price;
-        final TextView textView_house_info;
-        final TextView textView_description;
-        final ImageView imageView_profile;
+        private final TextView textView_payment;
+        private final TextView textView_price;
+        private final TextView textView_house_info;
+        private final TextView textView_description;
+        private final ImageView imageView_profile;
 
         public ViewHolder(@NonNull View itemView, final OnItemClickListener clickListener) {
             super(itemView);

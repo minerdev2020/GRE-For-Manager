@@ -2,6 +2,7 @@ package com.minerdev.greformanager;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.telephony.PhoneNumberFormattingTextWatcher;
@@ -25,17 +26,17 @@ import androidx.fragment.app.Fragment;
 import com.minerdev.greformanager.databinding.FragmentInfoBinding;
 
 public class InfoFragment extends Fragment implements OnSaveDataListener {
-    final Handler handler = new Handler();
+    private final Handler handler = new Handler();
 
     public String houseType;
     public String paymentType;
 
-    ArrayAdapter<String> arrayAdapterPayment;
-    ToggleButtonGroup toggleButtonGroupManageFeeContains;
-    ToggleButtonGroup toggleButtonGroupOptions;
-    Dialog addressDialog;
+    private ArrayAdapter<String> arrayAdapterPayment;
+    private ToggleButtonGroup toggleButtonGroupManageFeeContains;
+    private ToggleButtonGroup toggleButtonGroupOptions;
+    private Dialog addressDialog;
 
-    FragmentInfoBinding binding;
+    private FragmentInfoBinding binding;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -89,6 +90,15 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
 
         // 담당자 정보 초기화
         binding.houseModifyEditTextPhone.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
+
+
+        // 데이터 읽기
+        Intent intent = getActivity().getIntent();
+        String mode = intent.getStringExtra("mode");
+        if (mode.equals("modify")) {
+            House.ParcelableData data = intent.getParcelableExtra("house_value");
+            setValues(data);
+        }
 
         return binding.getRoot();
     }
@@ -221,7 +231,7 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
         SendData.getInstance().house = data;
     }
 
-    void setSpinners() {
+    private void setSpinners() {
         // 계약 형태 초기화
         arrayAdapterPayment = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item);
 
@@ -276,7 +286,7 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
         binding.houseModifySpinnerDirection.setAdapter(arrayAdapterDirection);
     }
 
-    void setCheckBoxes() {
+    private void setCheckBoxes() {
         // 관리비 초기화
         binding.houseModifyCheckBoxManageFee.setOnCheckedChangeListener((buttonView, isChecked) -> {
             binding.houseModifyEditTextManageFee.setText("");
@@ -300,7 +310,7 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
     }
 
     @SuppressLint("DefaultLocale")
-    void setAreaEditTexts() {
+    private void setAreaEditTexts() {
         // 전용 면적 초기화
         binding.houseModifyEditTextAreaPyeong.addTextChangedListener(new TextWatcher() {
             @Override
@@ -412,7 +422,7 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
     }
 
     @SuppressLint("SetJavaScriptEnabled")
-    void showAddressDialog() {
+    private void showAddressDialog() {
         addressDialog = new Dialog(getContext());
         addressDialog.setContentView(R.layout.dialog_address);
 
@@ -432,7 +442,7 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
         addressDialog.show();
     }
 
-    void showDatePickerDialog(OnClickListener listener) {
+    private void showDatePickerDialog(OnClickListener listener) {
         Dialog datePickerDialog = new Dialog(getContext());
         datePickerDialog.setContentView(R.layout.dialog_date_picker);
 
@@ -453,7 +463,7 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
         datePickerDialog.show();
     }
 
-    int parseInt(String number) {
+    private int parseInt(String number) {
         if (number == null || number.equals("")) {
             return 0;
 
@@ -462,7 +472,7 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
         }
     }
 
-    float parseFloat(String number) {
+    private float parseFloat(String number) {
         if (number == null || number.equals("")) {
             return 0;
 
@@ -471,7 +481,7 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
         }
     }
 
-    void onPaymentTypeItemSelected(AdapterView<?> parent, View view, int position, long id) {
+    private void onPaymentTypeItemSelected(AdapterView<?> parent, View view, int position, long id) {
         paymentType = binding.houseModifySpinnerPaymentType.getSelectedItem().toString();
 
         binding.houseModifyEditTextPrice.setText("");
@@ -498,7 +508,7 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
         }
     }
 
-    void onHouseTypeItemSelected(AdapterView<?> parent, View view, int position, long id) {
+    private void onHouseTypeItemSelected(AdapterView<?> parent, View view, int position, long id) {
         houseType = binding.houseModifySpinnerHouseType.getSelectedItem().toString();
 
         if (position > 0) {
@@ -528,11 +538,76 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
         binding.houseModifyRadioGroup.clearCheck();
     }
 
+    private void setValues(House.ParcelableData data) {
+        binding.houseModifyTextViewAddress.setText(data.address);
+        binding.houseModifyEditTextNumber.setText(data.house_number);
+        binding.houseModifySpinnerHouseType.setSelection(data.house_type);
+        binding.houseModifyCheckBoxFacility.setChecked(data.facility == 1);
+        binding.houseModifySpinnerPaymentType.setSelection(data.payment_type);
+        binding.houseModifyEditTextPrice.setText(String.valueOf(data.price));
+        binding.houseModifyEditTextDeposit.setText(String.valueOf(data.deposit));
+        binding.houseModifyEditTextMonthlyRent.setText(String.valueOf(data.monthly_rent));
+        binding.houseModifyEditTextPremium.setText(String.valueOf(data.premium));
+
+        if (data.manage_fee > 0) {
+            binding.houseModifyCheckBoxManageFee.setChecked(false);
+            binding.houseModifyEditTextManageFee.setText(String.valueOf(data.manage_fee));
+        }
+
+        String[] manageFeeTexts = data.manage_fee_contains.split("\\|");
+        for (String text : manageFeeTexts) {
+            toggleButtonGroupManageFeeContains.setToggleButtonCheckedState(text, true);
+        }
+
+        binding.houseModifyEditTextAreaMeter.setText(String.valueOf(data.area_meter));
+        binding.houseModifyEditTextRentAreaMeter.setText(String.valueOf(data.rent_area_meter));
+
+        binding.houseModifyEditTextAreaPyeong.setText(String.format("%.2f", data.area_meter * Constants.getInstance().METER_TO_PYEONG));
+        binding.houseModifyEditTextRentAreaPyeong.setText(String.format("%.2f", data.rent_area_meter * Constants.getInstance().METER_TO_PYEONG));
+
+        binding.houseModifyEditTextBuildingFloor.setText(String.valueOf(data.building_floor));
+
+        if (data.floor == -1) {
+            binding.houseModifyRadioButtonOutside.setChecked(true);
+
+        } else {
+            binding.houseModifyEditTextFloor.setText(String.valueOf(data.floor));
+        }
+
+        binding.houseModifySpinnerStructure.setSelection(data.structure);
+        binding.houseModifySpinnerBathroom.setSelection(data.bathroom);
+
+        if (data.bathroom_location == 0) {
+            binding.houseModifyRadioButtonOutside.setChecked(true);
+
+        } else {
+            binding.houseModifyRadioButtonInside.setChecked(true);
+        }
+
+        binding.houseModifySpinnerDirection.setSelection(data.direction);
+        binding.houseModifyTextViewBuiltDate.setText(data.built_date);
+
+        if (data.move_date.equals("")) {
+            binding.houseModifyCheckBoxMoveNow.setChecked(true);
+
+        } else {
+            binding.houseModifyTextViewMoveDate.setText(data.move_date);
+        }
+
+        String[] optionsTexts = data.options.split("\\|");
+        for (String text : optionsTexts) {
+            toggleButtonGroupOptions.setToggleButtonCheckedState(text, true);
+        }
+
+        binding.houseModifyDetailInfo.setText(data.detail_info);
+        binding.houseModifyEditTextPhone.setText(data.phone);
+    }
+
     public interface OnClickListener {
         void onClick(View v, String result);
     }
 
-    class AndroidBridge {
+    private class AndroidBridge {
         @JavascriptInterface
         public void setAddress(final String arg1, final String arg2, final String arg3) {
             handler.post(() -> {
@@ -541,5 +616,4 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
             });
         }
     }
-
 }

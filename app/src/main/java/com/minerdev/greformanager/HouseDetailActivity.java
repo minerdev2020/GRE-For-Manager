@@ -21,10 +21,10 @@ import com.naver.maps.map.UiSettings;
 import com.naver.maps.map.overlay.Marker;
 
 public class HouseDetailActivity extends AppCompatActivity {
-    final ImageAdapter adapter = new ImageAdapter(this);
-    public House house;
+    private final ImageAdapter adapter = new ImageAdapter(this);
+    private House house;
 
-    ActivityHouseDetailBinding binding;
+    private ActivityHouseDetailBinding binding;
 
     @BindingConversion
     public static int convertBooleanToVisibility(boolean visible) {
@@ -84,6 +84,7 @@ public class HouseDetailActivity extends AppCompatActivity {
             case R.id.house_detail_menu_modify:
                 Intent intent = new Intent(this, HouseModifyActivity.class);
                 intent.putExtra("mode", "modify");
+                intent.putExtra("house_value", house.getData());
                 startActivity(intent);
                 break;
 
@@ -94,7 +95,11 @@ public class HouseDetailActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    void setMapFragment() {
+    public House getHouse() {
+        return house;
+    }
+
+    private void setMapFragment() {
         MapFragment mapFragment = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         if (mapFragment == null) {
             mapFragment = MapFragment.newInstance();
@@ -119,7 +124,7 @@ public class HouseDetailActivity extends AppCompatActivity {
         });
     }
 
-    void readImages() {
+    private void readImages() {
         adapter.addImage(R.drawable.house);
         adapter.addImage(R.drawable.house);
         adapter.addImage(R.drawable.house);

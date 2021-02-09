@@ -5,7 +5,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class House {
-    final ParcelableData data;
+    private final ParcelableData data;
 
     public House(ParcelableData data) {
         this.data = data;
