@@ -150,7 +150,17 @@ public class House {
     }
 
     public String getBriefInfo() {
-        return "전용 면적: " + getAreaPyeong() + " | 관리비: " + getManageFee() + "만원 | 구조: " + getStructure();
+        String result = "전용 면적: " + getAreaPyeong();
+
+        if (data.manage_fee > 0) {
+            result += " | 관리비: " + getManageFee() + "만원";
+        }
+
+        if (data.structure > 0) {
+            result += " | 구조: " + getStructure();
+        }
+
+        return result;
     }
 
     public String getHouseInfo() {
