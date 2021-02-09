@@ -19,9 +19,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ToggleButton;
 
-import androidx.databinding.BindingConversion;
 import androidx.databinding.DataBindingUtil;
-import androidx.databinding.ObservableField;
 import androidx.fragment.app.Fragment;
 
 import com.minerdev.greformanager.databinding.FragmentInfoBinding;
@@ -29,8 +27,8 @@ import com.minerdev.greformanager.databinding.FragmentInfoBinding;
 public class InfoFragment extends Fragment implements OnSaveDataListener {
     final Handler handler = new Handler();
 
-    public ObservableField<String> houseType = new ObservableField<>();
-    public ObservableField<String> paymentType = new ObservableField<>();
+    public String houseType;
+    public String paymentType;
 
     ArrayAdapter<String> arrayAdapterPayment;
     ToggleButtonGroup toggleButtonGroupManageFeeContains;
@@ -38,11 +36,6 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
     Dialog addressDialog;
 
     FragmentInfoBinding binding;
-
-    @BindingConversion
-    public static int convertBooleanToVisibility(boolean visible) {
-        return visible ? View.VISIBLE : View.GONE;
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -287,12 +280,14 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
         // 관리비 초기화
         binding.houseModifyCheckBoxManageFee.setOnCheckedChangeListener((buttonView, isChecked) -> {
             binding.houseModifyEditTextManageFee.setText("");
+            binding.houseModifyFlowLayoutManageFee.setVisibility(isChecked ? View.GONE : View.VISIBLE);
         });
 
 
         // 층 초기화
         binding.houseModifyCheckBoxUnderground.setOnCheckedChangeListener((buttonView, isChecked) -> {
             binding.houseModifyEditTextFloor.setText("");
+            binding.houseModifyEditTextFloor.setEnabled(!isChecked);
         });
 
 
@@ -476,26 +471,60 @@ public class InfoFragment extends Fragment implements OnSaveDataListener {
     }
 
     void onPaymentTypeItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        paymentType = binding.houseModifySpinnerPaymentType.getSelectedItem().toString();
+
         binding.houseModifyEditTextPrice.setText("");
         binding.houseModifyEditTextDeposit.setText("");
         binding.houseModifyEditTextMonthlyRent.setText("");
         binding.houseModifyEditTextPremium.setText("");
 
-        paymentType.set(binding.houseModifySpinnerPaymentType.getSelectedItem().toString());
+        if (paymentType.equals("월세") || paymentType.equals("단기임대") || paymentType.equals("임대")) {
+            binding.houseModifyTableRowPrice.setVisibility(View.GONE);
+            binding.houseModifyTableRowDeposit.setVisibility(View.VISIBLE);
+            binding.houseModifyTableRowMonthlyRent.setVisibility(View.VISIBLE);
+
+        } else {
+            binding.houseModifyTableRowPrice.setVisibility(View.VISIBLE);
+            binding.houseModifyTableRowDeposit.setVisibility(View.GONE);
+            binding.houseModifyTableRowMonthlyRent.setVisibility(View.GONE);
+        }
+
+        if (houseType.equals("상가, 점포") && paymentType.equals("임대")) {
+            binding.houseModifyTableRowPremium.setVisibility(View.VISIBLE);
+
+        } else {
+            binding.houseModifyTableRowPremium.setVisibility(View.GONE);
+        }
     }
 
     void onHouseTypeItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        houseType = binding.houseModifySpinnerHouseType.getSelectedItem().toString();
+
         if (position > 0) {
             arrayAdapterPayment.clear();
-            String temp = getResources().getStringArray(R.array.paymentType)[position - 1];
-            arrayAdapterPayment.addAll(temp.split(" "));
+            arrayAdapterPayment.addAll(Constants.getInstance().PAYMENT_TYPE.get(position - 1));
             binding.houseModifySpinnerPaymentType.setSelection(0);
 
         } else {
             arrayAdapterPayment.clear();
         }
 
-        houseType.set(binding.houseModifySpinnerHouseType.getSelectedItem().toString());
+
+        // 시설 유무 초기화
+        binding.houseModifyCheckBoxFacility.setEnabled(houseType.equals("상가, 점포"));
+        binding.houseModifyCheckBoxFacility.setChecked(false);
+
+
+        // 구조 초기화 ('매물 종류'가 '주택'이나 '오피스텔'일때만 '구조' 항목이 보임)
+        int visibility = houseType.equals("주택") || houseType.equals("오피스텔") ? View.VISIBLE : View.GONE;
+        binding.houseModifyTableRowStructure.setVisibility(visibility);
+        binding.houseModifyView.setVisibility(visibility);
+        binding.houseModifySpinnerStructure.setSelection(0);
+
+
+        // 화장실 위치 초기화 ('매물 종류'가 '사무실'이나 '상가, 점포'일때만 '화장실 위치' 항목이 보임)
+        binding.houseModifyTableRowLocation.setVisibility(houseType.equals("사무실") || houseType.equals("상가, 점포") ? View.VISIBLE : View.GONE);
+        binding.houseModifyRadioGroup.clearCheck();
     }
 
     public interface OnClickListener {

@@ -2,13 +2,6 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <data>
-
-        <variable
-            name="fragment"
-            type="com.minerdev.greformanager.InfoFragment" />
-    </data>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -182,9 +175,9 @@
                         <View style="@style/Divider" />
 
                         <TableRow
+                            android:id="@+id/house_modify_tableRow_price"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:visibility='@{!(fragment.paymentType.equals("월세") || fragment.paymentType.equals("단기임대") || fragment.paymentType.equals("임대"))}'>
+                            android:layout_height="match_parent">
 
                             <TextView
                                 style="@style/TextAppearance.AppCompat.Body1"
@@ -215,9 +208,10 @@
                         </TableRow>
 
                         <TableRow
+                            android:id="@+id/house_modify_tableRow_deposit"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:visibility='@{fragment.paymentType.equals("월세") || fragment.paymentType.equals("단기임대") || fragment.paymentType.equals("임대")}'>
+                            android:visibility="gone">
 
                             <TextView
                                 style="@style/TextAppearance.AppCompat.Body1"
@@ -251,7 +245,7 @@
                             android:id="@+id/house_modify_tableRow_monthly_rent"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:visibility='@{fragment.paymentType.equals("월세") || fragment.paymentType.equals("단기임대") || fragment.paymentType.equals("임대")}'>
+                            android:visibility="gone">
 
                             <TextView
                                 style="@style/TextAppearance.AppCompat.Body1"
@@ -282,9 +276,10 @@
                         </TableRow>
 
                         <TableRow
+                            android:id="@+id/house_modify_tableRow_premium"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:visibility='@{fragment.houseType.equals("상가, 점포") &amp;&amp; fragment.paymentType.equals("임대")}'>
+                            android:visibility="gone">
 
                             <TextView
                                 style="@style/TextAppearance.AppCompat.Body1"
@@ -362,8 +357,7 @@
 
                         <TableRow
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:visibility="@{houseModifyCheckBoxManageFee.isChecked()}">
+                            android:layout_height="match_parent">
 
                             <LinearLayout
                                 android:layout_width="wrap_content"
@@ -374,7 +368,8 @@
                                 <com.google.android.material.internal.FlowLayout
                                     android:id="@+id/house_modify_flowLayout_manage_fee"
                                     android:layout_width="match_parent"
-                                    android:layout_height="match_parent" />
+                                    android:layout_height="match_parent"
+                                    android:visibility="gone" />
                             </LinearLayout>
                         </TableRow>
 
@@ -580,9 +575,10 @@
                         <View style="@style/Divider" />
 
                         <TableRow
+                            android:id="@+id/house_modify_tableRow_structure"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:visibility='@{fragment.houseType.equals("주택") || fragment.houseType.equals("오피스텔")}'>
+                            android:visibility="gone">
 
                             <TextView
                                 style="@style/TextAppearance.AppCompat.Body1"
@@ -607,8 +603,9 @@
                         </TableRow>
 
                         <View
+                            android:id="@+id/house_modify_view"
                             style="@style/Divider"
-                            android:visibility='@{fragment.houseType.equals("주택") || fragment.houseType.equals("오피스텔")}' />
+                            android:visibility="gone" />
 
                         <TableRow
                             android:layout_width="match_parent"
@@ -637,9 +634,10 @@
                         </TableRow>
 
                         <TableRow
+                            android:id="@+id/house_modify_tableRow_location"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:visibility='@{fragment.houseType.equals("사무실") || fragment.houseType.equals("상가, 점포")}'>
+                            android:visibility="gone">
 
                             <TextView
                                 style="@style/TextAppearance.AppCompat.Body1"
