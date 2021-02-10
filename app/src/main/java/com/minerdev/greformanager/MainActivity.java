@@ -14,6 +14,7 @@ import android.widget.SearchView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
@@ -23,11 +24,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.navigation.NavigationView;
 
-import java.util.ArrayList;
-
 public class MainActivity extends AppCompatActivity {
     private static final long FINISH_INTERVAL_TIME = 2000;
-    private static final ArrayList<House.ParcelableData> items = new ArrayList<>();
     private final HouseListAdapter saleAdapter = new HouseListAdapter();
     private final HouseListAdapter soldAdapter = new HouseListAdapter();
 
@@ -53,8 +51,10 @@ public class MainActivity extends AppCompatActivity {
         saleRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         saleAdapter.setOnItemClickListener((viewHolder, view, position) -> {
             Intent intent = new Intent(MainActivity.this, HouseDetailActivity.class);
+            intent.putExtra("original_state", Constants.getInstance().SALE);
+            intent.putExtra("index", position);
             intent.putExtra("house_value", saleAdapter.getItem(position));
-            startActivity(intent);
+            startActivityForResult(intent, Constants.getInstance().HOUSE_DETAIL_ACTIVITY_REQUEST_CODE);
         });
         saleRecyclerView.setAdapter(saleAdapter);
 
@@ -62,11 +62,6 @@ public class MainActivity extends AppCompatActivity {
         imageButton.setOnClickListener(v -> {
             saleRecyclerView.setVisibility(saleRecyclerView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
             imageButton.setImageResource(saleRecyclerView.getVisibility() == View.VISIBLE ? R.drawable.ic_round_expand_less_24 : R.drawable.ic_round_expand_more_24);
-        });
-
-        ReceiveData.getInstance().start(this, list -> {
-            saleAdapter.setItems(list);
-            saleAdapter.notifyDataSetChanged();
         });
 
 
@@ -77,8 +72,10 @@ public class MainActivity extends AppCompatActivity {
         soldRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         soldAdapter.setOnItemClickListener((viewHolder, view, position) -> {
             Intent intent = new Intent(MainActivity.this, HouseDetailActivity.class);
+            intent.putExtra("original_state", Constants.getInstance().SOLD);
+            intent.putExtra("index", position);
             intent.putExtra("house_value", soldAdapter.getItem(position));
-            startActivity(intent);
+            startActivityForResult(intent, Constants.getInstance().HOUSE_DETAIL_ACTIVITY_REQUEST_CODE);
         });
         soldRecyclerView.setAdapter(soldAdapter);
 
@@ -93,13 +90,7 @@ public class MainActivity extends AppCompatActivity {
         setNavigationView();
 
 
-        // 매물 리스트 초기화 및 HouseListAdapter에 리스트 등록
-        items.clear();
-
         readItems();
-
-        saleAdapter.setItems(items);
-        soldAdapter.setItems(items);
     }
 
     @Override
@@ -126,10 +117,10 @@ public class MainActivity extends AppCompatActivity {
         searchView.setOnCloseListener(() -> {
             searchView.onActionViewCollapsed();
 
-            saleAdapter.setItems(items);
+            saleAdapter.resetItems();
             saleAdapter.notifyDataSetChanged();
 
-            soldAdapter.setItems(items);
+            soldAdapter.resetItems();
             soldAdapter.notifyDataSetChanged();
 
             return true;
@@ -145,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.main_menu_add:
                 intent = new Intent(this, HouseModifyActivity.class);
                 intent.putExtra("mode", "add");
-                startActivity(intent);
+                startActivityForResult(intent, Constants.getInstance().HOUSE_MODIFY_ACTIVITY_REQUEST_CODE);
                 break;
 
             case R.id.main_menu_my_menu:
@@ -184,18 +175,65 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void rearrangeList(String keyword) {
-        ArrayList<House.ParcelableData> temp = new ArrayList<>();
-        for (House.ParcelableData i : items) {
-            if ((keyword == null || i.house_number.contains(keyword) || i.address.contains(keyword))) {
-                temp.add(i);
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == Constants.getInstance().HOUSE_DETAIL_ACTIVITY_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                if (data == null) {
+                    return;
+                }
+
+                int originalState = data.getIntExtra("original_state", 0);
+                int index = data.getIntExtra("index", 0);
+                House.ParcelableData house = data.getParcelableExtra("house_value");
+
+                if (originalState != house.state) {
+                    if (originalState == Constants.getInstance().SALE) {
+                        saleAdapter.removeItem(index);
+                        saleAdapter.notifyItemRemoved(index);
+
+                        soldAdapter.addItem(house);
+                        soldAdapter.notifyDataSetChanged();
+
+                    } else {
+                        soldAdapter.removeItem(index);
+                        soldAdapter.notifyItemRemoved(index);
+
+                        saleAdapter.addItem(house);
+                        saleAdapter.notifyDataSetChanged();
+                    }
+
+                } else {
+                    if (house.state == Constants.getInstance().SALE) {
+                        saleAdapter.setItem(index, house);
+                        saleAdapter.notifyItemChanged(index);
+
+                    } else {
+                        soldAdapter.setItem(index, house);
+                        soldAdapter.notifyItemChanged(index);
+                    }
+                }
+            }
+
+        } else if (requestCode == Constants.getInstance().HOUSE_MODIFY_ACTIVITY_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                if (data == null) {
+                    return;
+                }
+
+                House.ParcelableData house = data.getParcelableExtra("house_value");
+                saleAdapter.addItem(house);
+                saleAdapter.notifyDataSetChanged();
             }
         }
+    }
 
-        saleAdapter.setItems(temp);
+    private void rearrangeList(String keyword) {
+        saleAdapter.searchItems(keyword);
         saleAdapter.notifyDataSetChanged();
 
-        soldAdapter.setItems(temp);
+        soldAdapter.searchItems(keyword);
         soldAdapter.notifyDataSetChanged();
     }
 
@@ -233,6 +271,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void readItems() {
+        ReceiveData.getInstance().start(this, list -> {
+            // 매물의 판매 상태에 따라 분류
+            for (House.ParcelableData item : list) {
+                if (item.state == Constants.getInstance().SALE) {
+                    saleAdapter.addItem(item);
 
+                } else {
+                    soldAdapter.addItem(item);
+                }
+            }
+
+            saleAdapter.notifyDataSetChanged();
+            soldAdapter.notifyDataSetChanged();
+        });
     }
 }

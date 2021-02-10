@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.BindingConversion;
 import androidx.databinding.DataBindingUtil;
@@ -23,6 +24,8 @@ import com.naver.maps.map.overlay.Marker;
 public class HouseDetailActivity extends AppCompatActivity {
     private final ImageAdapter adapter = new ImageAdapter(this);
     private House house;
+    private int index;
+    private int originalState;
 
     private ActivityHouseDetailBinding binding;
 
@@ -38,8 +41,11 @@ public class HouseDetailActivity extends AppCompatActivity {
         binding.setActivity(this);
 
         Intent intent = getIntent();
+        originalState = intent.getIntExtra("original_state", 0);
+        index = intent.getIntExtra("index", 0);
         House.ParcelableData data = intent.getParcelableExtra("house_value");
         house = new House(data);
+
 
         setSupportActionBar(binding.houseDetailToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -49,10 +55,6 @@ public class HouseDetailActivity extends AppCompatActivity {
         binding.houseDetailViewPagerImage.setAdapter(adapter);
 
         setMapFragment();
-
-        binding.houseDetailSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            house.setState(isChecked);
-        });
 
         ToggleButtonGroup toggleButtonGroupManageFee = new ToggleButtonGroup(this, "ManageFee");
         toggleButtonGroupManageFee.addToggleButtons(house.getManageFeeContains().split("\\|"));
@@ -85,7 +87,7 @@ public class HouseDetailActivity extends AppCompatActivity {
                 Intent intent = new Intent(this, HouseModifyActivity.class);
                 intent.putExtra("mode", "modify");
                 intent.putExtra("house_value", house.getData());
-                startActivity(intent);
+                startActivityForResult(intent, Constants.getInstance().HOUSE_MODIFY_ACTIVITY_REQUEST_CODE);
                 break;
 
             default:
@@ -95,8 +97,58 @@ public class HouseDetailActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void finish() {
+//        SendData.getInstance().house = house.getData();
+//        SendData.getInstance().start(this);
+
+        Intent intent = new Intent();
+        intent.putExtra("original_state", originalState);
+        intent.putExtra("index", index);
+        intent.putExtra("house_value", house.getData());
+        setResult(RESULT_OK, intent);
+
+        super.finish();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == Constants.getInstance().HOUSE_MODIFY_ACTIVITY_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                if (data == null) {
+                    return;
+                }
+
+                House house = new House(data.getParcelableExtra("house_value"));
+                this.house = house;
+                refreshUI();
+            }
+        }
+    }
+
     public House getHouse() {
         return house;
+    }
+
+    private void refreshUI() {
+        binding.invalidateAll();
+        binding.houseDetailFlowLayoutManageFee.removeAllViews();
+        binding.houseDetailFlowLayoutOptions.removeAllViews();
+
+        ToggleButtonGroup toggleButtonGroupManageFee = new ToggleButtonGroup(this, "ManageFee");
+        toggleButtonGroupManageFee.addToggleButtons(house.getManageFeeContains().split("\\|"));
+        for (ToggleButton toggleButton : toggleButtonGroupManageFee.getToggleButtons()) {
+            binding.houseDetailFlowLayoutManageFee.addView(toggleButton);
+        }
+
+        ToggleButtonGroup toggleButtonGroupOptions = new ToggleButtonGroup(this, "Options");
+        toggleButtonGroupOptions.addToggleButtons(house.getOptions().split("\\|"));
+        for (ToggleButton toggleButton : toggleButtonGroupOptions.getToggleButtons()) {
+            binding.houseDetailFlowLayoutOptions.addView(toggleButton);
+        }
+
+        setMapFragment();
     }
 
     private void setMapFragment() {

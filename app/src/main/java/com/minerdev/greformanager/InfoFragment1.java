@@ -69,10 +69,21 @@ public class InfoFragment1 extends Fragment implements OnSaveDataListener {
             readData(data);
 
         } else {
+            if (SendData.getInstance().house != null) {
+                readData(SendData.getInstance().house);
+            }
+
             isFirst = false;
         }
 
         return binding.getRoot();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        isFirst = true;
     }
 
     @Override
@@ -174,6 +185,7 @@ public class InfoFragment1 extends Fragment implements OnSaveDataListener {
             binding.houseModify1EditTextManageFee.setText("");
             binding.houseModify1EditTextManageFee.setEnabled(!isChecked);
             binding.houseModify1FlowLayoutManageFee.setVisibility(isChecked ? View.GONE : View.VISIBLE);
+            toggleButtonGroupManageFeeContains.resetToggleButtonCheckedState();
         });
     }
 
@@ -292,9 +304,11 @@ public class InfoFragment1 extends Fragment implements OnSaveDataListener {
             binding.houseModify1EditTextManageFee.setText(String.valueOf(data.manage_fee));
         }
 
-        String[] manageFeeTexts = data.manage_fee_contains.split("\\|");
-        for (String text : manageFeeTexts) {
-            toggleButtonGroupManageFeeContains.setToggleButtonCheckedState(text, true);
+        if (data.manage_fee_contains != null && !data.manage_fee_contains.equals("")) {
+            String[] manageFeeTexts = data.manage_fee_contains.split("\\|");
+            for (String text : manageFeeTexts) {
+                toggleButtonGroupManageFeeContains.setToggleButtonCheckedState(text, true);
+            }
         }
     }
 

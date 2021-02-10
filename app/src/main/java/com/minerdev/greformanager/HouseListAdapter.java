@@ -14,7 +14,9 @@ import java.util.ArrayList;
 
 public class HouseListAdapter extends RecyclerView.Adapter<HouseListAdapter.ViewHolder> {
     private ArrayList<House.ParcelableData> items = new ArrayList<>();
+    private ArrayList<House.ParcelableData> searchResults = new ArrayList<>();
     private OnItemClickListener listener;
+    private String keyword;
 
     public void setOnItemClickListener(OnItemClickListener clickListener) {
         listener = clickListener;
@@ -30,21 +32,36 @@ public class HouseListAdapter extends RecyclerView.Adapter<HouseListAdapter.View
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        House.ParcelableData item = items.get(position);
+        House.ParcelableData item = (keyword == null) ? items.get(position) : searchResults.get(position);
         holder.setItem(item);
     }
 
     @Override
     public int getItemCount() {
-        return items.size();
+        return (keyword == null) ? items.size() : searchResults.size();
     }
 
     public void addItem(House.ParcelableData item) {
         items.add(item);
     }
 
-    public void setItems(ArrayList<House.ParcelableData> items) {
-        this.items = items;
+    public void removeItem(int index) {
+        items.remove(index);
+    }
+
+    public void searchItems(String keyword) {
+        this.keyword = keyword;
+        searchResults.clear();
+        for (House.ParcelableData item : items) {
+            if (item.address.contains(keyword) || item.house_number.contains(keyword)){
+                searchResults.add(item);
+            }
+        }
+    }
+
+    public void resetItems() {
+        keyword = null;
+        searchResults.clear();
     }
 
     public House.ParcelableData getItem(int position) {
@@ -53,6 +70,14 @@ public class HouseListAdapter extends RecyclerView.Adapter<HouseListAdapter.View
 
     public void setItem(int position, House.ParcelableData item) {
         items.set(position, item);
+    }
+
+    public ArrayList<House.ParcelableData> getItems() {
+        return items;
+    }
+
+    public void setItems(ArrayList<House.ParcelableData> items) {
+        this.items = items;
     }
 
     public interface OnItemClickListener {
@@ -81,7 +106,6 @@ public class HouseListAdapter extends RecyclerView.Adapter<HouseListAdapter.View
                     clickListener.onItemClick(ViewHolder.this, itemView, getAdapterPosition());
                 }
             });
-
         }
 
         public void setItem(House.ParcelableData house) {

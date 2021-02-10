@@ -315,6 +315,7 @@ public class InfoFragment2 extends Fragment implements OnSaveDataListener, OnPag
         }
     }
 
+    @SuppressLint("DefaultLocale")
     private void readData(House.ParcelableData data) {
         binding.houseModify2EditTextAreaMeter.setText(String.valueOf(data.area_meter));
         binding.houseModify2EditTextRentAreaMeter.setText(String.valueOf(data.rent_area_meter));
@@ -325,7 +326,7 @@ public class InfoFragment2 extends Fragment implements OnSaveDataListener, OnPag
         binding.houseModify2EditTextBuildingFloor.setText(String.valueOf(data.building_floor));
 
         if (data.floor == -1) {
-            binding.houseModify2RadioButtonOutside.setChecked(true);
+            binding.houseModify2CheckBoxUnderground.setChecked(true);
 
         } else {
             binding.houseModify2EditTextFloor.setText(String.valueOf(data.floor));
@@ -344,7 +345,7 @@ public class InfoFragment2 extends Fragment implements OnSaveDataListener, OnPag
         binding.houseModify2SpinnerDirection.setSelection(data.direction);
         binding.houseModify2TextViewBuiltDate.setText(data.built_date);
 
-        if (data.move_date.equals("")) {
+        if (data.move_date != null && data.move_date.equals("")) {
             binding.houseModify2CheckBoxMoveNow.setChecked(true);
 
         } else {
@@ -373,6 +374,9 @@ public class InfoFragment2 extends Fragment implements OnSaveDataListener, OnPag
         if (mode.equals("modify")) {
             House.ParcelableData data = intent.getParcelableExtra("house_value");
             readData(data);
+
+        } else if (SendData.getInstance().house != null) {
+            readData(SendData.getInstance().house);
         }
     }
 

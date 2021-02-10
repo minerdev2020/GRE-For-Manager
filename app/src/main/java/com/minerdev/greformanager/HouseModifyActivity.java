@@ -31,6 +31,13 @@ public class HouseModifyActivity extends AppCompatActivity {
 
         @Override
         public void onPageSelected(int position) {
+            if (adapter.getItem(position) instanceof OnPageSelectedListener) {
+                OnPageSelectedListener listener1 = (OnPageSelectedListener) adapter.getItem(position);
+                if (listener1 != null) {
+                    listener1.initData();
+                }
+            }
+
             switch (position) {
                 case 0:
                     button_previous.setEnabled(false);
@@ -112,7 +119,10 @@ public class HouseModifyActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("저장하지 않고 돌아가시겠습니까?");
         builder.setIcon(R.drawable.ic_round_help_24);
-        builder.setPositiveButton("확인", (dialog, which) -> HouseModifyActivity.super.finish());
+        builder.setPositiveButton("확인", (dialog, which) -> {
+            SendData.getInstance().house = null;
+            HouseModifyActivity.super.finish();
+        });
 
         builder.setNegativeButton("취소", (dialog, which) -> dialog.dismiss());
 
@@ -151,16 +161,8 @@ public class HouseModifyActivity extends AppCompatActivity {
         OnSaveDataListener listener = (OnSaveDataListener) adapter.getItem(current);
         if (listener.checkData()) {
             listener.saveData();
-
-            if (adapter.getItem(current + 1) instanceof OnPageSelectedListener) {
-                OnPageSelectedListener listener1 = (OnPageSelectedListener) adapter.getItem(current + 1);
-                if (listener1 != null) {
-                    listener1.initData();
-                }
-            }
-
             viewPager.setCurrentItem(current + 1);
-            
+
         } else {
             Toast.makeText(getApplicationContext(), "error", Toast.LENGTH_SHORT).show();
         }
@@ -169,16 +171,29 @@ public class HouseModifyActivity extends AppCompatActivity {
     private void askSave() {
         hideKeyboard();
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("저장하시겠습니까?");
-        builder.setIcon(R.drawable.ic_round_help_24);
-        builder.setPositiveButton("확인", (dialog, which) -> {
-            SendData.getInstance().start(this);
-            HouseModifyActivity.super.finish();
-        });
-        builder.setNegativeButton("취소", (dialog, which) -> dialog.dismiss());
+        int current = viewPager.getCurrentItem();
+        OnSaveDataListener listener = (OnSaveDataListener) adapter.getItem(current);
+        if (listener.checkData()) {
+            listener.saveData();
 
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("저장하시겠습니까?");
+            builder.setIcon(R.drawable.ic_round_help_24);
+            builder.setPositiveButton("확인", (dialog, which) -> {
+                SendData.getInstance().start(this);
+
+                Intent intent = new Intent();
+                intent.putExtra("house_value", SendData.getInstance().house);
+                setResult(RESULT_OK, intent);
+                HouseModifyActivity.super.finish();
+            });
+            builder.setNegativeButton("취소", (dialog, which) -> dialog.dismiss());
+
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+
+        } else {
+            Toast.makeText(getApplicationContext(), "error", Toast.LENGTH_SHORT).show();
+        }
     }
 }

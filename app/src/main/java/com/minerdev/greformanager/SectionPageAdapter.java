@@ -3,11 +3,11 @@ package com.minerdev.greformanager;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.fragment.app.FragmentStatePagerAdapter;
 
 import java.util.ArrayList;
 
-public class SectionPageAdapter extends FragmentPagerAdapter {
+public class SectionPageAdapter extends FragmentStatePagerAdapter {
     private final ArrayList<Fragment> fragmentList = new ArrayList<>();
     private final ArrayList<String> fragmentTitleList = new ArrayList<>();
 

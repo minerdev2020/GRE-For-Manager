@@ -42,6 +42,9 @@ public class InfoFragment3 extends Fragment implements OnSaveDataListener {
         if (mode.equals("modify")) {
             House.ParcelableData data = intent.getParcelableExtra("house_value");
             readData(data);
+
+        } else if (SendData.getInstance().house != null) {
+            readData(SendData.getInstance().house);
         }
 
         return binding.getRoot();
@@ -66,12 +69,14 @@ public class InfoFragment3 extends Fragment implements OnSaveDataListener {
     }
 
     private void readData(House.ParcelableData data) {
-        String[] optionsTexts = data.options.split("\\|");
-        for (String text : optionsTexts) {
-            toggleButtonGroupOptions.setToggleButtonCheckedState(text, true);
-        }
+        if (data.options != null && !data.options.equals("")) {
+            String[] optionsTexts = data.options.split("\\|");
+            for (String text : optionsTexts) {
+                toggleButtonGroupOptions.setToggleButtonCheckedState(text, true);
+            }
 
-        binding.houseModify3DetailInfo.setText(data.detail_info);
-        binding.houseModify3EditTextPhone.setText(data.phone);
+            binding.houseModify3DetailInfo.setText(data.detail_info);
+            binding.houseModify3EditTextPhone.setText(data.phone);
+        }
     }
 }

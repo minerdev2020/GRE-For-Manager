@@ -102,6 +102,17 @@ public class ToggleButtonGroup {
         return result.toString();
     }
 
+    public void resetToggleButtonCheckedState() {
+        if (toggleButtonCheckedStates.size() == 0) {
+            return;
+
+        } else {
+            for (ToggleButton button : toggleButtons) {
+                button.setChecked(false);
+            }
+        }
+    }
+
     public void addToggleButton(String text) {
         ToggleButton toggleButton = new ToggleButton(context);
         toggleButton.setLayoutParams(new ViewGroup.LayoutParams(

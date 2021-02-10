@@ -32,7 +32,7 @@ public class House {
     }
 
     public String getPaymentType() {
-        return Constants.getInstance().PAYMENT_TYPE.get(data.house_type).get(data.payment_type);
+        return Constants.getInstance().PAYMENT_TYPE.get(data.house_type - 1).get(data.payment_type);
     }
 
     public String getHouseType() {
@@ -138,11 +138,11 @@ public class House {
     }
 
     public boolean getState() {
-        return data.state == Constants.getInstance().SOLD_OUT;
+        return data.state == Constants.getInstance().SOLD;
     }
 
     public void setState(boolean isSoldOut) {
-        data.state = (byte) (isSoldOut ? Constants.getInstance().SOLD_OUT : Constants.getInstance().SALE);
+        data.state = (byte) (isSoldOut ? Constants.getInstance().SOLD : Constants.getInstance().SALE);
     }
 
     public ParcelableData getData() {
