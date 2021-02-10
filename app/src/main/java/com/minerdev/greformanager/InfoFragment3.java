@@ -42,8 +42,9 @@ public class InfoFragment3 extends Fragment implements OnSaveDataListener {
         if (mode.equals("modify")) {
             House.ParcelableData data = intent.getParcelableExtra("house_value");
             readData(data);
-
-        } else if (Repository.getInstance().house != null) {
+        }
+        // 이전 화면에서 돌아왔을때 다시 값 채워넣기 혹은 상세화면에서 넘어와서 정보 수정할때 값 채워넣기
+        else if (Repository.getInstance().house != null) {
             readData(Repository.getInstance().house);
         }
 

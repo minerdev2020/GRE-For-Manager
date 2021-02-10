@@ -201,9 +201,9 @@ public class House {
         public String updated_time;
         public String address;
         public String house_number;
-        public byte payment_type;
         public byte house_type;
         public byte facility;
+        public byte payment_type;
         public int price;
         public int deposit;
         public int monthly_rent;

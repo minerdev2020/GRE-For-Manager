@@ -29,6 +29,24 @@ public class SendData {
         return Holder.INSTANCE;
     }
 
+    public void start(Context context, HashMap<String, Object> data, String uri) {
+        String jsonUri = context.getResources().getString(R.string.web_server_dns) + "/" + uri;
+
+        Gson gson = new Gson();
+        String json = gson.toJson(data);
+        Log.d("SENDDATA", json);
+        sendJson(context, jsonUri, json);
+    }
+
+    public void start(Context context, House.ParcelableData data, String uri) {
+        String jsonUri = context.getResources().getString(R.string.web_server_dns) + "/" + uri;
+
+        Gson gson = new Gson();
+        String json = gson.toJson(data);
+        Log.d("SENDDATA", json);
+        sendJson(context, jsonUri, json);
+    }
+
     public void start(Context context, House.ParcelableData data, ArrayList<Uri> imageUris, String uri) {
         String jsonUri = context.getResources().getString(R.string.web_server_dns) + "/" + uri;
 

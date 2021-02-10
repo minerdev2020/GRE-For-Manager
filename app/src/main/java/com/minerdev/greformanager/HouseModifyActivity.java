@@ -190,6 +190,8 @@ public class HouseModifyActivity extends AppCompatActivity {
                 Intent intent = new Intent();
                 intent.putExtra("house_value", Repository.getInstance().house);
                 setResult(RESULT_OK, intent);
+
+                Repository.getInstance().house = null;
                 HouseModifyActivity.super.finish();
             });
             builder.setNegativeButton("취소", (dialog, which) -> dialog.dismiss());

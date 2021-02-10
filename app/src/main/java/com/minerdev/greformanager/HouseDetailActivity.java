@@ -21,6 +21,8 @@ import com.naver.maps.map.MapFragment;
 import com.naver.maps.map.UiSettings;
 import com.naver.maps.map.overlay.Marker;
 
+import java.util.HashMap;
+
 public class HouseDetailActivity extends AppCompatActivity {
     private final ImageAdapter adapter = new ImageAdapter(this);
     private House house;
@@ -99,8 +101,12 @@ public class HouseDetailActivity extends AppCompatActivity {
 
     @Override
     public void finish() {
-//        SendData.getInstance().house = house.getData();
-//        SendData.getInstance().start(this, "updateDB.php");
+        if (originalState != house.getData().state) {
+            HashMap<String, Object> data = new HashMap<>();
+            data.put("id", house.getData().id);
+            data.put("state", (int) house.getData().state);
+            SendData.getInstance().start(this, data, "updateDB.php");
+        }
 
         Intent intent = new Intent();
         intent.putExtra("original_state", originalState);
