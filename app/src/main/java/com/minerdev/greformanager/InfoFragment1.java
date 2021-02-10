@@ -24,12 +24,13 @@ import com.minerdev.greformanager.databinding.FragmentInfo1Binding;
 public class InfoFragment1 extends Fragment implements OnSaveDataListener {
     private final Handler handler = new Handler();
 
-    public String houseType;
-    public String paymentType;
+    private String houseType;
+    private String paymentType;
 
     private ArrayAdapter<String> arrayAdapterPayment;
     private ToggleButtonGroup toggleButtonGroupManageFeeContains;
     private Dialog addressDialog;
+    private boolean isFirst = true;
 
     private FragmentInfo1Binding binding;
 
@@ -66,6 +67,9 @@ public class InfoFragment1 extends Fragment implements OnSaveDataListener {
         if (mode.equals("modify")) {
             House.ParcelableData data = intent.getParcelableExtra("house_value");
             readData(data);
+
+        } else {
+            isFirst = false;
         }
 
         return binding.getRoot();
@@ -134,7 +138,6 @@ public class InfoFragment1 extends Fragment implements OnSaveDataListener {
     private void setSpinners() {
         // 계약 형태 초기화
         arrayAdapterPayment = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item);
-
         binding.houseModify1SpinnerPaymentType.setAdapter(arrayAdapterPayment);
         binding.houseModify1SpinnerPaymentType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -151,7 +154,6 @@ public class InfoFragment1 extends Fragment implements OnSaveDataListener {
         // 매물 종류 초기화
         ArrayAdapter<String> arrayAdapterHouse = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item);
         arrayAdapterHouse.addAll(getResources().getStringArray(R.array.houseType));
-
         binding.houseModify1SpinnerHouseType.setAdapter(arrayAdapterHouse);
         binding.houseModify1SpinnerHouseType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -217,11 +219,6 @@ public class InfoFragment1 extends Fragment implements OnSaveDataListener {
     private void onPaymentTypeItemSelected(AdapterView<?> parent, View view, int position, long id) {
         paymentType = binding.houseModify1SpinnerPaymentType.getSelectedItem().toString();
 
-        binding.houseModify1EditTextPrice.setText("");
-        binding.houseModify1EditTextDeposit.setText("");
-        binding.houseModify1EditTextMonthlyRent.setText("");
-        binding.houseModify1EditTextPremium.setText("");
-
         if (paymentType.equals("월세") || paymentType.equals("단기임대") || paymentType.equals("임대")) {
             binding.houseModify1TableRowPrice.setVisibility(View.GONE);
             binding.houseModify1TableRowDeposit.setVisibility(View.VISIBLE);
@@ -239,36 +236,52 @@ public class InfoFragment1 extends Fragment implements OnSaveDataListener {
         } else {
             binding.houseModify1TableRowPremium.setVisibility(View.GONE);
         }
+
+        if (isFirst) {
+            isFirst = false;
+
+        } else {
+            binding.houseModify1EditTextPrice.setText("");
+            binding.houseModify1EditTextDeposit.setText("");
+            binding.houseModify1EditTextMonthlyRent.setText("");
+            binding.houseModify1EditTextPremium.setText("");
+        }
     }
 
     private void onHouseTypeItemSelected(AdapterView<?> parent, View view, int position, long id) {
         houseType = binding.houseModify1SpinnerHouseType.getSelectedItem().toString();
 
-        if (position > 0) {
-            arrayAdapterPayment.clear();
-            arrayAdapterPayment.addAll(Constants.getInstance().PAYMENT_TYPE.get(position - 1));
-            binding.houseModify1SpinnerPaymentType.setSelection(0);
-
-        } else {
-            arrayAdapterPayment.clear();
-        }
-
-
         // 시설 유무 초기화
         binding.houseModify1CheckBoxFacility.setEnabled(houseType.equals("상가, 점포"));
-        binding.houseModify1CheckBoxFacility.setChecked(false);
+
+        if (isFirst) {
+
+        } else {
+            if (position > 0) {
+                arrayAdapterPayment.clear();
+                arrayAdapterPayment.addAll(Constants.getInstance().PAYMENT_TYPE.get(position - 1));
+                binding.houseModify1SpinnerPaymentType.setSelection(0);
+
+            } else {
+                arrayAdapterPayment.clear();
+            }
+
+            binding.houseModify1CheckBoxFacility.setChecked(false);
+        }
     }
 
     private void readData(House.ParcelableData data) {
+        houseType = getResources().getStringArray(R.array.houseType)[data.house_type];
+        paymentType = Constants.getInstance().PAYMENT_TYPE.get(data.house_type - 1).get(data.payment_type);
+
         binding.houseModify1TextViewAddress.setText(data.address);
         binding.houseModify1EditTextNumber.setText(data.house_number);
         binding.houseModify1SpinnerHouseType.setSelection(data.house_type);
 
-        arrayAdapterPayment.clear();
         arrayAdapterPayment.addAll(Constants.getInstance().PAYMENT_TYPE.get(data.house_type - 1));
+        binding.houseModify1SpinnerPaymentType.setSelection(data.payment_type);
 
         binding.houseModify1CheckBoxFacility.setChecked(data.facility == 1);
-        binding.houseModify1SpinnerPaymentType.setSelection(data.payment_type);
         binding.houseModify1EditTextPrice.setText(String.valueOf(data.price));
         binding.houseModify1EditTextDeposit.setText(String.valueOf(data.deposit));
         binding.houseModify1EditTextMonthlyRent.setText(String.valueOf(data.monthly_rent));

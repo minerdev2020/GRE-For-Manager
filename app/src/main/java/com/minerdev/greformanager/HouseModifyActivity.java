@@ -152,15 +152,15 @@ public class HouseModifyActivity extends AppCompatActivity {
         if (listener.checkData()) {
             listener.saveData();
 
-            viewPager.setCurrentItem(current + 1);
-
-            if (adapter.getItem(current) instanceof OnPageSelectedListener) {
-                OnPageSelectedListener listener1 = (OnPageSelectedListener) adapter.getItem(current);
+            if (adapter.getItem(current + 1) instanceof OnPageSelectedListener) {
+                OnPageSelectedListener listener1 = (OnPageSelectedListener) adapter.getItem(current + 1);
                 if (listener1 != null) {
                     listener1.initData();
                 }
             }
 
+            viewPager.setCurrentItem(current + 1);
+            
         } else {
             Toast.makeText(getApplicationContext(), "error", Toast.LENGTH_SHORT).show();
         }

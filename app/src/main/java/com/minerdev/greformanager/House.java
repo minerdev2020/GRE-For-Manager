@@ -98,7 +98,7 @@ public class House {
     }
 
     public String getFloor() {
-        return data.floor + "층";
+        return data.floor > 0 ? data.floor + "층" : "반지하";
     }
 
     public String getStructure() {

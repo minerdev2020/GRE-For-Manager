@@ -19,7 +19,7 @@ import androidx.fragment.app.Fragment;
 import com.minerdev.greformanager.databinding.FragmentInfo2Binding;
 
 public class InfoFragment2 extends Fragment implements OnSaveDataListener, OnPageSelectedListener {
-    public String houseType;
+    private String houseType;
 
     private FragmentInfo2Binding binding;
 
