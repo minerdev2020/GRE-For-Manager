@@ -100,7 +100,7 @@ public class HouseDetailActivity extends AppCompatActivity {
     @Override
     public void finish() {
 //        SendData.getInstance().house = house.getData();
-//        SendData.getInstance().start(this);
+//        SendData.getInstance().start(this, "updateDB.php");
 
         Intent intent = new Intent();
         intent.putExtra("original_state", originalState);

@@ -106,7 +106,7 @@ public class ImageFragment extends Fragment implements OnSaveDataListener {
 
     @Override
     public void saveData() {
-        SendData.getInstance().imageUris = imageListAdapter.getItems();
+        Repository.getInstance().imageUris = imageListAdapter.getItems();
     }
 
     public void showAlbum() {

@@ -65,15 +65,16 @@ public class InfoFragment1 extends Fragment implements OnSaveDataListener {
         Intent intent = getActivity().getIntent();
         String mode = intent.getStringExtra("mode");
         if (mode.equals("modify")) {
-            House.ParcelableData data = intent.getParcelableExtra("house_value");
-            readData(data);
+            Repository.getInstance().house = intent.getParcelableExtra("house_value");
 
         } else {
-            if (SendData.getInstance().house != null) {
-                readData(SendData.getInstance().house);
-            }
-
             isFirst = false;
+        }
+
+
+        // 이전 화면에서 돌아왔을때 다시 값 채워넣기 혹은 상세화면에서 넘어와서 정보 수정할때 값 채워넣기
+        if (Repository.getInstance().house != null) {
+            readData(Repository.getInstance().house);
         }
 
         return binding.getRoot();
@@ -129,7 +130,11 @@ public class InfoFragment1 extends Fragment implements OnSaveDataListener {
 
     @Override
     public void saveData() {
-        House.ParcelableData data = new House.ParcelableData();
+        if (Repository.getInstance().house == null) {
+            Repository.getInstance().house = new House.ParcelableData();
+        }
+
+        House.ParcelableData data = Repository.getInstance().house;
 
         data.address = binding.houseModify1TextViewAddress.getText().toString();
         data.house_number = binding.houseModify1EditTextNumber.getText().toString();
@@ -142,8 +147,36 @@ public class InfoFragment1 extends Fragment implements OnSaveDataListener {
         data.premium = parseInt(binding.houseModify1EditTextPremium.getText().toString());
         data.manage_fee = parseInt(binding.houseModify1EditTextManageFee.getText().toString());
         data.manage_fee_contains = toggleButtonGroupManageFeeContains.getCheckedToggleButtonTextsInSingleLine();
+    }
 
-        SendData.getInstance().house = data;
+    private void readData(House.ParcelableData data) {
+        houseType = getResources().getStringArray(R.array.houseType)[data.house_type];
+        paymentType = Constants.getInstance().PAYMENT_TYPE.get(data.house_type - 1).get(data.payment_type);
+
+        binding.houseModify1TextViewAddress.setText(data.address);
+        binding.houseModify1EditTextNumber.setText(data.house_number);
+        binding.houseModify1SpinnerHouseType.setSelection(data.house_type);
+
+        arrayAdapterPayment.addAll(Constants.getInstance().PAYMENT_TYPE.get(data.house_type - 1));
+        binding.houseModify1SpinnerPaymentType.setSelection(data.payment_type);
+
+        binding.houseModify1CheckBoxFacility.setChecked(data.facility == 1);
+        binding.houseModify1EditTextPrice.setText(String.valueOf(data.price));
+        binding.houseModify1EditTextDeposit.setText(String.valueOf(data.deposit));
+        binding.houseModify1EditTextMonthlyRent.setText(String.valueOf(data.monthly_rent));
+        binding.houseModify1EditTextPremium.setText(String.valueOf(data.premium));
+
+        if (data.manage_fee > 0) {
+            binding.houseModify1CheckBoxManageFee.setChecked(false);
+            binding.houseModify1EditTextManageFee.setText(String.valueOf(data.manage_fee));
+        }
+
+        if (data.manage_fee_contains != null && !data.manage_fee_contains.equals("")) {
+            String[] manageFeeTexts = data.manage_fee_contains.split("\\|");
+            for (String text : manageFeeTexts) {
+                toggleButtonGroupManageFeeContains.setToggleButtonCheckedState(text, true);
+            }
+        }
     }
 
     private void setSpinners() {
@@ -279,36 +312,6 @@ public class InfoFragment1 extends Fragment implements OnSaveDataListener {
             }
 
             binding.houseModify1CheckBoxFacility.setChecked(false);
-        }
-    }
-
-    private void readData(House.ParcelableData data) {
-        houseType = getResources().getStringArray(R.array.houseType)[data.house_type];
-        paymentType = Constants.getInstance().PAYMENT_TYPE.get(data.house_type - 1).get(data.payment_type);
-
-        binding.houseModify1TextViewAddress.setText(data.address);
-        binding.houseModify1EditTextNumber.setText(data.house_number);
-        binding.houseModify1SpinnerHouseType.setSelection(data.house_type);
-
-        arrayAdapterPayment.addAll(Constants.getInstance().PAYMENT_TYPE.get(data.house_type - 1));
-        binding.houseModify1SpinnerPaymentType.setSelection(data.payment_type);
-
-        binding.houseModify1CheckBoxFacility.setChecked(data.facility == 1);
-        binding.houseModify1EditTextPrice.setText(String.valueOf(data.price));
-        binding.houseModify1EditTextDeposit.setText(String.valueOf(data.deposit));
-        binding.houseModify1EditTextMonthlyRent.setText(String.valueOf(data.monthly_rent));
-        binding.houseModify1EditTextPremium.setText(String.valueOf(data.premium));
-
-        if (data.manage_fee > 0) {
-            binding.houseModify1CheckBoxManageFee.setChecked(false);
-            binding.houseModify1EditTextManageFee.setText(String.valueOf(data.manage_fee));
-        }
-
-        if (data.manage_fee_contains != null && !data.manage_fee_contains.equals("")) {
-            String[] manageFeeTexts = data.manage_fee_contains.split("\\|");
-            for (String text : manageFeeTexts) {
-                toggleButtonGroupManageFeeContains.setToggleButtonCheckedState(text, true);
-            }
         }
     }
 

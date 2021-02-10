@@ -59,7 +59,7 @@ public class HouseListAdapter extends RecyclerView.Adapter<HouseListAdapter.View
         }
     }
 
-    public void resetItems() {
+    public void resetSearchResults() {
         keyword = null;
         searchResults.clear();
     }
@@ -78,6 +78,10 @@ public class HouseListAdapter extends RecyclerView.Adapter<HouseListAdapter.View
 
     public void setItems(ArrayList<House.ParcelableData> items) {
         this.items = items;
+    }
+
+    public void clearItems() {
+        items.clear();
     }
 
     public interface OnItemClickListener {

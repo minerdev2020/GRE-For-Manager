@@ -16,9 +16,9 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 public class HouseModifyActivity extends AppCompatActivity {
+    private static String mode;
     private final SectionPageAdapter adapter = new SectionPageAdapter(getSupportFragmentManager(),
             FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
-
     private NonSwipeViewPager viewPager;
     private Button button_next;
     private Button button_previous;
@@ -75,7 +75,7 @@ public class HouseModifyActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
-        String mode = intent.getStringExtra("mode");
+        mode = intent.getStringExtra("mode");
         if (mode.equals("add")) {
             actionBar.setTitle("매물 추가");
 
@@ -120,7 +120,7 @@ public class HouseModifyActivity extends AppCompatActivity {
         builder.setMessage("저장하지 않고 돌아가시겠습니까?");
         builder.setIcon(R.drawable.ic_round_help_24);
         builder.setPositiveButton("확인", (dialog, which) -> {
-            SendData.getInstance().house = null;
+            Repository.getInstance().house = null;
             HouseModifyActivity.super.finish();
         });
 
@@ -180,10 +180,15 @@ public class HouseModifyActivity extends AppCompatActivity {
             builder.setMessage("저장하시겠습니까?");
             builder.setIcon(R.drawable.ic_round_help_24);
             builder.setPositiveButton("확인", (dialog, which) -> {
-                SendData.getInstance().start(this);
+                if (mode.equals("add")) {
+                    SendData.getInstance().start(this, Repository.getInstance().house, null, "insertDB.php");
+
+                } else if (mode.equals("modify")) {
+                    SendData.getInstance().start(this, Repository.getInstance().house, null, "updateDB.php");
+                }
 
                 Intent intent = new Intent();
-                intent.putExtra("house_value", SendData.getInstance().house);
+                intent.putExtra("house_value", Repository.getInstance().house);
                 setResult(RESULT_OK, intent);
                 HouseModifyActivity.super.finish();
             });

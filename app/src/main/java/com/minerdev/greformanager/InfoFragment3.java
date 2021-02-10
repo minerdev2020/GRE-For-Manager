@@ -43,8 +43,8 @@ public class InfoFragment3 extends Fragment implements OnSaveDataListener {
             House.ParcelableData data = intent.getParcelableExtra("house_value");
             readData(data);
 
-        } else if (SendData.getInstance().house != null) {
-            readData(SendData.getInstance().house);
+        } else if (Repository.getInstance().house != null) {
+            readData(Repository.getInstance().house);
         }
 
         return binding.getRoot();
@@ -61,7 +61,7 @@ public class InfoFragment3 extends Fragment implements OnSaveDataListener {
 
     @Override
     public void saveData() {
-        House.ParcelableData data = SendData.getInstance().house;
+        House.ParcelableData data = Repository.getInstance().house;
 
         data.options = toggleButtonGroupOptions.getCheckedToggleButtonTextsInSingleLine();
         data.detail_info = binding.houseModify3DetailInfo.getText().toString();

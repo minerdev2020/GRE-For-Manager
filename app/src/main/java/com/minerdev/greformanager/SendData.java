@@ -21,9 +21,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class SendData {
-    public ArrayList<Uri> imageUris = new ArrayList<>();
-    public House.ParcelableData house;
-
     private SendData() {
 
     }
@@ -32,17 +29,17 @@ public class SendData {
         return Holder.INSTANCE;
     }
 
-    public void start(Context context) {
-        String uri = context.getResources().getString(R.string.web_server_dns) + "/insertDB.php";
+    public void start(Context context, House.ParcelableData data, ArrayList<Uri> imageUris, String uri) {
+        String jsonUri = context.getResources().getString(R.string.web_server_dns) + "/" + uri;
 
         Gson gson = new Gson();
-        String json = gson.toJson(house);
+        String json = gson.toJson(data);
         Log.d("SENDDATA", json);
-        sendJson(context, uri, json);
+        sendJson(context, jsonUri, json);
 
-        for (Uri imageUri : imageUris) {
-            sendImage(context, uri, imageUri);
-        }
+//        for (Uri imageUri : imageUris) {
+//            sendImage(context, jsonUri, imageUri);
+//        }
     }
 
     private void sendJson(Context context, String address, String json) {

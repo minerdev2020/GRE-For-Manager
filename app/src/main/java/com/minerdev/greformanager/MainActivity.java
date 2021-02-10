@@ -117,10 +117,10 @@ public class MainActivity extends AppCompatActivity {
         searchView.setOnCloseListener(() -> {
             searchView.onActionViewCollapsed();
 
-            saleAdapter.resetItems();
+            saleAdapter.resetSearchResults();
             saleAdapter.notifyDataSetChanged();
 
-            soldAdapter.resetItems();
+            soldAdapter.resetSearchResults();
             soldAdapter.notifyDataSetChanged();
 
             return true;
@@ -272,6 +272,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void readItems() {
         ReceiveData.getInstance().start(this, list -> {
+            saleAdapter.clearItems();
+            soldAdapter.clearItems();
+
             // 매물의 판매 상태에 따라 분류
             for (House.ParcelableData item : list) {
                 if (item.state == Constants.getInstance().SALE) {
