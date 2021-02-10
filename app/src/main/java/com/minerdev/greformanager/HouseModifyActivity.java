@@ -37,12 +37,13 @@ public class HouseModifyActivity extends AppCompatActivity {
                     break;
 
                 case 1:
+                case 2:
                     button_previous.setEnabled(true);
                     button_next.setVisibility(View.VISIBLE);
                     button_save.setVisibility(View.GONE);
                     break;
 
-                case 2:
+                case 3:
                     button_next.setVisibility(View.GONE);
                     button_save.setVisibility(View.VISIBLE);
                     break;
@@ -128,9 +129,10 @@ public class HouseModifyActivity extends AppCompatActivity {
         viewPager = findViewById(R.id.house_modify_viewPager);
         viewPager.addOnPageChangeListener(onPageChangeListener);
 
-        adapter.addFragment(new InfoFragment(), "매물 정보 입력");
+        adapter.addFragment(new InfoFragment1(), "매물 정보 입력");
+        adapter.addFragment(new InfoFragment2(), "매물 정보 입력");
+        adapter.addFragment(new InfoFragment3(), "매물 정보 입력");
         adapter.addFragment(new ImageFragment(), "매물 사진 선택");
-        adapter.addFragment(new PreviewFragment(), "미리보기");
 
         viewPager.setAdapter(adapter);
     }
@@ -149,6 +151,14 @@ public class HouseModifyActivity extends AppCompatActivity {
         OnSaveDataListener listener = (OnSaveDataListener) adapter.getItem(current);
         if (listener.checkData()) {
             listener.saveData();
+
+            if (current + 1 < adapter.getCount() && adapter.getItem(current + 1) instanceof OnPageSelectedListener) {
+                OnPageSelectedListener listener1 = (OnPageSelectedListener) adapter.getItem(current + 1);
+                if (listener1 != null) {
+                    listener1.initData();
+                }
+            }
+
             viewPager.setCurrentItem(current + 1);
 
         } else {

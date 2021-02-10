@@ -18,6 +18,8 @@ public class Constants {
     public final ArrayList<String> DIRECTION = new ArrayList<>();
     public final ArrayList<String> BATHROOM = new ArrayList<>();
 
+    private boolean isInitialized = false;
+
     private Constants() {
 
     }
@@ -27,16 +29,20 @@ public class Constants {
     }
 
     public void initialize(Context context) {
-        Collections.addAll(HOUSE_TYPE, context.getResources().getStringArray(R.array.houseType));
-        String[] temp = context.getResources().getStringArray(R.array.paymentType);
-        for (int i = 0; i < HOUSE_TYPE.size() - 1; i++) {
-            ArrayList<String> list = new ArrayList<>(Arrays.asList(temp[i].split(" ")));
-            PAYMENT_TYPE.add(list);
-        }
+        if (!isInitialized) {
+            Collections.addAll(HOUSE_TYPE, context.getResources().getStringArray(R.array.houseType));
+            String[] temp = context.getResources().getStringArray(R.array.paymentType);
+            for (int i = 0; i < HOUSE_TYPE.size() - 1; i++) {
+                ArrayList<String> list = new ArrayList<>(Arrays.asList(temp[i].split(" ")));
+                PAYMENT_TYPE.add(list);
+            }
 
-        Collections.addAll(STRUCTURE, context.getResources().getStringArray(R.array.structure));
-        Collections.addAll(DIRECTION, context.getResources().getStringArray(R.array.direction));
-        Collections.addAll(BATHROOM, context.getResources().getStringArray(R.array.bathroom));
+            Collections.addAll(STRUCTURE, context.getResources().getStringArray(R.array.structure));
+            Collections.addAll(DIRECTION, context.getResources().getStringArray(R.array.direction));
+            Collections.addAll(BATHROOM, context.getResources().getStringArray(R.array.bathroom));
+
+            isInitialized = true;
+        }
     }
 
     private static class Holder {

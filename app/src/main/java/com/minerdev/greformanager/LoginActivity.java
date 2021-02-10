@@ -75,7 +75,7 @@ public class LoginActivity extends AppCompatActivity {
                 finish();
 
             } else {
-                Snackbar.make(view, "한 번 더 누르시면 종료됩니다.", Snackbar.LENGTH_LONG).show();
+                Snackbar.make(view, "아이디나 패스워드가 틀렸습니다!", Snackbar.LENGTH_LONG).show();
                 editText_pw.setText("");
             }
 
