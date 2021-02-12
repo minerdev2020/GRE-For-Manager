@@ -14,14 +14,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.BindingConversion;
 import androidx.databinding.DataBindingUtil;
 
+import com.android.volley.Request;
+import com.google.gson.JsonObject;
 import com.minerdev.greformanager.databinding.ActivityHouseDetailBinding;
 import com.naver.maps.geometry.LatLng;
 import com.naver.maps.map.CameraUpdate;
 import com.naver.maps.map.MapFragment;
 import com.naver.maps.map.UiSettings;
 import com.naver.maps.map.overlay.Marker;
-
-import java.util.HashMap;
 
 public class HouseDetailActivity extends AppCompatActivity {
     private final ImageAdapter adapter = new ImageAdapter(this);
@@ -102,10 +102,12 @@ public class HouseDetailActivity extends AppCompatActivity {
     @Override
     public void finish() {
         if (originalState != house.getData().state) {
-            HashMap<String, Object> data = new HashMap<>();
-            data.put("id", house.getData().id);
-            data.put("state", (int) house.getData().state);
-            SendData.getInstance().start(this, data, "updateDB.php");
+            JsonObject data = new JsonObject();
+            data.addProperty("op", "replace");
+            data.addProperty("path", "state");
+            data.addProperty("value", house.getData().state);
+            HttpConnection.getInstance().send(this, Request.Method.PATCH,
+                    "houses/" + house.getData().id, data, null);
         }
 
         Intent intent = new Intent();

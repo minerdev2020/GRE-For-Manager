@@ -23,6 +23,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.navigation.NavigationView;
+import com.google.gson.Gson;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class MainActivity extends AppCompatActivity {
     private static final long FINISH_INTERVAL_TIME = 2000;
@@ -271,22 +275,33 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void readItems() {
-        ReceiveData.getInstance().start(this, list -> {
-            saleAdapter.clearItems();
-            soldAdapter.clearItems();
+        HttpConnection.getInstance().receive(this, "houses",
+                receivedData -> {
+                    Gson gson = new Gson();
+                    House.ParcelableData[] array = gson.fromJson(receivedData, House.ParcelableData[].class);
+                    if (array == null) {
+                        Toast.makeText(this, "데이터 수신 실패.", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
 
-            // 매물의 판매 상태에 따라 분류
-            for (House.ParcelableData item : list) {
-                if (item.state == Constants.getInstance().SALE) {
-                    saleAdapter.addItem(item);
+                    ArrayList<House.ParcelableData> list = new ArrayList<>();
+                    Collections.addAll(list, array);
 
-                } else {
-                    soldAdapter.addItem(item);
-                }
-            }
+                    saleAdapter.clearItems();
+                    soldAdapter.clearItems();
 
-            saleAdapter.notifyDataSetChanged();
-            soldAdapter.notifyDataSetChanged();
-        });
+                    // 매물의 판매 상태에 따라 분류
+                    for (House.ParcelableData item : list) {
+                        if (item.state == Constants.getInstance().SALE) {
+                            saleAdapter.addItem(item);
+
+                        } else {
+                            soldAdapter.addItem(item);
+                        }
+                    }
+
+                    saleAdapter.notifyDataSetChanged();
+                    soldAdapter.notifyDataSetChanged();
+                });
     }
 }

@@ -15,6 +15,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import com.android.volley.Request;
+
 public class HouseModifyActivity extends AppCompatActivity {
     private static String mode;
     private final SectionPageAdapter adapter = new SectionPageAdapter(getSupportFragmentManager(),
@@ -179,12 +181,14 @@ public class HouseModifyActivity extends AppCompatActivity {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage("저장하시겠습니까?");
             builder.setIcon(R.drawable.ic_round_help_24);
+
             builder.setPositiveButton("확인", (dialog, which) -> {
+                int id = Repository.getInstance().house.id;
                 if (mode.equals("add")) {
-                    SendData.getInstance().start(this, Repository.getInstance().house, null, "insertDB.php");
+                    add(id);
 
                 } else if (mode.equals("modify")) {
-                    SendData.getInstance().start(this, Repository.getInstance().house, null, "updateDB.php");
+                    modify(id);
                 }
 
                 Intent intent = new Intent();
@@ -194,6 +198,7 @@ public class HouseModifyActivity extends AppCompatActivity {
                 Repository.getInstance().house = null;
                 HouseModifyActivity.super.finish();
             });
+
             builder.setNegativeButton("취소", (dialog, which) -> dialog.dismiss());
 
             AlertDialog alertDialog = builder.create();
@@ -202,5 +207,21 @@ public class HouseModifyActivity extends AppCompatActivity {
         } else {
             Toast.makeText(getApplicationContext(), "error", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void add(int id) {
+        HttpConnection.getInstance().send(this, Request.Method.POST,
+                "houses", Repository.getInstance().house, null);
+
+        HttpConnection.getInstance().send(this, Request.Method.POST,
+                "houses/" + id + "/images", Repository.getInstance().imageUris, null);
+    }
+
+    private void modify(int id) {
+        HttpConnection.getInstance().send(this, Request.Method.PUT,
+                "houses/" + id, Repository.getInstance().house, null);
+
+        HttpConnection.getInstance().send(this, Request.Method.PUT,
+                "houses/" + id + "/images", Repository.getInstance().imageUris, null);
     }
 }
