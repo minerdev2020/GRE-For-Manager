@@ -37,20 +37,20 @@ public class HttpConnection {
     }
 
     public void receive(Context context, String uri, OnReceiveListener listener) {
-        String serverUri = context.getResources().getString(R.string.local_server_dns) + "/" + uri;
+        String serverUri = context.getResources().getString(R.string.web_server_dns) + "/" + uri;
         Log.d("SEND_DATA", serverUri);
         makeRequest(context, Request.Method.GET, serverUri, null, listener);
     }
 
     public void send(Context context, int method, String uri, JsonObject data, OnReceiveListener listener) {
-        String serverUri = context.getResources().getString(R.string.local_server_dns) + "/" + uri;
+        String serverUri = context.getResources().getString(R.string.web_server_dns) + "/" + uri;
         String json = data.toString();
         Log.d("SEND_DATA", json);
         makeRequest(context, method, serverUri, json, listener);
     }
 
     public void send(Context context, int method, String uri, House.ParcelableData data, OnReceiveListener listener) {
-        String serverUri = context.getResources().getString(R.string.local_server_dns) + "/" + uri;
+        String serverUri = context.getResources().getString(R.string.web_server_dns) + "/" + uri;
         Gson gson = new Gson();
         String json = gson.toJson(data);
         Log.d("SEND_DATA", json);
@@ -58,7 +58,7 @@ public class HttpConnection {
     }
 
     public void send(Context context, int method, String uri, ArrayList<Uri> imageUris, OnReceiveListener listener) {
-        String serverUri = context.getResources().getString(R.string.local_server_dns) + "/" + uri;
+        String serverUri = context.getResources().getString(R.string.web_server_dns) + "/" + uri;
 //        for (Uri imageUri : imageUris) {
 //            Log.d("SEND_DATA", imageUri.getPath());
 //            makeImageRequest(context, method, serverUri, imageUri, listener);
@@ -77,11 +77,17 @@ public class HttpConnection {
         ) {
             @Override
             public byte[] getBody() throws AuthFailureError {
+                if (json == null || json.equals(""))
+                    return super.getBody();
+
                 return json.getBytes(StandardCharsets.UTF_8);
             }
 
             @Override
             public String getBodyContentType() {
+                if (json == null || json.equals(""))
+                    return super.getBodyContentType();
+
                 return "application/json";
             }
         };
