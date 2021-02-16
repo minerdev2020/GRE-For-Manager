@@ -27,8 +27,8 @@ public class House {
         return data.address;
     }
 
-    public String getHouseNumber() {
-        return data.house_number;
+    public String getNumber() {
+        return data.number;
     }
 
     public String getPaymentType() {
@@ -129,7 +129,7 @@ public class House {
         return data.options;
     }
 
-    public String getDetailIfo() {
+    public String getDetailInfo() {
         return data.detail_info;
     }
 
@@ -200,7 +200,7 @@ public class House {
         public String created_time;
         public String updated_time;
         public String address;
-        public String house_number;
+        public String number;
         public byte house_type;
         public byte facility;
         public byte payment_type;
@@ -230,7 +230,7 @@ public class House {
             created_time = in.readString();
             updated_time = in.readString();
             address = in.readString();
-            house_number = in.readString();
+            number = in.readString();
             payment_type = in.readByte();
             house_type = in.readByte();
             facility = in.readByte();
@@ -271,7 +271,7 @@ public class House {
             parcel.writeString(created_time);
             parcel.writeString(updated_time);
             parcel.writeString(address);
-            parcel.writeString(house_number);
+            parcel.writeString(number);
             parcel.writeByte(payment_type);
             parcel.writeByte(house_type);
             parcel.writeByte(facility);

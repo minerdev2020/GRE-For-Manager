@@ -59,13 +59,13 @@ public class HouseDetailActivity extends AppCompatActivity {
         setMapFragment();
 
         ToggleButtonGroup toggleButtonGroupManageFee = new ToggleButtonGroup(this, "ManageFee");
-        toggleButtonGroupManageFee.addToggleButtons(house.getManageFeeContains().split("\\|"));
+        toggleButtonGroupManageFee.addToggleButtonsFromText(house.getManageFeeContains());
         for (ToggleButton toggleButton : toggleButtonGroupManageFee.getToggleButtons()) {
             binding.houseDetailFlowLayoutManageFee.addView(toggleButton);
         }
 
         ToggleButtonGroup toggleButtonGroupOptions = new ToggleButtonGroup(this, "Options");
-        toggleButtonGroupOptions.addToggleButtons(house.getOptions().split("\\|"));
+        toggleButtonGroupOptions.addToggleButtonsFromText(house.getOptions());
         for (ToggleButton toggleButton : toggleButtonGroupOptions.getToggleButtons()) {
             binding.houseDetailFlowLayoutOptions.addView(toggleButton);
         }
@@ -103,9 +103,7 @@ public class HouseDetailActivity extends AppCompatActivity {
     public void finish() {
         if (originalState != house.getData().state) {
             JsonObject data = new JsonObject();
-            data.addProperty("op", "replace");
-            data.addProperty("path", "state");
-            data.addProperty("value", house.getData().state);
+            data.addProperty("state", house.getData().state);
             HttpConnection.getInstance().send(this, Request.Method.PATCH,
                     "houses/" + house.getData().id, data, null);
         }

@@ -110,7 +110,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
-                                android:text="@{activity.house.houseNumber}"
+                                android:text="@{activity.house.number}"
                                 android:textSize="10sp" />
                         </LinearLayout>
 
@@ -511,7 +511,7 @@
                             android:layout_height="200dp"
                             android:gravity="left|top"
                             android:padding="10dp"
-                            android:text="@{activity.house.detailIfo}" />
+                            android:text="@{activity.house.detailInfo}" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>

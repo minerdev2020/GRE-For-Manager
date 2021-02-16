@@ -22,6 +22,7 @@ android {
         resValue "string", "client_id", (secureProps.getProperty("CLIENT_ID") ?: "")
         resValue "string", "client_secret", (secureProps.getProperty("CLIENT_SECRET") ?: "")
         resValue "string", "web_server_dns", (secureProps.getProperty("WEB_SERVER_DNS") ?: "")
+        resValue "string", "local_server_dns", (secureProps.getProperty("LOCAL_SERVER_DNS") ?: "")
     }
 
     buildTypes {

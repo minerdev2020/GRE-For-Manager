@@ -137,7 +137,7 @@ public class InfoFragment1 extends Fragment implements OnSaveDataListener {
         House.ParcelableData data = Repository.getInstance().house;
 
         data.address = binding.houseModify1TextViewAddress.getText().toString();
-        data.house_number = binding.houseModify1EditTextNumber.getText().toString();
+        data.number = binding.houseModify1EditTextNumber.getText().toString();
         data.house_type = (byte) binding.houseModify1SpinnerHouseType.getSelectedItemPosition();
         data.facility = (byte) (binding.houseModify1CheckBoxFacility.isChecked() ? 1 : 0);
         data.payment_type = (byte) binding.houseModify1SpinnerPaymentType.getSelectedItemPosition();
@@ -154,7 +154,7 @@ public class InfoFragment1 extends Fragment implements OnSaveDataListener {
         paymentType = Constants.getInstance().PAYMENT_TYPE.get(data.house_type - 1).get(data.payment_type);
 
         binding.houseModify1TextViewAddress.setText(data.address);
-        binding.houseModify1EditTextNumber.setText(data.house_number);
+        binding.houseModify1EditTextNumber.setText(data.number);
         binding.houseModify1SpinnerHouseType.setSelection(data.house_type);
 
         arrayAdapterPayment.addAll(Constants.getInstance().PAYMENT_TYPE.get(data.house_type - 1));
@@ -230,7 +230,7 @@ public class InfoFragment1 extends Fragment implements OnSaveDataListener {
         WebView webView = addressDialog.findViewById(R.id.address_dialog_button_webView);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.addJavascriptInterface(new AndroidBridge(), "GREApp");
-        webView.loadUrl(getString(R.string.web_server_dns) + "/get_daum_address.php");
+        webView.loadUrl(getString(R.string.local_server_dns) + "/daum-address");
 
         WindowManager.LayoutParams params = addressDialog.getWindow().getAttributes();
         params.width = ViewGroup.LayoutParams.MATCH_PARENT;

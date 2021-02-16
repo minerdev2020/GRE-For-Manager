@@ -7,366 +7,377 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <LinearLayout
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingHorizontal="5dp"
-            android:paddingVertical="10dp">
-
-            <TextView
-                style="@style/TextAppearance.AppCompat.Menu"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="위치 정보" />
+            android:layout_height="match_parent">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="10dp">
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="5dp"
+                    android:paddingVertical="10dp">
+
+                    <TextView
+                        style="@style/TextAppearance.AppCompat.Menu"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="위치 정보" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="10dp">
+
+                        <View style="@style/Divider" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/house_modify_1_textView_address"
+                                style="@style/TextAppearance.AppCompat.Body1"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:hint="주소를 선택해주세요." />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/house_modify_1_materialButton_search"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="검색"
+                                app:icon="@drawable/ic_round_search_24" />
+                        </LinearLayout>
+
+                        <View style="@style/Divider" />
+
+                    </LinearLayout>
+                </LinearLayout>
 
                 <View style="@style/Divider" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:orientation="horizontal">
+                    android:orientation="vertical"
+                    android:paddingHorizontal="5dp"
+                    android:paddingVertical="10dp">
 
                     <TextView
-                        android:id="@+id/house_modify_1_textView_address"
-                        style="@style/TextAppearance.AppCompat.Body1"
-                        android:layout_width="0dp"
+                        style="@style/TextAppearance.AppCompat.Menu"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:hint="주소를 선택해주세요." />
+                        android:text="거래 정보" />
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/house_modify_1_materialButton_search"
-                        android:layout_width="wrap_content"
+                    <TableLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="검색"
-                        app:icon="@drawable/ic_round_search_24" />
+                        android:padding="10dp"
+                        android:stretchColumns="1">
+
+                        <View style="@style/Divider" />
+
+                        <TableRow
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <TextView
+                                style="@style/TextAppearance.AppCompat.Body1"
+                                android:layout_width="@dimen/house_modify_text_width"
+                                android:layout_height="@dimen/house_modify_widget_height"
+                                android:gravity="center"
+                                android:text="매물 번호" />
+
+                            <EditText
+                                android:id="@+id/house_modify_1_editText_number"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="20dp"
+                                android:inputType="numberSigned" />
+                        </TableRow>
+
+                        <View style="@style/Divider" />
+
+                        <TableRow
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <TextView
+                                style="@style/TextAppearance.AppCompat.Body1"
+                                android:layout_width="@dimen/house_modify_text_width"
+                                android:layout_height="@dimen/house_modify_widget_height"
+                                android:gravity="center"
+                                android:text="매물 종류" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="horizontal">
+
+                                <Spinner
+                                    android:id="@+id/house_modify_1_spinner_houseType"
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:spinnerMode="dialog" />
+
+                                <Space
+                                    android:layout_width="10dp"
+                                    android:layout_height="wrap_content" />
+
+                                <CheckBox
+                                    android:id="@+id/house_modify_1_checkBox_facility"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:checked="false"
+                                    android:text="시설 있음" />
+                            </LinearLayout>
+                        </TableRow>
+
+                        <View style="@style/Divider" />
+
+                        <TableRow
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <TextView
+                                style="@style/TextAppearance.AppCompat.Body1"
+                                android:layout_width="@dimen/house_modify_text_width"
+                                android:layout_height="@dimen/house_modify_widget_height"
+                                android:gravity="center"
+                                android:text="계약 형태" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:gravity="center"
+                                android:orientation="horizontal"
+                                android:paddingHorizontal="40dp">
+
+                                <Spinner
+                                    android:id="@+id/house_modify_1_spinner_paymentType"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:spinnerMode="dialog" />
+                            </LinearLayout>
+                        </TableRow>
+
+                        <View style="@style/Divider" />
+
+                        <TableRow
+                            android:id="@+id/house_modify_1_tableRow_price"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <TextView
+                                style="@style/TextAppearance.AppCompat.Body1"
+                                android:layout_width="@dimen/house_modify_text_width"
+                                android:layout_height="@dimen/house_modify_widget_height"
+                                android:gravity="center"
+                                android:text="가격" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="horizontal"
+                                android:paddingHorizontal="40dp">
+
+                                <EditText
+                                    android:id="@+id/house_modify_1_editText_price"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:inputType="numberSigned" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center"
+                                    android:text="만원" />
+                            </LinearLayout>
+                        </TableRow>
+
+                        <TableRow
+                            android:id="@+id/house_modify_1_tableRow_deposit"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:visibility="gone">
+
+                            <TextView
+                                style="@style/TextAppearance.AppCompat.Body1"
+                                android:layout_width="@dimen/house_modify_text_width"
+                                android:layout_height="@dimen/house_modify_widget_height"
+                                android:gravity="center"
+                                android:text="보증금" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="horizontal"
+                                android:paddingHorizontal="40dp">
+
+                                <EditText
+                                    android:id="@+id/house_modify_1_editText_deposit"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:inputType="numberSigned" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center"
+                                    android:text="만원" />
+                            </LinearLayout>
+                        </TableRow>
+
+                        <TableRow
+                            android:id="@+id/house_modify_1_tableRow_monthly_rent"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:visibility="gone">
+
+                            <TextView
+                                style="@style/TextAppearance.AppCompat.Body1"
+                                android:layout_width="@dimen/house_modify_text_width"
+                                android:layout_height="@dimen/house_modify_widget_height"
+                                android:gravity="center"
+                                android:text="월세" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="horizontal"
+                                android:paddingHorizontal="40dp">
+
+                                <EditText
+                                    android:id="@+id/house_modify_1_editText_monthly_rent"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:inputType="numberSigned" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center"
+                                    android:text="만원" />
+                            </LinearLayout>
+                        </TableRow>
+
+                        <TableRow
+                            android:id="@+id/house_modify_1_tableRow_premium"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:visibility="gone">
+
+                            <TextView
+                                style="@style/TextAppearance.AppCompat.Body1"
+                                android:layout_width="@dimen/house_modify_text_width"
+                                android:layout_height="@dimen/house_modify_widget_height"
+                                android:gravity="center"
+                                android:text="권리금" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="horizontal"
+                                android:paddingHorizontal="40dp">
+
+                                <EditText
+                                    android:id="@+id/house_modify_1_editText_premium"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:inputType="numberSigned" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center"
+                                    android:text="만원" />
+                            </LinearLayout>
+                        </TableRow>
+
+                        <View style="@style/Divider" />
+
+                        <TableRow
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <TextView
+                                style="@style/TextAppearance.AppCompat.Body1"
+                                android:layout_width="@dimen/house_modify_text_width"
+                                android:layout_height="@dimen/house_modify_widget_height"
+                                android:gravity="center"
+                                android:text="관리비 정보" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="horizontal"
+                                android:paddingHorizontal="20dp">
+
+                                <EditText
+                                    android:id="@+id/house_modify_1_editText_manage_fee"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:enabled="false"
+                                    android:inputType="numberSigned" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center"
+                                    android:text="만원" />
+
+                                <Space
+                                    android:layout_width="10dp"
+                                    android:layout_height="wrap_content" />
+
+                                <CheckBox
+                                    android:id="@+id/house_modify_1_checkBox_manage_fee"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:checked="true"
+                                    android:text="관리비 없음" />
+                            </LinearLayout>
+                        </TableRow>
+
+                        <TableRow
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_span="2">
+
+                                <com.google.android.material.internal.FlowLayout
+                                    android:id="@+id/house_modify_1_flowLayout_manage_fee"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:visibility="gone" />
+                            </LinearLayout>
+                        </TableRow>
+
+                        <View style="@style/Divider" />
+
+                    </TableLayout>
                 </LinearLayout>
-
-                <View style="@style/Divider" />
-
             </LinearLayout>
-        </LinearLayout>
-
-        <View style="@style/Divider" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingHorizontal="5dp"
-            android:paddingVertical="10dp">
-
-            <TextView
-                style="@style/TextAppearance.AppCompat.Menu"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="거래 정보" />
-
-            <TableLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:stretchColumns="1">
-
-                <View style="@style/Divider" />
-
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <TextView
-                        style="@style/TextAppearance.AppCompat.Body1"
-                        android:layout_width="@dimen/house_modify_text_width"
-                        android:layout_height="@dimen/house_modify_widget_height"
-                        android:gravity="center"
-                        android:text="매물 번호" />
-
-                    <EditText
-                        android:id="@+id/house_modify_1_editText_number"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="20dp"
-                        android:inputType="numberSigned" />
-                </TableRow>
-
-                <View style="@style/Divider" />
-
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <TextView
-                        style="@style/TextAppearance.AppCompat.Body1"
-                        android:layout_width="@dimen/house_modify_text_width"
-                        android:layout_height="@dimen/house_modify_widget_height"
-                        android:gravity="center"
-                        android:text="매물 종류" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal">
-
-                        <Spinner
-                            android:id="@+id/house_modify_1_spinner_houseType"
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:spinnerMode="dialog" />
-
-                        <Space
-                            android:layout_width="10dp"
-                            android:layout_height="wrap_content" />
-
-                        <CheckBox
-                            android:id="@+id/house_modify_1_checkBox_facility"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:checked="false"
-                            android:text="시설 있음" />
-                    </LinearLayout>
-                </TableRow>
-
-                <View style="@style/Divider" />
-
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <TextView
-                        style="@style/TextAppearance.AppCompat.Body1"
-                        android:layout_width="@dimen/house_modify_text_width"
-                        android:layout_height="@dimen/house_modify_widget_height"
-                        android:gravity="center"
-                        android:text="계약 형태" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:orientation="horizontal"
-                        android:paddingHorizontal="40dp">
-
-                        <Spinner
-                            android:id="@+id/house_modify_1_spinner_paymentType"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:spinnerMode="dialog" />
-                    </LinearLayout>
-                </TableRow>
-
-                <View style="@style/Divider" />
-
-                <TableRow
-                    android:id="@+id/house_modify_1_tableRow_price"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <TextView
-                        style="@style/TextAppearance.AppCompat.Body1"
-                        android:layout_width="@dimen/house_modify_text_width"
-                        android:layout_height="@dimen/house_modify_widget_height"
-                        android:gravity="center"
-                        android:text="가격" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal"
-                        android:paddingHorizontal="40dp">
-
-                        <EditText
-                            android:id="@+id/house_modify_1_editText_price"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:inputType="numberSigned" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:text="만원" />
-                    </LinearLayout>
-                </TableRow>
-
-                <TableRow
-                    android:id="@+id/house_modify_1_tableRow_deposit"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:visibility="gone">
-
-                    <TextView
-                        style="@style/TextAppearance.AppCompat.Body1"
-                        android:layout_width="@dimen/house_modify_text_width"
-                        android:layout_height="@dimen/house_modify_widget_height"
-                        android:gravity="center"
-                        android:text="보증금" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal"
-                        android:paddingHorizontal="40dp">
-
-                        <EditText
-                            android:id="@+id/house_modify_1_editText_deposit"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:inputType="numberSigned" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:text="만원" />
-                    </LinearLayout>
-                </TableRow>
-
-                <TableRow
-                    android:id="@+id/house_modify_1_tableRow_monthly_rent"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:visibility="gone">
-
-                    <TextView
-                        style="@style/TextAppearance.AppCompat.Body1"
-                        android:layout_width="@dimen/house_modify_text_width"
-                        android:layout_height="@dimen/house_modify_widget_height"
-                        android:gravity="center"
-                        android:text="월세" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal"
-                        android:paddingHorizontal="40dp">
-
-                        <EditText
-                            android:id="@+id/house_modify_1_editText_monthly_rent"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:inputType="numberSigned" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:text="만원" />
-                    </LinearLayout>
-                </TableRow>
-
-                <TableRow
-                    android:id="@+id/house_modify_1_tableRow_premium"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:visibility="gone">
-
-                    <TextView
-                        style="@style/TextAppearance.AppCompat.Body1"
-                        android:layout_width="@dimen/house_modify_text_width"
-                        android:layout_height="@dimen/house_modify_widget_height"
-                        android:gravity="center"
-                        android:text="권리금" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal"
-                        android:paddingHorizontal="40dp">
-
-                        <EditText
-                            android:id="@+id/house_modify_1_editText_premium"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:inputType="numberSigned" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:text="만원" />
-                    </LinearLayout>
-                </TableRow>
-
-                <View style="@style/Divider" />
-
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <TextView
-                        style="@style/TextAppearance.AppCompat.Body1"
-                        android:layout_width="@dimen/house_modify_text_width"
-                        android:layout_height="@dimen/house_modify_widget_height"
-                        android:gravity="center"
-                        android:text="관리비 정보" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal"
-                        android:paddingHorizontal="20dp">
-
-                        <EditText
-                            android:id="@+id/house_modify_1_editText_manage_fee"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:enabled="false"
-                            android:inputType="numberSigned" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:text="만원" />
-
-                        <Space
-                            android:layout_width="10dp"
-                            android:layout_height="wrap_content" />
-
-                        <CheckBox
-                            android:id="@+id/house_modify_1_checkBox_manage_fee"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:checked="true"
-                            android:text="관리비 없음" />
-                    </LinearLayout>
-                </TableRow>
-
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_span="2">
-
-                        <com.google.android.material.internal.FlowLayout
-                            android:id="@+id/house_modify_1_flowLayout_manage_fee"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:visibility="gone" />
-                    </LinearLayout>
-                </TableRow>
-
-                <View style="@style/Divider" />
-
-            </TableLayout>
-        </LinearLayout>
+        </ScrollView>
     </LinearLayout>
 </layout>

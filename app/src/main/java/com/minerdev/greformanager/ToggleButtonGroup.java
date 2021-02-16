@@ -30,19 +30,10 @@ public class ToggleButtonGroup {
     }
 
     public ArrayList<ToggleButton> getToggleButtons() {
-        if (toggleButtons.size() == 0) {
-            return null;
-
-        } else {
-            return toggleButtons;
-        }
+        return toggleButtons;
     }
 
     public ArrayList<ToggleButton> getCheckedToggleButtons() {
-        if (toggleButtonCheckedStates.size() == 0) {
-            return null;
-        }
-
         final ArrayList<ToggleButton> checkedToggleButtons = new ArrayList<>();
         for (ToggleButton button : toggleButtons) {
             if (button.isChecked()) {
@@ -54,12 +45,7 @@ public class ToggleButtonGroup {
     }
 
     public HashMap<String, Boolean> getToggleButtonCheckedStates() {
-        if (toggleButtonCheckedStates.size() == 0) {
-            return null;
-
-        } else {
-            return toggleButtonCheckedStates;
-        }
+        return toggleButtonCheckedStates;
     }
 
     public Boolean getToggleButtonCheckedState(String buttonText) {
@@ -73,14 +59,11 @@ public class ToggleButtonGroup {
     }
 
     public void setToggleButtonCheckedState(String buttonText, boolean checked) {
-        if (toggleButtonCheckedStates.size() == 0) {
-            return;
-
-        } else {
+        if (toggleButtonCheckedStates.size() > 0) {
             for (ToggleButton button : toggleButtons) {
                 if (button.getText().equals(buttonText)) {
                     button.setChecked(checked);
-                    return;
+                    break;
                 }
             }
         }
@@ -114,23 +97,35 @@ public class ToggleButtonGroup {
     }
 
     public void addToggleButton(String text) {
-        ToggleButton toggleButton = new ToggleButton(context);
-        toggleButton.setLayoutParams(new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        );
-        toggleButton.setText(text);
-        toggleButton.setTextOn(text);
-        toggleButton.setTextOff(text);
-        toggleButton.setOnCheckedChangeListener((buttonView, isChecked) ->
-                toggleButtonCheckedStates.put(buttonView.getText().toString(), isChecked));
+        if (text != null && !text.equals("")) {
+            ToggleButton toggleButton = new ToggleButton(context);
+            toggleButton.setLayoutParams(new ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            );
+            toggleButton.setText(text);
+            toggleButton.setTextOn(text);
+            toggleButton.setTextOff(text);
+            toggleButton.setOnCheckedChangeListener((buttonView, isChecked) ->
+                    toggleButtonCheckedStates.put(buttonView.getText().toString(), isChecked));
 
-        toggleButtons.add(toggleButton);
-        toggleButtonCheckedStates.put(text, false);
+            toggleButtons.add(toggleButton);
+            toggleButtonCheckedStates.put(text, false);
+        }
     }
 
     public void addToggleButtons(String... texts) {
-        for (String text : texts) {
-            addToggleButton(text);
+        if (texts != null) {
+            for (String text : texts) {
+                if (!text.equals("")) {
+                    addToggleButton(text);
+                }
+            }
+        }
+    }
+
+    public void addToggleButtonsFromText(String text) {
+        if (text != null && !text.equals("")) {
+            addToggleButtons(text.split("\\|"));
         }
     }
 

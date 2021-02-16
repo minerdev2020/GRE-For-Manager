@@ -53,7 +53,7 @@ public class HouseListAdapter extends RecyclerView.Adapter<HouseListAdapter.View
         this.keyword = keyword;
         searchResults.clear();
         for (House.ParcelableData item : items) {
-            if (item.address.contains(keyword) || item.house_number.contains(keyword)){
+            if (item.address.contains(keyword) || item.number.contains(keyword)){
                 searchResults.add(item);
             }
         }
@@ -118,7 +118,7 @@ public class HouseListAdapter extends RecyclerView.Adapter<HouseListAdapter.View
             textView_payment.setText(house1.getPaymentType());
             textView_price.setText(house1.getPrice());
             textView_house_info.setText(house1.getHouseInfo());
-            textView_description.setText(house1.getDetailIfo());
+            textView_description.setText(house1.getDetailInfo());
             imageView_profile.setImageResource(R.drawable.house);
         }
     }

@@ -75,9 +75,9 @@ public class InfoFragment3 extends Fragment implements OnSaveDataListener {
             for (String text : optionsTexts) {
                 toggleButtonGroupOptions.setToggleButtonCheckedState(text, true);
             }
-
-            binding.houseModify3DetailInfo.setText(data.detail_info);
-            binding.houseModify3EditTextPhone.setText(data.phone);
         }
+
+        binding.houseModify3DetailInfo.setText(data.detail_info);
+        binding.houseModify3EditTextPhone.setText(data.phone);
     }
 }
