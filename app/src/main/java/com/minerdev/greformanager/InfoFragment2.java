@@ -157,7 +157,7 @@ public class InfoFragment2 extends Fragment implements OnSaveDataListener, OnPag
         binding.houseModify2SpinnerDirection.setSelection(data.direction);
         binding.houseModify2TextViewBuiltDate.setText(data.built_date);
 
-        if (data.move_date != null && data.move_date.equals("")) {
+        if (data.move_date == null || data.move_date.equals("")) {
             binding.houseModify2CheckBoxMoveNow.setChecked(true);
 
         } else {

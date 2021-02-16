@@ -22,6 +22,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -75,13 +76,13 @@ public class HttpConnection {
                 error -> Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show()
         ) {
             @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-                if (json != null) {
-                    params.put("data", json);
-                }
+            public byte[] getBody() throws AuthFailureError {
+                return json.getBytes(StandardCharsets.UTF_8);
+            }
 
-                return params;
+            @Override
+            public String getBodyContentType() {
+                return "application/json";
             }
         };
 

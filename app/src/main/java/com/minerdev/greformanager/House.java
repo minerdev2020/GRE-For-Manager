@@ -122,7 +122,7 @@ public class House {
     }
 
     public String getMoveDate() {
-        return data.move_date.equals("") ? "즉시 입주 가능" : data.move_date;
+        return (data.move_date == null || data.move_date.equals("")) ? "즉시 입주 가능" : data.move_date;
     }
 
     public String getOptions() {
