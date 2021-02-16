@@ -15,12 +15,12 @@ public class House {
         return String.valueOf(data.id);
     }
 
-    public String getCreatedTime() {
-        return data.created_time;
+    public String getCreatedAt() {
+        return data.created_at;
     }
 
-    public String getUpdatedTime() {
-        return data.updated_time;
+    public String getUpdatedAt() {
+        return data.updated_at;
     }
 
     public String getAddress() {
@@ -197,8 +197,8 @@ public class House {
         };
 
         public int id;
-        public String created_time;
-        public String updated_time;
+        public String created_at;
+        public String updated_at;
         public String address;
         public String number;
         public byte house_type;
@@ -227,8 +227,8 @@ public class House {
 
         protected ParcelableData(Parcel in) {
             id = in.readInt();
-            created_time = in.readString();
-            updated_time = in.readString();
+            created_at = in.readString();
+            updated_at = in.readString();
             address = in.readString();
             number = in.readString();
             payment_type = in.readByte();
@@ -268,8 +268,8 @@ public class House {
         @Override
         public void writeToParcel(Parcel parcel, int i) {
             parcel.writeInt(id);
-            parcel.writeString(created_time);
-            parcel.writeString(updated_time);
+            parcel.writeString(created_at);
+            parcel.writeString(updated_at);
             parcel.writeString(address);
             parcel.writeString(number);
             parcel.writeByte(payment_type);
