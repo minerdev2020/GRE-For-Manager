@@ -13,6 +13,7 @@ public class Constants {
     public final float METER_TO_PYEONG = 0.3025f;
     public final int HOUSE_DETAIL_ACTIVITY_REQUEST_CODE = 1;
     public final int HOUSE_MODIFY_ACTIVITY_REQUEST_CODE = 2;
+    public final long FILE_MAX_SIZE = 10485760;
 
     public final ArrayList<ArrayList<String>> PAYMENT_TYPE = new ArrayList<>();
     public final ArrayList<String> HOUSE_TYPE = new ArrayList<>();

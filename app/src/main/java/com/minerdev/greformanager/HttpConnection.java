@@ -1,16 +1,12 @@
 package com.minerdev.greformanager;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
-import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -18,9 +14,7 @@ import com.google.gson.JsonObject;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -70,11 +64,22 @@ public class HttpConnection {
         StringRequest request = new StringRequest(method, uri,
                 response -> {
                     Toast.makeText(context, "데이터 전송 성공.", Toast.LENGTH_SHORT).show();
+                    try {
+                        JSONObject obj = new JSONObject(response);
+                        Log.d("RECEIVE_DATA", obj.getString("message"));
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
                     if (listener != null) {
                         listener.onReceive(response);
                     }
                 },
-                error -> Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show()
+                error -> {
+                    Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.e("HTTP_ERROR", error.getMessage() == null ? "null" : error.getMessage());
+                }
         ) {
             @Override
             public byte[] getBody() throws AuthFailureError {
@@ -95,51 +100,33 @@ public class HttpConnection {
 
         // 이전 결과가 있더라도 새로 요청
         request.setShouldCache(false);
-        AppHelper.requestQueue.add(request);
+        AppHelper.getInstance().requestQueue.add(request);
     }
 
-
     private void makeImageRequest(Context context, int method, String uri, Uri imageUri, int position, OnReceiveListener listener) {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        File file = new File(getPathFromUri(context, imageUri));
-        FileInputStream inputStream;
-        byte[] buf = new byte[1024];
-        int size;
+        File file = new File(AppHelper.getInstance().getPathFromUri(context, imageUri));
+        String fileName = file.getName();
+        String fileExtension = fileName.substring(fileName.lastIndexOf(".") + 1);
+        String title = System.currentTimeMillis() + "." + fileExtension;
 
-        if (file.exists() && file.canRead()) {
-            try {
-                inputStream = new FileInputStream(file);
-                while ((size = inputStream.read(buf)) != -1) {
-                    byteArrayOutputStream.write(buf, 0, size);
-                }
-
-                inputStream.close();
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        String title = System.currentTimeMillis() + ".jpg";
         VolleyMultipartRequest request = new VolleyMultipartRequest(method, uri,
-                new Response.Listener<NetworkResponse>() {
-                    @Override
-                    public void onResponse(NetworkResponse response) {
-                        try {
-                            JSONObject obj = new JSONObject(new String(response.data));
-                            Toast.makeText(context, obj.getString("message"), Toast.LENGTH_SHORT).show();
+                response -> {
+                    Toast.makeText(context, "데이터 전송 성공.", Toast.LENGTH_SHORT).show();
+                    try {
+                        JSONObject obj = new JSONObject(new String(response.data));
+                        Log.d("RECEIVE_DATA", obj.getString("message"));
 
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    if (listener != null) {
+                        listener.onReceive(new String(response.data));
                     }
                 },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(context, error.getMessage(), Toast.LENGTH_LONG).show();
-                        Log.e("GotError", "" + error.getMessage());
-                    }
+                error -> {
+                    Toast.makeText(context, error.getMessage(), Toast.LENGTH_LONG).show();
+                    Log.e("HTTP_ERROR", error.getMessage() == null ? "null" : error.getMessage());
                 }
         ) {
             @Override
@@ -153,23 +140,14 @@ public class HttpConnection {
             @Override
             protected Map<String, DataPart> getByteData() {
                 Map<String, DataPart> params = new HashMap<>();
-                params.put("image", new DataPart(title, byteArrayOutputStream.toByteArray()));
+                params.put("image", new DataPart(title, AppHelper.getInstance().getByteArrayFromUri(context, imageUri)));
                 return params;
             }
         };
 
         // 이전 결과가 있더라도 새로 요청
         request.setShouldCache(false);
-        AppHelper.requestQueue.add(request);
-    }
-
-    public String getPathFromUri(Context context, Uri uri) {
-        Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
-        cursor.moveToNext();
-        String path = cursor.getString(cursor.getColumnIndex("_data"));
-        cursor.close();
-
-        return path;
+        AppHelper.getInstance().requestQueue.add(request);
     }
 
     public interface OnReceiveListener {

@@ -23,6 +23,8 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.File;
+
 public class ImageFragment extends Fragment implements OnSaveDataListener {
     private static final int GALLERY_REQUEST_CODE = 1;
     private final ImageListAdapter imageListAdapter = new ImageListAdapter();
@@ -67,8 +69,18 @@ public class ImageFragment extends Fragment implements OnSaveDataListener {
                     return;
                 }
 
-                imageListAdapter.addItem(selectedImageUri);
-                imageListAdapter.notifyDataSetChanged();
+                String path = AppHelper.getInstance().getPathFromUri(getContext(), selectedImageUri);
+                File file = new File(path);
+                if (!file.exists() || !file.canRead()) {
+                    Toast.makeText(getContext(), "사진이 존재 하지않거나 읽을 수 없습니다!", Toast.LENGTH_SHORT).show();
+
+                } else if (file.length() > Constants.getInstance().FILE_MAX_SIZE) {
+                    Toast.makeText(getContext(), "사진의 크기는 10MB 보다 작아야 합니다!", Toast.LENGTH_SHORT).show();
+
+                } else {
+                    imageListAdapter.addItem(selectedImageUri);
+                    imageListAdapter.notifyDataSetChanged();
+                }
             }
         }
     }

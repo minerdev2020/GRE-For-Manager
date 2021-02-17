@@ -68,7 +68,7 @@ public class Geocode {
         // 이전 결과가 있더라도 새로 요청
         request.setShouldCache(false);
 
-        AppHelper.requestQueue.add(request);
+        AppHelper.getInstance().requestQueue.add(request);
     }
 
     public interface OnDataReceiveListener {

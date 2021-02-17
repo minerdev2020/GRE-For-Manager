@@ -43,8 +43,8 @@ public class LoginActivity extends AppCompatActivity {
             finish();
         }
 
-        if (AppHelper.requestQueue == null)
-            AppHelper.requestQueue = Volley.newRequestQueue(getApplicationContext());
+        if (AppHelper.getInstance().requestQueue == null)
+            AppHelper.getInstance().requestQueue = Volley.newRequestQueue(getApplicationContext());
     }
 
     @Override
