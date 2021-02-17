@@ -20,6 +20,8 @@ public class Constants {
     public final ArrayList<String> DIRECTION = new ArrayList<>();
     public final ArrayList<String> BATHROOM = new ArrayList<>();
 
+    public String DNS;
+
     private boolean isInitialized = false;
 
     private Constants() {
@@ -42,6 +44,8 @@ public class Constants {
             Collections.addAll(STRUCTURE, context.getResources().getStringArray(R.array.structure));
             Collections.addAll(DIRECTION, context.getResources().getStringArray(R.array.direction));
             Collections.addAll(BATHROOM, context.getResources().getStringArray(R.array.bathroom));
+
+            DNS = context.getResources().getString(R.string.local_server_dns);
 
             isInitialized = true;
         }

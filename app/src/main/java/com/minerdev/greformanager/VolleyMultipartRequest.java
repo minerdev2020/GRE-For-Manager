@@ -64,9 +64,11 @@ public class VolleyMultipartRequest extends Request<NetworkResponse> {
             dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
 
             return bos.toByteArray();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         return null;
     }
 
@@ -86,6 +88,7 @@ public class VolleyMultipartRequest extends Request<NetworkResponse> {
             return Response.success(
                     response,
                     HttpHeaderParser.parseCacheHeaders(response));
+
         } catch (Exception e) {
             return Response.error(new ParseError(e));
         }
@@ -114,6 +117,7 @@ public class VolleyMultipartRequest extends Request<NetworkResponse> {
             for (Map.Entry<String, String> entry : params.entrySet()) {
                 buildTextPart(dataOutputStream, entry.getKey(), entry.getValue());
             }
+
         } catch (UnsupportedEncodingException uee) {
             throw new RuntimeException("Encoding not supported: " + encoding, uee);
         }

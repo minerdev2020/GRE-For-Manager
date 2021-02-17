@@ -1,11 +1,8 @@
 package com.minerdev.greformanager;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.net.Uri;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -22,6 +19,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,20 +36,20 @@ public class HttpConnection {
     }
 
     public void receive(Context context, String uri, OnReceiveListener listener) {
-        String serverUri = context.getResources().getString(R.string.web_server_dns) + "/" + uri;
+        String serverUri = Constants.getInstance().DNS + "/" + uri;
         Log.d("SEND_DATA", serverUri);
         makeRequest(context, Request.Method.GET, serverUri, null, listener);
     }
 
     public void send(Context context, int method, String uri, JsonObject data, OnReceiveListener listener) {
-        String serverUri = context.getResources().getString(R.string.web_server_dns) + "/" + uri;
+        String serverUri = Constants.getInstance().DNS + "/" + uri;
         String json = data.toString();
         Log.d("SEND_DATA", json);
         makeRequest(context, method, serverUri, json, listener);
     }
 
     public void send(Context context, int method, String uri, House.ParcelableData data, OnReceiveListener listener) {
-        String serverUri = context.getResources().getString(R.string.web_server_dns) + "/" + uri;
+        String serverUri = Constants.getInstance().DNS + "/" + uri;
         Gson gson = new Gson();
         String json = gson.toJson(data);
         Log.d("SEND_DATA", json);
@@ -58,11 +57,13 @@ public class HttpConnection {
     }
 
     public void send(Context context, int method, String uri, ArrayList<Uri> imageUris, OnReceiveListener listener) {
-        String serverUri = context.getResources().getString(R.string.web_server_dns) + "/" + uri;
-//        for (Uri imageUri : imageUris) {
-//            Log.d("SEND_DATA", imageUri.getPath());
-//            makeImageRequest(context, method, serverUri, imageUri, listener);
-//        }
+        String serverUri = Constants.getInstance().DNS + "/" + uri;
+        int position = 0;
+        for (Uri imageUri : imageUris) {
+            Log.d("SEND_DATA", imageUri.getPath());
+            makeImageRequest(context, method, serverUri, imageUri, position, listener);
+            position++;
+        }
     }
 
     private void makeRequest(Context context, int method, String uri, String json, OnReceiveListener listener) {
@@ -97,15 +98,37 @@ public class HttpConnection {
         AppHelper.requestQueue.add(request);
     }
 
-    private void makeImageRequest(Context context, int method, String uri, Uri imageUri, OnReceiveListener listener) {
-        Bitmap bitmap = getBitmapImage(context, imageUri);
-        VolleyMultipartRequest request = new VolleyMultipartRequest(Request.Method.POST, uri,
+
+    private void makeImageRequest(Context context, int method, String uri, Uri imageUri, int position, OnReceiveListener listener) {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        File file = new File(getPathFromUri(context, imageUri));
+        FileInputStream inputStream;
+        byte[] buf = new byte[1024];
+        int size;
+
+        if (file.exists() && file.canRead()) {
+            try {
+                inputStream = new FileInputStream(file);
+                while ((size = inputStream.read(buf)) != -1) {
+                    byteArrayOutputStream.write(buf, 0, size);
+                }
+
+                inputStream.close();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        String title = System.currentTimeMillis() + ".jpg";
+        VolleyMultipartRequest request = new VolleyMultipartRequest(method, uri,
                 new Response.Listener<NetworkResponse>() {
                     @Override
                     public void onResponse(NetworkResponse response) {
                         try {
                             JSONObject obj = new JSONObject(new String(response.data));
                             Toast.makeText(context, obj.getString("message"), Toast.LENGTH_SHORT).show();
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -120,10 +143,17 @@ public class HttpConnection {
                 }
         ) {
             @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("title", title);
+                params.put("position", String.valueOf(position));
+                return params;
+            }
+
+            @Override
             protected Map<String, DataPart> getByteData() {
                 Map<String, DataPart> params = new HashMap<>();
-                long imageName = System.currentTimeMillis();
-                params.put("image", new DataPart(imageName + ".png", getFileDataFromDrawable(bitmap)));
+                params.put("image", new DataPart(title, byteArrayOutputStream.toByteArray()));
                 return params;
             }
         };
@@ -142,25 +172,6 @@ public class HttpConnection {
         return path;
     }
 
-    private Bitmap getBitmapImage(Context context, Uri imageUri) {
-        Bitmap bitmap = null;
-        ContentResolver resolver = context.getContentResolver();
-        try {
-            bitmap = MediaStore.Images.Media.getBitmap(resolver, imageUri);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return bitmap;
-    }
-
-    public byte[] getFileDataFromDrawable(Bitmap bitmap) {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 80, byteArrayOutputStream);
-        return byteArrayOutputStream.toByteArray();
-    }
-
     public interface OnReceiveListener {
         void onReceive(String receivedData);
     }
@@ -168,38 +179,5 @@ public class HttpConnection {
     private static class Holder {
         public static final HttpConnection INSTANCE = new HttpConnection();
     }
-
-    //    private String createCopyAndReturnRealPath(Context context, Uri uri) {
-//        final ContentResolver contentResolver = context.getContentResolver();
-//
-//        if (contentResolver == null) {
-//            return null;
-//        }
-//
-//        String filePath = context.getApplicationInfo().dataDir + File.separator + System.currentTimeMillis();
-//        File file = new File(filePath);
-//        try {
-//            InputStream inputStream = contentResolver.openInputStream(uri);
-//            if (inputStream == null) {
-//                return null;
-//            }
-//
-//            OutputStream outputStream = new FileOutputStream(file);
-//            byte[] buffer = new byte[1024];
-//            int length;
-//            while ((length = inputStream.read(buffer)) > 0) {
-//                outputStream.write(buffer, 0, length);
-//            }
-//
-//            outputStream.close();
-//            inputStream.close();
-//
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            return null;
-//        }
-//
-//        return file.getAbsolutePath();
-//    }
 }
 
