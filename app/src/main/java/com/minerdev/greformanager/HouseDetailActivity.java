@@ -45,7 +45,7 @@ public class HouseDetailActivity extends AppCompatActivity {
         Intent intent = getIntent();
         originalState = intent.getIntExtra("original_state", 0);
         index = intent.getIntExtra("index", 0);
-        House.ParcelableData data = intent.getParcelableExtra("house_value");
+        HouseParcelableData data = intent.getParcelableExtra("house_value");
         house = new House(data);
 
 

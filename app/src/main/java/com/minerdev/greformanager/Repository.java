@@ -5,7 +5,7 @@ import android.net.Uri;
 import java.util.ArrayList;
 
 public class Repository {
-    public House.ParcelableData house;
+    public HouseParcelableData house;
     public ArrayList<Uri> imageUris;
 
     private Repository() {

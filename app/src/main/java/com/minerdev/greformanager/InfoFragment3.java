@@ -40,7 +40,7 @@ public class InfoFragment3 extends Fragment implements OnSaveDataListener {
         Intent intent = getActivity().getIntent();
         String mode = intent.getStringExtra("mode");
         if (mode.equals("modify")) {
-            House.ParcelableData data = intent.getParcelableExtra("house_value");
+            HouseParcelableData data = intent.getParcelableExtra("house_value");
             readData(data);
         }
         // 이전 화면에서 돌아왔을때 다시 값 채워넣기 혹은 상세화면에서 넘어와서 정보 수정할때 값 채워넣기
@@ -62,14 +62,14 @@ public class InfoFragment3 extends Fragment implements OnSaveDataListener {
 
     @Override
     public void saveData() {
-        House.ParcelableData data = Repository.getInstance().house;
+        HouseParcelableData data = Repository.getInstance().house;
 
         data.options = toggleButtonGroupOptions.getCheckedToggleButtonTextsInSingleLine();
         data.detail_info = binding.houseModify3DetailInfo.getText().toString();
         data.phone = binding.houseModify3EditTextPhone.getText().toString();
     }
 
-    private void readData(House.ParcelableData data) {
+    private void readData(HouseParcelableData data) {
         if (data.options != null && !data.options.equals("")) {
             String[] optionsTexts = data.options.split("\\|");
             for (String text : optionsTexts) {

@@ -106,7 +106,7 @@ public class InfoFragment2 extends Fragment implements OnSaveDataListener, OnPag
 
     @Override
     public void saveData() {
-        House.ParcelableData data = Repository.getInstance().house;
+        HouseParcelableData data = Repository.getInstance().house;
 
         data.area_meter = parseFloat(binding.houseModify2EditTextAreaMeter.getText().toString());
         data.rent_area_meter = parseFloat(binding.houseModify2EditTextRentAreaMeter.getText().toString());
@@ -128,7 +128,7 @@ public class InfoFragment2 extends Fragment implements OnSaveDataListener, OnPag
     }
 
     @SuppressLint("DefaultLocale")
-    private void readData(House.ParcelableData data) {
+    private void readData(HouseParcelableData data) {
         binding.houseModify2EditTextAreaMeter.setText(String.valueOf(data.area_meter));
         binding.houseModify2EditTextRentAreaMeter.setText(String.valueOf(data.rent_area_meter));
 
@@ -372,7 +372,7 @@ public class InfoFragment2 extends Fragment implements OnSaveDataListener, OnPag
         Intent intent = getActivity().getIntent();
         String mode = intent.getStringExtra("mode");
         if (mode.equals("modify")) {
-            House.ParcelableData data = intent.getParcelableExtra("house_value");
+            HouseParcelableData data = intent.getParcelableExtra("house_value");
             readData(data);
         }
         // 이전 화면에서 돌아왔을때 다시 값 채워넣기 혹은 상세화면에서 넘어와서 정보 수정할때 값 채워넣기

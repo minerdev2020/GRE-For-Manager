@@ -131,10 +131,10 @@ public class InfoFragment1 extends Fragment implements OnSaveDataListener {
     @Override
     public void saveData() {
         if (Repository.getInstance().house == null) {
-            Repository.getInstance().house = new House.ParcelableData();
+            Repository.getInstance().house = new HouseParcelableData();
         }
 
-        House.ParcelableData data = Repository.getInstance().house;
+        HouseParcelableData data = Repository.getInstance().house;
 
         data.address = binding.houseModify1TextViewAddress.getText().toString();
         data.number = binding.houseModify1EditTextNumber.getText().toString();
@@ -149,7 +149,7 @@ public class InfoFragment1 extends Fragment implements OnSaveDataListener {
         data.manage_fee_contains = toggleButtonGroupManageFeeContains.getCheckedToggleButtonTextsInSingleLine();
     }
 
-    private void readData(House.ParcelableData data) {
+    private void readData(HouseParcelableData data) {
         houseType = getResources().getStringArray(R.array.houseType)[data.house_type];
         paymentType = Constants.getInstance().PAYMENT_TYPE.get(data.house_type - 1).get(data.payment_type);
 

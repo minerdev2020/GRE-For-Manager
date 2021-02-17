@@ -26,7 +26,7 @@ public class HouseModifyActivity extends AppCompatActivity {
     private Button button_next;
     private Button button_previous;
     private Button button_save;
-    private ViewPager.OnPageChangeListener onPageChangeListener = new ViewPager.OnPageChangeListener() {
+    private final ViewPager.OnPageChangeListener onPageChangeListener = new ViewPager.OnPageChangeListener() {
         @Override
         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
@@ -35,10 +35,8 @@ public class HouseModifyActivity extends AppCompatActivity {
         @Override
         public void onPageSelected(int position) {
             if (adapter.getItem(position) instanceof OnPageSelectedListener) {
-                OnPageSelectedListener listener1 = (OnPageSelectedListener) adapter.getItem(position);
-                if (listener1 != null) {
-                    listener1.initData();
-                }
+                OnPageSelectedListener listener = (OnPageSelectedListener) adapter.getItem(position);
+                listener.initData();
             }
 
             switch (position) {
@@ -211,14 +209,11 @@ public class HouseModifyActivity extends AppCompatActivity {
 
     private void add() {
         HttpConnection.getInstance().send(this, Request.Method.POST,
-                "houses", Repository.getInstance().house, new HttpConnection.OnReceiveListener() {
-                    @Override
-                    public void onReceive(String receivedData) {
-                        Gson gson = new Gson();
-                        House.ParcelableData data = gson.fromJson(receivedData, House.ParcelableData.class);
-                        HttpConnection.getInstance().send(getApplication(), Request.Method.POST,
-                                "houses/" + data.id + "/images", Repository.getInstance().imageUris, null);
-                    }
+                "houses", Repository.getInstance().house, receivedData -> {
+                    Gson gson = new Gson();
+                    HouseParcelableData data = gson.fromJson(receivedData, HouseParcelableData.class);
+                    HttpConnection.getInstance().send(getApplication(), Request.Method.POST,
+                            "houses/" + data.id + "/images", Repository.getInstance().imageUris, null);
                 });
     }
 

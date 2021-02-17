@@ -13,8 +13,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 public class HouseListAdapter extends RecyclerView.Adapter<HouseListAdapter.ViewHolder> {
-    private ArrayList<House.ParcelableData> items = new ArrayList<>();
-    private ArrayList<House.ParcelableData> searchResults = new ArrayList<>();
+    private ArrayList<HouseParcelableData> items = new ArrayList<>();
+    private ArrayList<HouseParcelableData> searchResults = new ArrayList<>();
     private OnItemClickListener listener;
     private String keyword;
 
@@ -32,7 +32,7 @@ public class HouseListAdapter extends RecyclerView.Adapter<HouseListAdapter.View
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        House.ParcelableData item = (keyword == null) ? items.get(position) : searchResults.get(position);
+        HouseParcelableData item = (keyword == null) ? items.get(position) : searchResults.get(position);
         holder.setItem(item);
     }
 
@@ -41,7 +41,7 @@ public class HouseListAdapter extends RecyclerView.Adapter<HouseListAdapter.View
         return (keyword == null) ? items.size() : searchResults.size();
     }
 
-    public void addItem(House.ParcelableData item) {
+    public void addItem(HouseParcelableData item) {
         items.add(item);
     }
 
@@ -52,7 +52,7 @@ public class HouseListAdapter extends RecyclerView.Adapter<HouseListAdapter.View
     public void searchItems(String keyword) {
         this.keyword = keyword;
         searchResults.clear();
-        for (House.ParcelableData item : items) {
+        for (HouseParcelableData item : items) {
             if (item.address.contains(keyword) || item.number.contains(keyword)){
                 searchResults.add(item);
             }
@@ -64,19 +64,19 @@ public class HouseListAdapter extends RecyclerView.Adapter<HouseListAdapter.View
         searchResults.clear();
     }
 
-    public House.ParcelableData getItem(int position) {
+    public HouseParcelableData getItem(int position) {
         return items.get(position);
     }
 
-    public void setItem(int position, House.ParcelableData item) {
+    public void setItem(int position, HouseParcelableData item) {
         items.set(position, item);
     }
 
-    public ArrayList<House.ParcelableData> getItems() {
+    public ArrayList<HouseParcelableData> getItems() {
         return items;
     }
 
-    public void setItems(ArrayList<House.ParcelableData> items) {
+    public void setItems(ArrayList<HouseParcelableData> items) {
         this.items = items;
     }
 
@@ -112,7 +112,7 @@ public class HouseListAdapter extends RecyclerView.Adapter<HouseListAdapter.View
             });
         }
 
-        public void setItem(House.ParcelableData house) {
+        public void setItem(HouseParcelableData house) {
             House house1 = new House(house);
 
             textView_payment.setText(house1.getPaymentType());

@@ -190,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
 
                 int originalState = data.getIntExtra("original_state", 0);
                 int index = data.getIntExtra("index", 0);
-                House.ParcelableData house = data.getParcelableExtra("house_value");
+                HouseParcelableData house = data.getParcelableExtra("house_value");
 
                 if (originalState != house.state) {
                     if (originalState == Constants.getInstance().SALE) {
@@ -226,7 +226,7 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
 
-                House.ParcelableData house = data.getParcelableExtra("house_value");
+                HouseParcelableData house = data.getParcelableExtra("house_value");
                 saleAdapter.addItem(house);
                 saleAdapter.notifyDataSetChanged();
             }
@@ -278,20 +278,20 @@ public class MainActivity extends AppCompatActivity {
         HttpConnection.getInstance().receive(this, "houses",
                 receivedData -> {
                     Gson gson = new Gson();
-                    House.ParcelableData[] array = gson.fromJson(receivedData, House.ParcelableData[].class);
+                    HouseParcelableData[] array = gson.fromJson(receivedData, HouseParcelableData[].class);
                     if (array == null) {
                         Toast.makeText(this, "데이터 수신 실패.", Toast.LENGTH_SHORT).show();
                         return;
                     }
 
-                    ArrayList<House.ParcelableData> list = new ArrayList<>();
+                    ArrayList<HouseParcelableData> list = new ArrayList<>();
                     Collections.addAll(list, array);
 
                     saleAdapter.clearItems();
                     soldAdapter.clearItems();
 
                     // 매물의 판매 상태에 따라 분류
-                    for (House.ParcelableData item : list) {
+                    for (HouseParcelableData item : list) {
                         if (item.state == Constants.getInstance().SALE) {
                             saleAdapter.addItem(item);
 

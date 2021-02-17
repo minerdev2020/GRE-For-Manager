@@ -42,7 +42,7 @@ public class HttpConnection {
         makeRequest(context, method, serverUri, json, listener);
     }
 
-    public void send(Context context, int method, String uri, House.ParcelableData data, OnReceiveListener listener) {
+    public void send(Context context, int method, String uri, HouseParcelableData data, OnReceiveListener listener) {
         String serverUri = Constants.getInstance().DNS + "/" + uri;
         Gson gson = new Gson();
         String json = gson.toJson(data);
