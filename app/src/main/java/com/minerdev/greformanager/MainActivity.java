@@ -18,6 +18,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,13 +26,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.gson.Gson;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
 public class MainActivity extends AppCompatActivity {
     private static final long FINISH_INTERVAL_TIME = 2000;
-    private final HouseListAdapter saleAdapter = new HouseListAdapter();
-    private final HouseListAdapter soldAdapter = new HouseListAdapter();
+    private final HouseListAdapter saleAdapter = new HouseListAdapter(new HouseListAdapter.DiffCallback());
+    private final HouseListAdapter soldAdapter = new HouseListAdapter(new HouseListAdapter.DiffCallback());
+    private HouseListViewModel viewModel;
 
     private long backPressedTime = 0;
     private OneSideDrawerLayout drawerLayout;
@@ -43,6 +42,14 @@ public class MainActivity extends AppCompatActivity {
 
         Constants.getInstance().initialize(getApplicationContext());
 
+        viewModel = new ViewModelProvider(this,
+                new ViewModelProvider.AndroidViewModelFactory(getApplication())).get(HouseListViewModel.class);
+        viewModel.getAll().observe(this, houses -> {
+            saleAdapter.submitList(houses);
+            soldAdapter.submitList(houses);
+        });
+
+
         // 툴바 초기화
         Toolbar toolbar = findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
@@ -50,14 +57,11 @@ public class MainActivity extends AppCompatActivity {
 
         // 판매중 매물 RecyclerView 및 HouseListAdapter 초기화
         RecyclerView saleRecyclerView = findViewById(R.id.main_recyclerView_sale);
-        LinearLayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        saleRecyclerView.setLayoutManager(manager);
+        saleRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         saleRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         saleAdapter.setOnItemClickListener((viewHolder, view, position) -> {
             Intent intent = new Intent(MainActivity.this, HouseDetailActivity.class);
-            intent.putExtra("original_state", Constants.getInstance().SALE);
-            intent.putExtra("index", position);
-            intent.putExtra("house_value", saleAdapter.getItem(position));
+            intent.putExtra("house_value", saleAdapter.get(position));
             startActivityForResult(intent, Constants.getInstance().HOUSE_DETAIL_ACTIVITY_REQUEST_CODE);
         });
         saleRecyclerView.setAdapter(saleAdapter);
@@ -71,14 +75,11 @@ public class MainActivity extends AppCompatActivity {
 
         // 판매완료 매물 RecyclerView 및 HouseListAdapter 초기화
         RecyclerView soldRecyclerView = findViewById(R.id.main_recyclerView_sold);
-        LinearLayoutManager manager1 = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        soldRecyclerView.setLayoutManager(manager1);
+        soldRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         soldRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         soldAdapter.setOnItemClickListener((viewHolder, view, position) -> {
             Intent intent = new Intent(MainActivity.this, HouseDetailActivity.class);
-            intent.putExtra("original_state", Constants.getInstance().SOLD);
-            intent.putExtra("index", position);
-            intent.putExtra("house_value", soldAdapter.getItem(position));
+            intent.putExtra("house_value", soldAdapter.get(position));
             startActivityForResult(intent, Constants.getInstance().HOUSE_DETAIL_ACTIVITY_REQUEST_CODE);
         });
         soldRecyclerView.setAdapter(soldAdapter);
@@ -120,13 +121,6 @@ public class MainActivity extends AppCompatActivity {
         });
         searchView.setOnCloseListener(() -> {
             searchView.onActionViewCollapsed();
-
-            saleAdapter.resetSearchResults();
-            saleAdapter.notifyDataSetChanged();
-
-            soldAdapter.resetSearchResults();
-            soldAdapter.notifyDataSetChanged();
-
             return true;
         });
 
@@ -188,36 +182,8 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
 
-                int originalState = data.getIntExtra("original_state", 0);
-                int index = data.getIntExtra("index", 0);
                 HouseParcelableData house = data.getParcelableExtra("house_value");
-
-                if (originalState != house.state) {
-                    if (originalState == Constants.getInstance().SALE) {
-                        saleAdapter.removeItem(index);
-                        saleAdapter.notifyItemRemoved(index);
-
-                        soldAdapter.addItem(house);
-                        soldAdapter.notifyDataSetChanged();
-
-                    } else {
-                        soldAdapter.removeItem(index);
-                        soldAdapter.notifyItemRemoved(index);
-
-                        saleAdapter.addItem(house);
-                        saleAdapter.notifyDataSetChanged();
-                    }
-
-                } else {
-                    if (house.state == Constants.getInstance().SALE) {
-                        saleAdapter.setItem(index, house);
-                        saleAdapter.notifyItemChanged(index);
-
-                    } else {
-                        soldAdapter.setItem(index, house);
-                        soldAdapter.notifyItemChanged(index);
-                    }
-                }
+                viewModel.update(house);
             }
 
         } else if (requestCode == Constants.getInstance().HOUSE_MODIFY_ACTIVITY_REQUEST_CODE) {
@@ -227,18 +193,13 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 HouseParcelableData house = data.getParcelableExtra("house_value");
-                saleAdapter.addItem(house);
-                saleAdapter.notifyDataSetChanged();
+                viewModel.insert(house);
             }
         }
     }
 
     private void rearrangeList(String keyword) {
-        saleAdapter.searchItems(keyword);
-        saleAdapter.notifyDataSetChanged();
 
-        soldAdapter.searchItems(keyword);
-        soldAdapter.notifyDataSetChanged();
     }
 
     private void setNavigationView() {
@@ -250,6 +211,10 @@ public class MainActivity extends AppCompatActivity {
             drawerLayout.closeDrawers();
 
             switch (menuItem.getItemId()) {
+                case R.id.nav_menu_db_reset:
+                    viewModel.deleteAll();
+                    break;
+
                 case R.id.nav_menu_logout:
                     SharedPreferences sharedPreferences = getSharedPreferences("login", Activity.MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -284,24 +249,7 @@ public class MainActivity extends AppCompatActivity {
                         return;
                     }
 
-                    ArrayList<HouseParcelableData> list = new ArrayList<>();
-                    Collections.addAll(list, array);
-
-                    saleAdapter.clearItems();
-                    soldAdapter.clearItems();
-
-                    // 매물의 판매 상태에 따라 분류
-                    for (HouseParcelableData item : list) {
-                        if (item.state == Constants.getInstance().SALE) {
-                            saleAdapter.addItem(item);
-
-                        } else {
-                            soldAdapter.addItem(item);
-                        }
-                    }
-
-                    saleAdapter.notifyDataSetChanged();
-                    soldAdapter.notifyDataSetChanged();
+                    viewModel.insertList(array);
                 });
     }
 }

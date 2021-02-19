@@ -16,8 +16,8 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class HttpConnection {
@@ -50,7 +50,7 @@ public class HttpConnection {
         makeRequest(context, method, serverUri, json, listener);
     }
 
-    public void send(Context context, int method, String uri, ArrayList<Uri> imageUris, OnReceiveListener listener) {
+    public void send(Context context, int method, String uri, List<Uri> imageUris, OnReceiveListener listener) {
         String serverUri = Constants.getInstance().DNS + "/" + uri;
         int position = 0;
         for (Uri imageUri : imageUris) {

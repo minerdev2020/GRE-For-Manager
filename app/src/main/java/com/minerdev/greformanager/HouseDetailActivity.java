@@ -26,7 +26,6 @@ import com.naver.maps.map.overlay.Marker;
 public class HouseDetailActivity extends AppCompatActivity {
     private final ImageAdapter adapter = new ImageAdapter(this);
     private House house;
-    private int index;
     private int originalState;
 
     private ActivityHouseDetailBinding binding;
@@ -43,9 +42,8 @@ public class HouseDetailActivity extends AppCompatActivity {
         binding.setActivity(this);
 
         Intent intent = getIntent();
-        originalState = intent.getIntExtra("original_state", 0);
-        index = intent.getIntExtra("index", 0);
         HouseParcelableData data = intent.getParcelableExtra("house_value");
+        originalState = data.state;
         house = new House(data);
 
 
@@ -109,8 +107,6 @@ public class HouseDetailActivity extends AppCompatActivity {
         }
 
         Intent intent = new Intent();
-        intent.putExtra("original_state", originalState);
-        intent.putExtra("index", index);
         intent.putExtra("house_value", house.getData());
         setResult(RESULT_OK, intent);
 

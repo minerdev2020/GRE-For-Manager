@@ -19,20 +19,25 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.File;
+import java.util.List;
 
 public class ImageFragment extends Fragment implements OnSaveDataListener {
     private static final int GALLERY_REQUEST_CODE = 1;
     private final ImageListAdapter imageListAdapter = new ImageListAdapter();
+    private HouseModifyViewModel viewModel;
+    private List<Uri> imageUris;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_image, container, false);
+        viewModel = new ViewModelProvider(requireActivity()).get(HouseModifyViewModel.class);
 
         RecyclerView recyclerView = rootView.findViewById(R.id.house_modify_recyclerView);
         LinearLayoutManager manager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
@@ -57,6 +62,12 @@ public class ImageFragment extends Fragment implements OnSaveDataListener {
         });
 
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        initData();
     }
 
     @Override
@@ -118,7 +129,11 @@ public class ImageFragment extends Fragment implements OnSaveDataListener {
 
     @Override
     public void saveData() {
-        Repository.getInstance().imageUris = imageListAdapter.getItems();
+        imageUris = imageListAdapter.getItems();
+    }
+
+    public void initData() {
+        imageUris = viewModel.getImageUris();
     }
 
     public void showAlbum() {

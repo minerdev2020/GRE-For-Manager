@@ -8,18 +8,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
-
-public class HouseListAdapter extends RecyclerView.Adapter<HouseListAdapter.ViewHolder> {
-    private ArrayList<HouseParcelableData> items = new ArrayList<>();
-    private ArrayList<HouseParcelableData> searchResults = new ArrayList<>();
+public class HouseListAdapter extends ListAdapter<HouseParcelableData, HouseListAdapter.ViewHolder> {
     private OnItemClickListener listener;
-    private String keyword;
 
-    public void setOnItemClickListener(OnItemClickListener clickListener) {
-        listener = clickListener;
+    public HouseListAdapter(DiffUtil.ItemCallback<HouseParcelableData> diffCallback) {
+        super(diffCallback);
     }
 
     @NonNull
@@ -32,56 +29,16 @@ public class HouseListAdapter extends RecyclerView.Adapter<HouseListAdapter.View
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        HouseParcelableData item = (keyword == null) ? items.get(position) : searchResults.get(position);
+        HouseParcelableData item = getItem(position);
         holder.setItem(item);
     }
 
-    @Override
-    public int getItemCount() {
-        return (keyword == null) ? items.size() : searchResults.size();
+    public HouseParcelableData get(int position) {
+        return getItem(position);
     }
 
-    public void addItem(HouseParcelableData item) {
-        items.add(item);
-    }
-
-    public void removeItem(int index) {
-        items.remove(index);
-    }
-
-    public void searchItems(String keyword) {
-        this.keyword = keyword;
-        searchResults.clear();
-        for (HouseParcelableData item : items) {
-            if (item.address.contains(keyword) || item.number.contains(keyword)){
-                searchResults.add(item);
-            }
-        }
-    }
-
-    public void resetSearchResults() {
-        keyword = null;
-        searchResults.clear();
-    }
-
-    public HouseParcelableData getItem(int position) {
-        return items.get(position);
-    }
-
-    public void setItem(int position, HouseParcelableData item) {
-        items.set(position, item);
-    }
-
-    public ArrayList<HouseParcelableData> getItems() {
-        return items;
-    }
-
-    public void setItems(ArrayList<HouseParcelableData> items) {
-        this.items = items;
-    }
-
-    public void clearItems() {
-        items.clear();
+    public void setOnItemClickListener(OnItemClickListener clickListener) {
+        listener = clickListener;
     }
 
     public interface OnItemClickListener {
@@ -120,6 +77,18 @@ public class HouseListAdapter extends RecyclerView.Adapter<HouseListAdapter.View
             textView_house_info.setText(house1.getHouseInfo());
             textView_description.setText(house1.getDetailInfo());
             imageView_profile.setImageResource(R.drawable.house);
+        }
+    }
+
+    public static class DiffCallback extends DiffUtil.ItemCallback<HouseParcelableData> {
+        @Override
+        public boolean areItemsTheSame(@NonNull HouseParcelableData oldItem, @NonNull HouseParcelableData newItem) {
+            return oldItem == newItem;
+        }
+
+        @Override
+        public boolean areContentsTheSame(@NonNull HouseParcelableData oldItem, @NonNull HouseParcelableData newItem) {
+            return oldItem.id == newItem.id;
         }
     }
 }

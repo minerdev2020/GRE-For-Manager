@@ -3,7 +3,13 @@ package com.minerdev.greformanager;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
+@Entity(tableName = "house")
 public class HouseParcelableData implements Parcelable {
+    @Ignore
     public static final Creator<HouseParcelableData> CREATOR = new Creator<HouseParcelableData>() {
         @Override
         public HouseParcelableData createFromParcel(Parcel in) {
@@ -16,6 +22,7 @@ public class HouseParcelableData implements Parcelable {
         }
     };
 
+    @PrimaryKey
     public int id;
     public String created_at;
     public String updated_at;

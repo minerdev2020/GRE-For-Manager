@@ -411,6 +411,7 @@
                                     android:id="@+id/house_modify_2_checkBox_move_now"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:checked="true"
                                     android:text="즉시입주" />
                             </LinearLayout>
                         </TableRow>

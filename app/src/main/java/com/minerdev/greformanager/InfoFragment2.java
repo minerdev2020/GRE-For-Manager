@@ -2,7 +2,6 @@ package com.minerdev.greformanager;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -15,18 +14,22 @@ import android.widget.DatePicker;
 
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.minerdev.greformanager.databinding.FragmentInfo2Binding;
 
-public class InfoFragment2 extends Fragment implements OnSaveDataListener, OnPageSelectedListener {
+public class InfoFragment2 extends Fragment implements OnSaveDataListener {
     private String houseType;
 
     private FragmentInfo2Binding binding;
+    private HouseModifyViewModel viewModel;
+    private HouseParcelableData house;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_info2, container, false);
+        viewModel = new ViewModelProvider(requireActivity()).get(HouseModifyViewModel.class);
 
 
         // 스피너 초기화
@@ -48,11 +51,18 @@ public class InfoFragment2 extends Fragment implements OnSaveDataListener, OnPag
 
 
         // 입주가능일 초기화
+        binding.houseModify2ImageButtonMoveDate.setEnabled(false);
         binding.houseModify2ImageButtonMoveDate.setOnClickListener(
                 v -> showDatePickerDialog((v1, result) -> binding.houseModify2TextViewMoveDate.setText(result))
         );
 
         return binding.getRoot();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        initData();
     }
 
     @Override
@@ -106,62 +116,88 @@ public class InfoFragment2 extends Fragment implements OnSaveDataListener, OnPag
 
     @Override
     public void saveData() {
-        HouseParcelableData data = Repository.getInstance().house;
-
-        data.area_meter = parseFloat(binding.houseModify2EditTextAreaMeter.getText().toString());
-        data.rent_area_meter = parseFloat(binding.houseModify2EditTextRentAreaMeter.getText().toString());
-        data.building_floor = (byte) parseInt(binding.houseModify2EditTextBuildingFloor.getText().toString());
+        house.area_meter = parseFloat(binding.houseModify2EditTextAreaMeter.getText().toString());
+        house.rent_area_meter = parseFloat(binding.houseModify2EditTextRentAreaMeter.getText().toString());
+        house.building_floor = (byte) parseInt(binding.houseModify2EditTextBuildingFloor.getText().toString());
 
         if (binding.houseModify2CheckBoxUnderground.isChecked()) {
-            data.floor = -1;
+            house.floor = -1;
 
         } else {
-            data.floor = Byte.parseByte(binding.houseModify2EditTextFloor.getText().toString());
+            house.floor = Byte.parseByte(binding.houseModify2EditTextFloor.getText().toString());
         }
 
-        data.structure = (byte) binding.houseModify2SpinnerStructure.getSelectedItemPosition();
-        data.bathroom = (byte) binding.houseModify2SpinnerBathroom.getSelectedItemPosition();
-        data.bathroom_location = (byte) binding.houseModify2RadioGroup.getCheckedRadioButtonId();
-        data.direction = (byte) binding.houseModify2SpinnerDirection.getSelectedItemId();
-        data.built_date = binding.houseModify2TextViewBuiltDate.getText().toString();
-        data.move_date = binding.houseModify2TextViewMoveDate.getText().toString();
+        house.structure = (byte) binding.houseModify2SpinnerStructure.getSelectedItemPosition();
+        house.bathroom = (byte) binding.houseModify2SpinnerBathroom.getSelectedItemPosition();
+
+        if (binding.houseModify2RadioButtonOutside.isChecked()) {
+            house.bathroom_location = 0;
+
+        } else {
+            house.bathroom_location = 1;
+        }
+
+        house.direction = (byte) binding.houseModify2SpinnerDirection.getSelectedItemId();
+        house.built_date = binding.houseModify2TextViewBuiltDate.getText().toString();
+        house.move_date = binding.houseModify2TextViewMoveDate.getText().toString();
+    }
+
+    public void initData() {
+        house = viewModel.getHouse();
+        houseType = Constants.getInstance().HOUSE_TYPE.get(house.house_type);
+
+        // 구조 초기화 ('매물 종류'가 '주택'이나 '오피스텔'일때만 '구조' 항목이 보임)
+        int visibility = houseType.equals("주택") || houseType.equals("오피스텔") ? View.VISIBLE : View.GONE;
+        binding.houseModify2TableRowStructure.setVisibility(visibility);
+        binding.houseModify2View.setVisibility(visibility);
+        binding.houseModify2SpinnerStructure.setSelection(0);
+
+
+        // 화장실 위치 초기화 ('매물 종류'가 '사무실'이나 '상가, 점포'일때만 '화장실 위치' 항목이 보임)
+        binding.houseModify2TableRowLocation.setVisibility(houseType.equals("사무실") || houseType.equals("상가, 점포") ? View.VISIBLE : View.GONE);
+        binding.houseModify2RadioGroup.clearCheck();
+
+        // 데이터 읽기
+        if (house != null) {
+            loadData();
+        }
     }
 
     @SuppressLint("DefaultLocale")
-    private void readData(HouseParcelableData data) {
-        binding.houseModify2EditTextAreaMeter.setText(String.valueOf(data.area_meter));
-        binding.houseModify2EditTextRentAreaMeter.setText(String.valueOf(data.rent_area_meter));
+    private void loadData() {
+        binding.houseModify2EditTextAreaMeter.setText(house.area_meter == 0 ? "" : String.valueOf(house.area_meter));
+        binding.houseModify2EditTextRentAreaMeter.setText(house.rent_area_meter == 0 ? "" : String.valueOf(house.rent_area_meter));
 
-        binding.houseModify2EditTextAreaPyeong.setText(String.format("%.2f", data.area_meter * Constants.getInstance().METER_TO_PYEONG));
-        binding.houseModify2EditTextRentAreaPyeong.setText(String.format("%.2f", data.rent_area_meter * Constants.getInstance().METER_TO_PYEONG));
+        binding.houseModify2EditTextAreaPyeong.setText(house.area_meter == 0 ? "" : String.format("%.2f", house.area_meter * Constants.getInstance().METER_TO_PYEONG));
+        binding.houseModify2EditTextRentAreaPyeong.setText(house.rent_area_meter == 0 ? "" : String.format("%.2f", house.rent_area_meter * Constants.getInstance().METER_TO_PYEONG));
 
-        binding.houseModify2EditTextBuildingFloor.setText(String.valueOf(data.building_floor));
+        binding.houseModify2EditTextBuildingFloor.setText(house.building_floor == 0 ? "" : String.valueOf(house.building_floor));
 
-        if (data.floor == -1) {
+        if (house.floor == -1) {
             binding.houseModify2CheckBoxUnderground.setChecked(true);
 
         } else {
-            binding.houseModify2EditTextFloor.setText(String.valueOf(data.floor));
+            binding.houseModify2EditTextFloor.setText(house.floor == 0 ? "" : String.valueOf(house.floor));
         }
 
-        binding.houseModify2SpinnerStructure.setSelection(data.structure);
-        binding.houseModify2SpinnerBathroom.setSelection(data.bathroom);
+        binding.houseModify2SpinnerStructure.setSelection(house.structure);
+        binding.houseModify2SpinnerBathroom.setSelection(house.bathroom);
 
-        if (data.bathroom_location == 0) {
+        if (house.bathroom_location == 0) {
             binding.houseModify2RadioButtonOutside.setChecked(true);
 
         } else {
             binding.houseModify2RadioButtonInside.setChecked(true);
         }
 
-        binding.houseModify2SpinnerDirection.setSelection(data.direction);
-        binding.houseModify2TextViewBuiltDate.setText(data.built_date);
+        binding.houseModify2SpinnerDirection.setSelection(house.direction);
+        binding.houseModify2TextViewBuiltDate.setText(house.built_date);
 
-        if (data.move_date == null || data.move_date.equals("")) {
+        if (house.move_date == null || house.move_date.equals("")) {
             binding.houseModify2CheckBoxMoveNow.setChecked(true);
 
         } else {
-            binding.houseModify2TextViewMoveDate.setText(data.move_date);
+            binding.houseModify2TextViewMoveDate.setText(house.move_date);
         }
     }
 
@@ -350,34 +386,6 @@ public class InfoFragment2 extends Fragment implements OnSaveDataListener, OnPag
 
         } else {
             return Float.parseFloat(number);
-        }
-    }
-
-    @Override
-    public void initData() {
-        houseType = Constants.getInstance().HOUSE_TYPE.get(Repository.getInstance().house.house_type);
-
-        // 구조 초기화 ('매물 종류'가 '주택'이나 '오피스텔'일때만 '구조' 항목이 보임)
-        int visibility = houseType.equals("주택") || houseType.equals("오피스텔") ? View.VISIBLE : View.GONE;
-        binding.houseModify2TableRowStructure.setVisibility(visibility);
-        binding.houseModify2View.setVisibility(visibility);
-        binding.houseModify2SpinnerStructure.setSelection(0);
-
-
-        // 화장실 위치 초기화 ('매물 종류'가 '사무실'이나 '상가, 점포'일때만 '화장실 위치' 항목이 보임)
-        binding.houseModify2TableRowLocation.setVisibility(houseType.equals("사무실") || houseType.equals("상가, 점포") ? View.VISIBLE : View.GONE);
-        binding.houseModify2RadioGroup.clearCheck();
-
-        // 데이터 읽기
-        Intent intent = getActivity().getIntent();
-        String mode = intent.getStringExtra("mode");
-        if (mode.equals("modify")) {
-            HouseParcelableData data = intent.getParcelableExtra("house_value");
-            readData(data);
-        }
-        // 이전 화면에서 돌아왔을때 다시 값 채워넣기 혹은 상세화면에서 넘어와서 정보 수정할때 값 채워넣기
-        else if (Repository.getInstance().house != null) {
-            readData(Repository.getInstance().house);
         }
     }
 

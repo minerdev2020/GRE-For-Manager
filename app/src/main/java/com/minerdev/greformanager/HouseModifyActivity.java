@@ -13,6 +13,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
 import com.android.volley.Request;
@@ -22,6 +23,7 @@ public class HouseModifyActivity extends AppCompatActivity {
     private static String mode;
     private final SectionPageAdapter adapter = new SectionPageAdapter(getSupportFragmentManager(),
             FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+    private HouseModifyViewModel viewModel;
     private NonSwipeViewPager viewPager;
     private Button button_next;
     private Button button_previous;
@@ -34,11 +36,6 @@ public class HouseModifyActivity extends AppCompatActivity {
 
         @Override
         public void onPageSelected(int position) {
-            if (adapter.getItem(position) instanceof OnPageSelectedListener) {
-                OnPageSelectedListener listener = (OnPageSelectedListener) adapter.getItem(position);
-                listener.initData();
-            }
-
             switch (position) {
                 case 0:
                     button_previous.setEnabled(false);
@@ -77,12 +74,18 @@ public class HouseModifyActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         mode = intent.getStringExtra("mode");
+        HouseParcelableData house = null;
+
         if (mode.equals("add")) {
             actionBar.setTitle("매물 추가");
 
         } else if (mode.equals("modify")) {
             actionBar.setTitle("매물 정보 수정");
+            house = intent.getParcelableExtra("house_value");
         }
+
+        viewModel = new ViewModelProvider(this).get(HouseModifyViewModel.class);
+        viewModel.setMode(mode, house);
 
         button_next = findViewById(R.id.house_modify_button_next);
         button_next.setOnClickListener(v -> toNextPage());
@@ -99,6 +102,11 @@ public class HouseModifyActivity extends AppCompatActivity {
         button_save.setOnClickListener(v -> askSave());
 
         setViewPager();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     @Override
@@ -121,7 +129,6 @@ public class HouseModifyActivity extends AppCompatActivity {
         builder.setMessage("저장하지 않고 돌아가시겠습니까?");
         builder.setIcon(R.drawable.ic_round_help_24);
         builder.setPositiveButton("확인", (dialog, which) -> {
-            Repository.getInstance().house = null;
             HouseModifyActivity.super.finish();
         });
 
@@ -186,15 +193,8 @@ public class HouseModifyActivity extends AppCompatActivity {
                     add();
 
                 } else if (mode.equals("modify")) {
-                    modify(Repository.getInstance().house.id);
+                    modify();
                 }
-
-                Intent intent = new Intent();
-                intent.putExtra("house_value", Repository.getInstance().house);
-                setResult(RESULT_OK, intent);
-
-                Repository.getInstance().house = null;
-                HouseModifyActivity.super.finish();
             });
 
             builder.setNegativeButton("취소", (dialog, which) -> dialog.dismiss());
@@ -209,19 +209,44 @@ public class HouseModifyActivity extends AppCompatActivity {
 
     private void add() {
         HttpConnection.getInstance().send(this, Request.Method.POST,
-                "houses", Repository.getInstance().house, receivedData -> {
+                "houses", viewModel.getHouse(), receivedData -> {
                     Gson gson = new Gson();
                     HouseParcelableData data = gson.fromJson(receivedData, HouseParcelableData.class);
+
                     HttpConnection.getInstance().send(getApplication(), Request.Method.POST,
-                            "houses/" + data.id + "/images", Repository.getInstance().imageUris, null);
+                            "houses/" + data.id + "/images", viewModel.getImageUris(), null);
+
+                    viewModel.getHouse().id = data.id;
+                    viewModel.getHouse().created_at = data.created_at;
+                    viewModel.getHouse().updated_at = data.updated_at;
+
+                    Intent intent = new Intent();
+                    intent.putExtra("house_value", viewModel.getHouse());
+                    setResult(RESULT_OK, intent);
+                    HouseModifyActivity.super.finish();
                 });
     }
 
-    private void modify(int id) {
+    private void modify() {
+        int id = viewModel.getHouse().id;
         HttpConnection.getInstance().send(this, Request.Method.PATCH,
-                "houses/" + id, Repository.getInstance().house, null);
+                "houses/" + id, viewModel.getHouse(), new HttpConnection.OnReceiveListener() {
+                    @Override
+                    public void onReceive(String receivedData) {
+                        Gson gson = new Gson();
+                        HouseParcelableData data = gson.fromJson(receivedData, HouseParcelableData.class);
 
-        HttpConnection.getInstance().send(this, Request.Method.POST,
-                "houses/" + id + "/images", Repository.getInstance().imageUris, null);
+                        HttpConnection.getInstance().send(getApplication(), Request.Method.POST,
+                                "houses/" + id + "/images", viewModel.getImageUris(), null);
+
+                        viewModel.getHouse().updated_at = data.updated_at;
+
+                        Intent intent = new Intent();
+                        intent.putExtra("house_value", viewModel.getHouse());
+                        setResult(RESULT_OK, intent);
+                        HouseModifyActivity.super.finish();
+                    }
+                });
+
     }
 }

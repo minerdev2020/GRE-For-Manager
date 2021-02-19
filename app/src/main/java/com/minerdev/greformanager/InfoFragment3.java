@@ -1,6 +1,5 @@
 package com.minerdev.greformanager;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.view.LayoutInflater;
@@ -10,6 +9,7 @@ import android.widget.ToggleButton;
 
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.minerdev.greformanager.databinding.FragmentInfo3Binding;
 
@@ -17,11 +17,14 @@ public class InfoFragment3 extends Fragment implements OnSaveDataListener {
     private ToggleButtonGroup toggleButtonGroupOptions;
 
     private FragmentInfo3Binding binding;
+    private HouseModifyViewModel viewModel;
+    private HouseParcelableData house;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_info3, container, false);
+        viewModel = new ViewModelProvider(requireActivity()).get(HouseModifyViewModel.class);
 
 
         // 옵션 정보 초기화
@@ -35,20 +38,13 @@ public class InfoFragment3 extends Fragment implements OnSaveDataListener {
         // 담당자 정보 초기화
         binding.houseModify3EditTextPhone.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
 
-
-        // 데이터 읽기
-        Intent intent = getActivity().getIntent();
-        String mode = intent.getStringExtra("mode");
-        if (mode.equals("modify")) {
-            HouseParcelableData data = intent.getParcelableExtra("house_value");
-            readData(data);
-        }
-        // 이전 화면에서 돌아왔을때 다시 값 채워넣기 혹은 상세화면에서 넘어와서 정보 수정할때 값 채워넣기
-        else if (Repository.getInstance().house != null) {
-            readData(Repository.getInstance().house);
-        }
-
         return binding.getRoot();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        initData();
     }
 
     @Override
@@ -62,22 +58,30 @@ public class InfoFragment3 extends Fragment implements OnSaveDataListener {
 
     @Override
     public void saveData() {
-        HouseParcelableData data = Repository.getInstance().house;
+        HouseParcelableData data = house;
 
         data.options = toggleButtonGroupOptions.getCheckedToggleButtonTextsInSingleLine();
         data.detail_info = binding.houseModify3DetailInfo.getText().toString();
         data.phone = binding.houseModify3EditTextPhone.getText().toString();
     }
 
-    private void readData(HouseParcelableData data) {
-        if (data.options != null && !data.options.equals("")) {
-            String[] optionsTexts = data.options.split("\\|");
+    public void initData() {
+        // 데이터 읽기
+        house = viewModel.getHouse();
+        if (house != null) {
+            loadData();
+        }
+    }
+
+    private void loadData() {
+        if (house.options != null && !house.options.equals("")) {
+            String[] optionsTexts = house.options.split("\\|");
             for (String text : optionsTexts) {
                 toggleButtonGroupOptions.setToggleButtonCheckedState(text, true);
             }
         }
 
-        binding.houseModify3DetailInfo.setText(data.detail_info);
-        binding.houseModify3EditTextPhone.setText(data.phone);
+        binding.houseModify3DetailInfo.setText(house.detail_info);
+        binding.houseModify3EditTextPhone.setText(house.phone);
     }
 }
