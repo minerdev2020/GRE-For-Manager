@@ -258,7 +258,7 @@ public class InfoFragment1 extends Fragment implements OnSaveDataListener {
         WebView webView = addressDialog.findViewById(R.id.address_dialog_button_webView);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.addJavascriptInterface(new AndroidBridge(), "GREApp");
-        webView.loadUrl(Constants.getInstance().DNS + "/daum-address");
+        webView.loadUrl(Constants.getInstance().DNS + "/api/daum-address");
 
         WindowManager.LayoutParams params = addressDialog.getWindow().getAttributes();
         params.width = ViewGroup.LayoutParams.MATCH_PARENT;

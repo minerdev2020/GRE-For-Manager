@@ -11,10 +11,6 @@ import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
@@ -30,33 +26,31 @@ public class HttpConnection {
     }
 
     public void receive(Context context, String uri, OnReceiveListener listener) {
-        String serverUri = Constants.getInstance().DNS + "/" + uri;
+        String serverUri = Constants.getInstance().DNS + "/api/" + uri;
         Log.d("SEND_DATA", serverUri);
         makeRequest(context, Request.Method.GET, serverUri, null, listener);
     }
 
     public void send(Context context, int method, String uri, JsonObject data, OnReceiveListener listener) {
-        String serverUri = Constants.getInstance().DNS + "/" + uri;
+        String serverUri = Constants.getInstance().DNS + "/api/" + uri;
         String json = data.toString();
         Log.d("SEND_DATA", json);
         makeRequest(context, method, serverUri, json, listener);
     }
 
     public void send(Context context, int method, String uri, House data, OnReceiveListener listener) {
-        String serverUri = Constants.getInstance().DNS + "/" + uri;
+        String serverUri = Constants.getInstance().DNS + "/api/" + uri;
         Gson gson = new Gson();
         String json = gson.toJson(data);
         Log.d("SEND_DATA", json);
         makeRequest(context, method, serverUri, json, listener);
     }
 
-    public void send(Context context, int method, String uri, List<Uri> imageUris, int thumbnail, OnReceiveListener listener) {
-        String serverUri = Constants.getInstance().DNS + "/" + uri;
-        int position = 0;
-        for (Uri imageUri : imageUris) {
-            Log.d("SEND_DATA", imageUri.getPath());
-            makeImageRequest(context, method, serverUri, imageUri, position, thumbnail, listener);
-            position++;
+    public void send(Context context, int method, String uri, List<Uri> imageUris, List<Image> images, OnReceiveListener listener) {
+        String serverUri = Constants.getInstance().DNS + "/api/" + uri;
+        for (int i = 0; i < imageUris.size(); i++) {
+            Log.d("SEND_DATA", imageUris.get(i).getPath());
+            makeImageRequest(context, method, serverUri, imageUris.get(i), images.get(i), listener);
         }
     }
 
@@ -64,14 +58,6 @@ public class HttpConnection {
         StringRequest request = new StringRequest(method, uri,
                 response -> {
                     Toast.makeText(context, "데이터 전송 성공.", Toast.LENGTH_SHORT).show();
-                    try {
-                        JSONObject obj = new JSONObject(response);
-                        Log.d("RECEIVE_DATA", obj.getString("message"));
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
                     if (listener != null) {
                         listener.onReceive(response);
                     }
@@ -103,23 +89,10 @@ public class HttpConnection {
         AppHelper.getInstance().requestQueue.add(request);
     }
 
-    private void makeImageRequest(Context context, int method, String uri, Uri imageUri, int position, int thumbnail, OnReceiveListener listener) {
-        File file = new File(AppHelper.getInstance().getPathFromUri(context, imageUri));
-        String fileName = file.getName();
-        String fileExtension = fileName.substring(fileName.lastIndexOf(".") + 1);
-        String title = System.currentTimeMillis() + "." + fileExtension;
-
+    private void makeImageRequest(Context context, int method, String uri, Uri imageUri, Image image, OnReceiveListener listener) {
         VolleyMultipartRequest request = new VolleyMultipartRequest(method, uri,
                 response -> {
                     Toast.makeText(context, "데이터 전송 성공.", Toast.LENGTH_SHORT).show();
-                    try {
-                        JSONObject obj = new JSONObject(new String(response.data));
-                        Log.d("RECEIVE_DATA", obj.getString("message"));
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
                     if (listener != null) {
                         listener.onReceive(new String(response.data));
                     }
@@ -132,10 +105,10 @@ public class HttpConnection {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
-                params.put("title", title);
-                params.put("position", String.valueOf(position));
+                params.put("title", image.title);
+                params.put("position", String.valueOf(image.position));
 
-                if (position == thumbnail) {
+                if (image.thumbnail == 1) {
                     params.put("thumbnail", "1");
 
                 } else {
@@ -148,7 +121,7 @@ public class HttpConnection {
             @Override
             protected Map<String, DataPart> getByteData() {
                 Map<String, DataPart> params = new HashMap<>();
-                params.put("image", new DataPart(title, AppHelper.getInstance().getByteArrayFromUri(context, imageUri)));
+                params.put("image", new DataPart(image.title, AppHelper.getInstance().getByteArrayFromUri(context, imageUri)));
                 return params;
             }
         };

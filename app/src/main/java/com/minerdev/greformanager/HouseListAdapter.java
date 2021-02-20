@@ -1,5 +1,6 @@
 package com.minerdev.greformanager;
 
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
 
 public class HouseListAdapter extends ListAdapter<House, HouseListAdapter.ViewHolder> {
     private OnItemClickListener listener;
@@ -50,6 +53,7 @@ public class HouseListAdapter extends ListAdapter<House, HouseListAdapter.ViewHo
         private final TextView textView_price;
         private final TextView textView_house_info;
         private final TextView textView_description;
+        private final TextView textView_upload_time;
         private final ImageView imageView_profile;
 
         public ViewHolder(@NonNull View itemView, final OnItemClickListener clickListener) {
@@ -59,6 +63,7 @@ public class HouseListAdapter extends ListAdapter<House, HouseListAdapter.ViewHo
             textView_price = itemView.findViewById(R.id.houseItem_textView_price);
             textView_house_info = itemView.findViewById(R.id.houseItem_textView_house_info);
             textView_description = itemView.findViewById(R.id.houseItem_textView_description);
+            textView_upload_time = itemView.findViewById(R.id.houseItem_textView_upload_time);
             imageView_profile = itemView.findViewById(R.id.houseItem_imageView_profile);
 
             LinearLayout linearLayout = itemView.findViewById(R.id.houseItem_layout);
@@ -76,7 +81,10 @@ public class HouseListAdapter extends ListAdapter<House, HouseListAdapter.ViewHo
             textView_price.setText(houseWrapper1.getPrice());
             textView_house_info.setText(houseWrapper1.getHouseInfo());
             textView_description.setText(houseWrapper1.getDetailInfo());
-            imageView_profile.setImageResource(R.drawable.house);
+            textView_upload_time.setText(house.created_at);
+
+            Uri uri = Uri.parse(Constants.getInstance().DNS + "/storage/images/" + house.id + "/" + house.thumbnail);
+            Glide.with(itemView).load(uri).into(imageView_profile);
         }
     }
 

@@ -2,10 +2,12 @@ package com.minerdev.greformanager;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
@@ -13,8 +15,10 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.BindingConversion;
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.android.volley.Request;
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.minerdev.greformanager.databinding.ActivityHouseDetailBinding;
 import com.naver.maps.geometry.LatLng;
@@ -24,11 +28,12 @@ import com.naver.maps.map.UiSettings;
 import com.naver.maps.map.overlay.Marker;
 
 public class HouseDetailActivity extends AppCompatActivity {
-    private final ImageAdapter adapter = new ImageAdapter(this);
+    private final ImageAdapter adapter = new ImageAdapter();
     private HouseWrapper houseWrapper;
     private int originalState;
 
     private ActivityHouseDetailBinding binding;
+    private ImageViewModel imageViewModel;
 
     @BindingConversion
     public static int convertBooleanToVisibility(boolean visible) {
@@ -41,6 +46,10 @@ public class HouseDetailActivity extends AppCompatActivity {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_house_detail);
         binding.setActivity(this);
 
+        imageViewModel = new ViewModelProvider(this,
+                new ViewModelProvider.AndroidViewModelFactory(getApplication())).get(ImageViewModel.class);
+
+
         Intent intent = getIntent();
         House data = intent.getParcelableExtra("house_value");
         originalState = data.state;
@@ -50,11 +59,22 @@ public class HouseDetailActivity extends AppCompatActivity {
         setSupportActionBar(binding.houseDetailToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        readImages();
+        imageViewModel.getOrderByPosition(data.id).observe(this, images -> {
+            Log.d("DB_CHANGED", "observe");
 
-        binding.houseDetailViewPagerImage.setAdapter(adapter);
+            for (Image image : images) {
+                Log.d("DB_CHANGED", image.title);
+            }
+
+            adapter.addImages(images);
+            adapter.notifyDataSetChanged();
+        });
+
+        binding.houseDetailViewPager2Image.setAdapter(adapter);
+
 
         setMapFragment();
+
 
         ToggleButtonGroup toggleButtonGroupManageFee = new ToggleButtonGroup(this, "ManageFee");
         toggleButtonGroupManageFee.addToggleButtonsFromText(houseWrapper.getManageFeeContains());
@@ -67,6 +87,9 @@ public class HouseDetailActivity extends AppCompatActivity {
         for (ToggleButton toggleButton : toggleButtonGroupOptions.getToggleButtons()) {
             binding.houseDetailFlowLayoutOptions.addView(toggleButton);
         }
+
+
+        readItems();
     }
 
     @Override
@@ -178,11 +201,19 @@ public class HouseDetailActivity extends AppCompatActivity {
         });
     }
 
-    private void readImages() {
-        adapter.addImage(R.drawable.house);
-        adapter.addImage(R.drawable.house);
-        adapter.addImage(R.drawable.house);
-        adapter.addImage(R.drawable.house);
-        adapter.addImage(R.drawable.house);
+    private void readItems() {
+        HttpConnection.getInstance().receive(this, "houses/" + houseWrapper.getId() + "/images",
+                receivedData -> {
+                    Gson gson = new Gson();
+                    Image[] array = gson.fromJson(receivedData, Image[].class);
+                    if (array == null) {
+                        Toast.makeText(this, "데이터 수신 실패.", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    Log.d("DB_DATA", receivedData);
+
+                    imageViewModel.insert(array);
+                });
     }
 }

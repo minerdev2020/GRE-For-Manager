@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 public class MainViewModel extends AndroidViewModel {
@@ -16,6 +17,10 @@ public class MainViewModel extends AndroidViewModel {
         super(application);
         repository = new HouseRepository(application);
         allHouses = repository.getAll();
+    }
+
+    public LiveData<Timestamp> getLatestUpdatedAt() {
+        return repository.getLatestUpdatedAt();
     }
 
     public LiveData<List<House>> getAll() {

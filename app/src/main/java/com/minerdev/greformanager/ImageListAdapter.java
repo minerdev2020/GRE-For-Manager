@@ -11,6 +11,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -114,7 +116,7 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.View
         }
 
         public void setItem(Uri uri, int thumbnailPos) {
-            imageView.setImageURI(uri);
+            Glide.with(itemView).load(uri).into(imageView);
 
             if (getAdapterPosition() == thumbnailPos) {
                 textView.setVisibility(View.VISIBLE);

@@ -15,8 +15,7 @@
             android:id="@+id/houseItem_imageView_profile"
             android:layout_width="100dp"
             android:layout_height="match_parent"
-            android:layout_margin="2dp"
-            android:src="@drawable/house"/>
+            android:layout_margin="2dp" />
 
         <LinearLayout
             android:layout_width="0dp"

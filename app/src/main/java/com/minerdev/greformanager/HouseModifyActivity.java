@@ -1,7 +1,10 @@
 package com.minerdev.greformanager;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,10 +23,15 @@ import androidx.viewpager.widget.ViewPager;
 import com.android.volley.Request;
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class HouseModifyActivity extends AppCompatActivity {
     private static String mode;
     private final SectionPageAdapter adapter = new SectionPageAdapter(getSupportFragmentManager(),
             FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+    private Handler handler = new Handler();
+    private int count = 0;
     private ImageViewModel imageViewModel;
     private HouseModifyViewModel viewModel;
     private NonSwipeViewPager viewPager;
@@ -74,23 +82,35 @@ public class HouseModifyActivity extends AppCompatActivity {
         imageViewModel = new ViewModelProvider(this,
                 new ViewModelProvider.AndroidViewModelFactory(getApplication())).get(ImageViewModel.class);
 
+        viewModel = new ViewModelProvider(this).get(HouseModifyViewModel.class);
+
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
         mode = intent.getStringExtra("mode");
-        House house = null;
-
         if (mode.equals("add")) {
             actionBar.setTitle("매물 추가");
+            viewModel.setMode(mode, null);
 
         } else if (mode.equals("modify")) {
             actionBar.setTitle("매물 정보 수정");
-            house = intent.getParcelableExtra("house_value");
-        }
+            House house = intent.getParcelableExtra("house_value");
+            viewModel.setMode(mode, house);
 
-        viewModel = new ViewModelProvider(this).get(HouseModifyViewModel.class);
-        viewModel.setMode(mode, house);
+            imageViewModel.getOrderByPosition(house.id).observe(this, images -> {
+                List<Uri> uris = new ArrayList<>();
+                for (Image image : images) {
+                    uris.add(Uri.parse(Constants.getInstance().DNS + "/storage/images/" + image.house_id + "/" + image.title));
+
+                    if (image.thumbnail == 1) {
+                        viewModel.setThumbnail(image.position);
+                    }
+                }
+
+                viewModel.setImageUris(uris);
+            });
+        }
 
         button_next = findViewById(R.id.house_modify_button_next);
         button_next.setOnClickListener(v -> toNextPage());
@@ -133,9 +153,7 @@ public class HouseModifyActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("저장하지 않고 돌아가시겠습니까?");
         builder.setIcon(R.drawable.ic_round_help_24);
-        builder.setPositiveButton("확인", (dialog, which) -> {
-            HouseModifyActivity.super.finish();
-        });
+        builder.setPositiveButton("확인", (dialog, which) -> HouseModifyActivity.super.finish());
 
         builder.setNegativeButton("취소", (dialog, which) -> dialog.dismiss());
 
@@ -194,6 +212,9 @@ public class HouseModifyActivity extends AppCompatActivity {
             builder.setIcon(R.drawable.ic_round_help_24);
 
             builder.setPositiveButton("확인", (dialog, which) -> {
+                viewModel.getHouse().thumbnail = viewModel.getThumbnailTitle();
+                count = 0;
+
                 if (mode.equals("add")) {
                     add();
 
@@ -213,6 +234,9 @@ public class HouseModifyActivity extends AppCompatActivity {
     }
 
     private void add() {
+        ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("데이터 전송중...");
+
         HttpConnection.getInstance().send(this, Request.Method.POST,
                 "houses", viewModel.getHouse(), receivedData -> {
                     Gson gson = new Gson();
@@ -222,40 +246,53 @@ public class HouseModifyActivity extends AppCompatActivity {
                     viewModel.getHouse().updated_at = data.updated_at;
 
                     HttpConnection.getInstance().send(getApplication(), Request.Method.POST,
-                            "houses/" + data.id + "/images", viewModel.getImageUris(), viewModel.getThumbnail(), receivedData1 -> {
+                            "houses/" + data.id + "/images", viewModel.getImageUris(), viewModel.getImages(), receivedData1 -> {
                                 Gson gson1 = new Gson();
                                 Image imageData = gson1.fromJson(receivedData1, Image.class);
                                 imageViewModel.insert(imageData);
                                 Log.d("DB_INSERT", receivedData1);
-                            });
 
-                    Intent intent = new Intent();
-                    intent.putExtra("house_value", viewModel.getHouse());
-                    setResult(RESULT_OK, intent);
-                    HouseModifyActivity.super.finish();
+                                count++;
+
+                                if (count == viewModel.getImageUris().size()) {
+                                    Intent intent = new Intent();
+                                    intent.putExtra("house_value", viewModel.getHouse());
+                                    setResult(RESULT_OK, intent);
+                                    HouseModifyActivity.super.finish();
+                                }
+                            });
                 });
     }
 
     private void modify() {
+        ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("데이터 전송중...");
+
         int id = viewModel.getHouse().id;
         HttpConnection.getInstance().send(this, Request.Method.PATCH,
                 "houses/" + id, viewModel.getHouse(), receivedData -> {
                     Gson gson = new Gson();
                     House data = gson.fromJson(receivedData, House.class);
                     viewModel.getHouse().updated_at = data.updated_at;
+                    imageViewModel.deleteAll(id);
 
                     HttpConnection.getInstance().send(getApplication(), Request.Method.POST,
-                            "houses/" + id + "/images", viewModel.getImageUris(), viewModel.getThumbnail(), receivedData1 -> {
+                            "houses/" + id + "/images", viewModel.getImageUris(), viewModel.getImages(), receivedData1 -> {
                                 Gson gson1 = new Gson();
                                 Image imageData = gson1.fromJson(receivedData1, Image.class);
-                                imageViewModel.updateOrInsert(imageData);
+                                imageViewModel.deleteAll(id);
+                                imageViewModel.insert(imageData);
                                 Log.d("DB_INSERT", receivedData1);
-                            });
 
-                    Intent intent = new Intent();
-                    intent.putExtra("house_value", viewModel.getHouse());
-                    setResult(RESULT_OK, intent);
-                    HouseModifyActivity.super.finish();
+                                count++;
+
+                                if (count == viewModel.getImageUris().size()) {
+                                    Intent intent = new Intent();
+                                    intent.putExtra("house_value", viewModel.getHouse());
+                                    setResult(RESULT_OK, intent);
+                                    HouseModifyActivity.super.finish();
+                                }
+                            });
                 });
     }
 }

@@ -7,6 +7,8 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import java.sql.Timestamp;
+
 @Entity
 public class Image implements Parcelable {
     @Ignore
@@ -24,8 +26,8 @@ public class Image implements Parcelable {
 
     @PrimaryKey
     public int id;
-    public String created_at;
-    public String updated_at;
+    public Timestamp created_at;
+    public Timestamp updated_at;
     public String title;
     public String path;
     public byte position;
@@ -38,8 +40,8 @@ public class Image implements Parcelable {
 
     protected Image(Parcel in) {
         id = in.readInt();
-        created_at = in.readString();
-        updated_at = in.readString();
+        created_at = Timestamp.valueOf(in.readString());
+        updated_at = Timestamp.valueOf(in.readString());
         title = in.readString();
         path = in.readString();
         position = in.readByte();
@@ -54,8 +56,8 @@ public class Image implements Parcelable {
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeInt(id);
-        parcel.writeString(created_at);
-        parcel.writeString(updated_at);
+        parcel.writeString(created_at.toString());
+        parcel.writeString(updated_at.toString());
         parcel.writeString(title);
         parcel.writeString(path);
         parcel.writeByte(position);

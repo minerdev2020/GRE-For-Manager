@@ -42,8 +42,8 @@
                     android:layout_height="@dimen/image_slider_height"
                     android:orientation="vertical">
 
-                    <androidx.viewpager.widget.ViewPager
-                        android:id="@+id/house_detail_viewPager_image"
+                    <androidx.viewpager2.widget.ViewPager2
+                        android:id="@+id/house_detail_viewPager2_image"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="#FFEEEEEE" />

@@ -63,7 +63,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:backgroundTint="#FFFFFFFF"
-                            android:src="@drawable/ic_round_expand_more_24" />
+                            android:src="@drawable/ic_round_expand_less_24" />
                     </LinearLayout>
 
                     <androidx.recyclerview.widget.RecyclerView
@@ -96,7 +96,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:backgroundTint="#FFFFFFFF"
-                            android:src="@drawable/ic_round_expand_more_24" />
+                            android:src="@drawable/ic_round_expand_less_24" />
                     </LinearLayout>
 
                     <androidx.recyclerview.widget.RecyclerView

@@ -129,16 +129,18 @@ public class ImageFragment extends Fragment implements OnSaveDataListener {
     public void saveData() {
         viewModel.setImageUris(imageListAdapter.getItems());
         viewModel.setThumbnail(imageListAdapter.getThumbnail());
+        viewModel.saveImages(getContext());
     }
 
     public void initData() {
         imageListAdapter.setItems(viewModel.getImageUris());
         imageListAdapter.setThumbnail(viewModel.getThumbnail());
+        imageListAdapter.notifyDataSetChanged();
     }
 
     public void showAlbum() {
         Intent intent = new Intent();
-        intent.setType("image/*");
+        intent.setDataAndType(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
         intent.setAction(Intent.ACTION_PICK);
         startActivityForResult(intent, GALLERY_REQUEST_CODE);
     }

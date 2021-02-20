@@ -7,6 +7,8 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import java.sql.Timestamp;
+
 @Entity
 public class House implements Parcelable {
     @Ignore
@@ -24,8 +26,8 @@ public class House implements Parcelable {
 
     @PrimaryKey
     public int id;
-    public String created_at;
-    public String updated_at;
+    public Timestamp created_at;
+    public Timestamp updated_at;
     public String address;
     public String number;
     public byte house_type;
@@ -51,6 +53,7 @@ public class House implements Parcelable {
     public String detail_info;
     public String phone;
     public byte state;
+    public String thumbnail;
 
     public House() {
 
@@ -58,8 +61,8 @@ public class House implements Parcelable {
 
     protected House(Parcel in) {
         id = in.readInt();
-        created_at = in.readString();
-        updated_at = in.readString();
+        created_at = Timestamp.valueOf(in.readString());
+        updated_at = Timestamp.valueOf(in.readString());
         address = in.readString();
         number = in.readString();
         house_type = in.readByte();
@@ -85,6 +88,7 @@ public class House implements Parcelable {
         detail_info = in.readString();
         phone = in.readString();
         state = in.readByte();
+        thumbnail = in.readString();
     }
 
     @Override
@@ -95,8 +99,8 @@ public class House implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(id);
-        dest.writeString(created_at);
-        dest.writeString(updated_at);
+        dest.writeString(created_at.toString());
+        dest.writeString(updated_at.toString());
         dest.writeString(address);
         dest.writeString(number);
         dest.writeByte(house_type);
@@ -122,5 +126,6 @@ public class House implements Parcelable {
         dest.writeString(detail_info);
         dest.writeString(phone);
         dest.writeByte(state);
+        dest.writeString(thumbnail);
     }
 }

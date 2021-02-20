@@ -3,6 +3,10 @@ package com.minerdev.greformanager;
 import android.app.Application;
 
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+
+import java.sql.Timestamp;
+import java.util.List;
 
 public class ImageViewModel extends AndroidViewModel {
     private ImageRepository repository;
@@ -10,6 +14,14 @@ public class ImageViewModel extends AndroidViewModel {
     public ImageViewModel(Application application) {
         super(application);
         repository = new ImageRepository(application);
+    }
+
+    public LiveData<Timestamp> getLatestUpdatedAt(int house_id) {
+        return repository.getLatestUpdatedAt(house_id);
+    }
+
+    public LiveData<List<Image>> getOrderByPosition(int house_id) {
+        return repository.getOrderByPosition(house_id);
     }
 
     public void insert(Image image) {
@@ -20,19 +32,7 @@ public class ImageViewModel extends AndroidViewModel {
         repository.insert(images);
     }
 
-    public void update(Image image) {
-        repository.update(image);
-    }
-
-    public void update(Image... images) {
-        repository.update(images);
-    }
-
-    public void updateOrInsert(Image image) {
-        repository.updateOrInsert(image);
-    }
-
-    public void deleteAll() {
-        repository.deleteAll();
+    public void deleteAll(int house_id) {
+        repository.deleteAll(house_id);
     }
 }

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -25,6 +26,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.navigation.NavigationView;
 import com.google.gson.Gson;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
     private static final long FINISH_INTERVAL_TIME = 2000;
@@ -240,16 +245,35 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void readItems() {
-        HttpConnection.getInstance().receive(this, "houses",
+        HttpConnection.getInstance().receive(this, "houses/latest_updated_at",
                 receivedData -> {
-                    Gson gson = new Gson();
-                    House[] array = gson.fromJson(receivedData, House[].class);
-                    if (array == null) {
-                        Toast.makeText(this, "데이터 수신 실패.", Toast.LENGTH_SHORT).show();
-                        return;
+                    Log.d("latest_updated_at", receivedData.substring(1, receivedData.length() - 9));
+                    Log.d("latest_updated_at", "" + viewModel.getLatestUpdatedAt().getValue().toString());
+                    SimpleDateFormat fm = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                    Date serverDate = null;
+                    Date clientDate = null;
+
+                    try {
+                        serverDate = fm.parse(receivedData.substring(1, receivedData.length() - 9));
+                        clientDate = fm.parse(viewModel.getLatestUpdatedAt().getValue().toString());
+
+                    } catch (ParseException e) {
+                        e.printStackTrace();
                     }
 
-                    viewModel.insert(array);
+                    if (clientDate.before(serverDate)) {
+                        HttpConnection.getInstance().receive(this, "houses",
+                                receivedData1 -> {
+                                    Gson gson = new Gson();
+                                    House[] array = gson.fromJson(receivedData1, House[].class);
+                                    if (array == null) {
+                                        Toast.makeText(this, "데이터 수신 실패.", Toast.LENGTH_SHORT).show();
+                                        return;
+                                    }
+
+                                    viewModel.insert(array);
+                                });
+                    }
                 });
     }
 }

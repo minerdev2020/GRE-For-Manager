@@ -4,6 +4,7 @@ import android.app.Application;
 
 import androidx.lifecycle.LiveData;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 public class ImageRepository {
@@ -16,11 +17,15 @@ public class ImageRepository {
         allImages = imageDao.getAllImages();
     }
 
+    LiveData<Timestamp> getLatestUpdatedAt(int house_id) {
+        return imageDao.getLatestUpdatedAt(house_id);
+    }
+
     public LiveData<List<Image>> getAllImages() {
         return allImages;
     }
 
-    public LiveData<List<Image>> getImages(int house_id) {
+    public LiveData<List<Image>> getOrderByPosition(int house_id) {
         return imageDao.getImages(house_id);
     }
 
@@ -30,14 +35,6 @@ public class ImageRepository {
 
     public void insert(Image... images) {
         GreDatabase.databaseWriteExecutor.execute(() -> imageDao.insert(images));
-    }
-
-    public void update(Image image) {
-        GreDatabase.databaseWriteExecutor.execute(() -> imageDao.update(image));
-    }
-
-    public void update(Image... images) {
-        GreDatabase.databaseWriteExecutor.execute(() -> imageDao.update(images));
     }
 
     public void updateOrInsert(Image image) {
@@ -50,6 +47,10 @@ public class ImageRepository {
                 imageDao.update(image);
             }
         });
+    }
+
+    public void deleteAll(int house_id) {
+        GreDatabase.databaseWriteExecutor.execute(() -> imageDao.deleteAll(house_id));
     }
 
     public void deleteAll() {
