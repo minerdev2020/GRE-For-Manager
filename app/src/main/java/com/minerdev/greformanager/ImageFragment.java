@@ -25,13 +25,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.File;
-import java.util.List;
 
 public class ImageFragment extends Fragment implements OnSaveDataListener {
     private static final int GALLERY_REQUEST_CODE = 1;
     private final ImageListAdapter imageListAdapter = new ImageListAdapter();
     private HouseModifyViewModel viewModel;
-    private List<Uri> imageUris;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -129,11 +127,13 @@ public class ImageFragment extends Fragment implements OnSaveDataListener {
 
     @Override
     public void saveData() {
-        imageUris = imageListAdapter.getItems();
+        viewModel.setImageUris(imageListAdapter.getItems());
+        viewModel.setThumbnail(imageListAdapter.getThumbnail());
     }
 
     public void initData() {
-        imageUris = viewModel.getImageUris();
+        imageListAdapter.setItems(viewModel.getImageUris());
+        imageListAdapter.setThumbnail(viewModel.getThumbnail());
     }
 
     public void showAlbum() {

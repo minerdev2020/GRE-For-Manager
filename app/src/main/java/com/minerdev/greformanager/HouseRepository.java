@@ -8,7 +8,7 @@ import java.util.List;
 
 public class HouseRepository {
     private HouseDao houseDao;
-    private LiveData<List<HouseParcelableData>> allHouses;
+    private LiveData<List<House>> allHouses;
 
     public HouseRepository(Application application) {
         GreDatabase db = GreDatabase.getDatabase(application);
@@ -16,23 +16,23 @@ public class HouseRepository {
         allHouses = houseDao.getAll();
     }
 
-    public LiveData<List<HouseParcelableData>> getAll() {
+    public LiveData<List<House>> getAll() {
         return allHouses;
     }
 
-    public HouseParcelableData get(int id) {
+    public House get(int id) {
         return houseDao.get(id);
     }
 
-    public void insert(HouseParcelableData house) {
+    public void insert(House house) {
         GreDatabase.databaseWriteExecutor.execute(() -> houseDao.insert(house));
     }
 
-    public void insertList(HouseParcelableData... houses) {
+    public void insert(House... houses) {
         GreDatabase.databaseWriteExecutor.execute(() -> houseDao.insert(houses));
     }
 
-    public void update(HouseParcelableData house) {
+    public void update(House house) {
         GreDatabase.databaseWriteExecutor.execute(() -> houseDao.update(house));
     }
 

@@ -25,7 +25,7 @@ import com.naver.maps.map.overlay.Marker;
 
 public class HouseDetailActivity extends AppCompatActivity {
     private final ImageAdapter adapter = new ImageAdapter(this);
-    private House house;
+    private HouseWrapper houseWrapper;
     private int originalState;
 
     private ActivityHouseDetailBinding binding;
@@ -42,9 +42,9 @@ public class HouseDetailActivity extends AppCompatActivity {
         binding.setActivity(this);
 
         Intent intent = getIntent();
-        HouseParcelableData data = intent.getParcelableExtra("house_value");
+        House data = intent.getParcelableExtra("house_value");
         originalState = data.state;
-        house = new House(data);
+        houseWrapper = new HouseWrapper(data);
 
 
         setSupportActionBar(binding.houseDetailToolbar);
@@ -57,13 +57,13 @@ public class HouseDetailActivity extends AppCompatActivity {
         setMapFragment();
 
         ToggleButtonGroup toggleButtonGroupManageFee = new ToggleButtonGroup(this, "ManageFee");
-        toggleButtonGroupManageFee.addToggleButtonsFromText(house.getManageFeeContains());
+        toggleButtonGroupManageFee.addToggleButtonsFromText(houseWrapper.getManageFeeContains());
         for (ToggleButton toggleButton : toggleButtonGroupManageFee.getToggleButtons()) {
             binding.houseDetailFlowLayoutManageFee.addView(toggleButton);
         }
 
         ToggleButtonGroup toggleButtonGroupOptions = new ToggleButtonGroup(this, "Options");
-        toggleButtonGroupOptions.addToggleButtonsFromText(house.getOptions());
+        toggleButtonGroupOptions.addToggleButtonsFromText(houseWrapper.getOptions());
         for (ToggleButton toggleButton : toggleButtonGroupOptions.getToggleButtons()) {
             binding.houseDetailFlowLayoutOptions.addView(toggleButton);
         }
@@ -86,7 +86,7 @@ public class HouseDetailActivity extends AppCompatActivity {
             case R.id.house_detail_menu_modify:
                 Intent intent = new Intent(this, HouseModifyActivity.class);
                 intent.putExtra("mode", "modify");
-                intent.putExtra("house_value", house.getData());
+                intent.putExtra("house_value", houseWrapper.getData());
                 startActivityForResult(intent, Constants.getInstance().HOUSE_MODIFY_ACTIVITY_REQUEST_CODE);
                 break;
 
@@ -99,15 +99,15 @@ public class HouseDetailActivity extends AppCompatActivity {
 
     @Override
     public void finish() {
-        if (originalState != house.getData().state) {
+        if (originalState != houseWrapper.getData().state) {
             JsonObject data = new JsonObject();
-            data.addProperty("state", house.getData().state);
+            data.addProperty("state", houseWrapper.getData().state);
             HttpConnection.getInstance().send(this, Request.Method.PATCH,
-                    "houses/" + house.getData().id, data, null);
+                    "houses/" + houseWrapper.getData().id, data, null);
         }
 
         Intent intent = new Intent();
-        intent.putExtra("house_value", house.getData());
+        intent.putExtra("house_value", houseWrapper.getData());
         setResult(RESULT_OK, intent);
 
         super.finish();
@@ -122,15 +122,15 @@ public class HouseDetailActivity extends AppCompatActivity {
                     return;
                 }
 
-                House house = new House(data.getParcelableExtra("house_value"));
-                this.house = house;
+                HouseWrapper houseWrapper = new HouseWrapper(data.getParcelableExtra("house_value"));
+                this.houseWrapper = houseWrapper;
                 refreshUI();
             }
         }
     }
 
-    public House getHouse() {
-        return house;
+    public HouseWrapper getHouseWrapper() {
+        return houseWrapper;
     }
 
     private void refreshUI() {
@@ -139,13 +139,13 @@ public class HouseDetailActivity extends AppCompatActivity {
         binding.houseDetailFlowLayoutOptions.removeAllViews();
 
         ToggleButtonGroup toggleButtonGroupManageFee = new ToggleButtonGroup(this, "ManageFee");
-        toggleButtonGroupManageFee.addToggleButtons(house.getManageFeeContains().split("\\|"));
+        toggleButtonGroupManageFee.addToggleButtons(houseWrapper.getManageFeeContains().split("\\|"));
         for (ToggleButton toggleButton : toggleButtonGroupManageFee.getToggleButtons()) {
             binding.houseDetailFlowLayoutManageFee.addView(toggleButton);
         }
 
         ToggleButtonGroup toggleButtonGroupOptions = new ToggleButtonGroup(this, "Options");
-        toggleButtonGroupOptions.addToggleButtons(house.getOptions().split("\\|"));
+        toggleButtonGroupOptions.addToggleButtons(houseWrapper.getOptions().split("\\|"));
         for (ToggleButton toggleButton : toggleButtonGroupOptions.getToggleButtons()) {
             binding.houseDetailFlowLayoutOptions.addView(toggleButton);
         }
@@ -167,7 +167,7 @@ public class HouseDetailActivity extends AppCompatActivity {
             uiSettings.setZoomControlEnabled(false);
             uiSettings.setAllGesturesEnabled(false);
 
-            Geocode.getInstance().getQueryResponseFromNaver(HouseDetailActivity.this, house.getAddress().substring(8));
+            Geocode.getInstance().getQueryResponseFromNaver(HouseDetailActivity.this, houseWrapper.getAddress().substring(8));
             Geocode.getInstance().setOnDataReceiveListener(result -> {
                 GeocodeResult.Address address = result.addresses.get(0);
                 LatLng latLng = new LatLng(Double.parseDouble(address.y), Double.parseDouble(address.x));

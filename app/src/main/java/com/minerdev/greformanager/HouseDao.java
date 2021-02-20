@@ -12,33 +12,33 @@ import java.util.List;
 
 @Dao
 public interface HouseDao {
-    @Query("SELECT * FROM house")
-    LiveData<List<HouseParcelableData>> getAll();
+    @Query("SELECT * FROM House")
+    LiveData<List<House>> getAll();
 
 //    @Query("SELECT * FROM house WHERE :options")
-//    List<HouseParcelableData> getHouses(String options);
+//    List<House> getHouses(String options);
 
-    @Query("SELECT * FROM house WHERE id = :id")
-    HouseParcelableData get(int id);
-
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    void insert(HouseParcelableData... houses);
+    @Query("SELECT * FROM House WHERE id = :id")
+    House get(int id);
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    void insert(HouseParcelableData house);
+    void insert(House... houses);
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    void insert(House house);
 
     @Update
-    void update(HouseParcelableData... houses);
+    void update(House... houses);
 
     @Update
-    void update(HouseParcelableData house);
+    void update(House house);
 
     @Delete
-    void delete(HouseParcelableData... houses);
+    void delete(House... houses);
 
     @Delete
-    void delete(HouseParcelableData house);
+    void delete(House house);
 
-    @Query("DELETE FROM house")
+    @Query("DELETE FROM House")
     void deleteAll();
 }

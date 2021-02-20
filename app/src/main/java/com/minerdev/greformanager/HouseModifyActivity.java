@@ -2,6 +2,7 @@ package com.minerdev.greformanager;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -23,6 +24,7 @@ public class HouseModifyActivity extends AppCompatActivity {
     private static String mode;
     private final SectionPageAdapter adapter = new SectionPageAdapter(getSupportFragmentManager(),
             FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+    private ImageViewModel imageViewModel;
     private HouseModifyViewModel viewModel;
     private NonSwipeViewPager viewPager;
     private Button button_next;
@@ -69,12 +71,15 @@ public class HouseModifyActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_house_modify);
 
+        imageViewModel = new ViewModelProvider(this,
+                new ViewModelProvider.AndroidViewModelFactory(getApplication())).get(ImageViewModel.class);
+
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
         mode = intent.getStringExtra("mode");
-        HouseParcelableData house = null;
+        House house = null;
 
         if (mode.equals("add")) {
             actionBar.setTitle("매물 추가");
@@ -211,14 +216,18 @@ public class HouseModifyActivity extends AppCompatActivity {
         HttpConnection.getInstance().send(this, Request.Method.POST,
                 "houses", viewModel.getHouse(), receivedData -> {
                     Gson gson = new Gson();
-                    HouseParcelableData data = gson.fromJson(receivedData, HouseParcelableData.class);
-
-                    HttpConnection.getInstance().send(getApplication(), Request.Method.POST,
-                            "houses/" + data.id + "/images", viewModel.getImageUris(), null);
-
+                    House data = gson.fromJson(receivedData, House.class);
                     viewModel.getHouse().id = data.id;
                     viewModel.getHouse().created_at = data.created_at;
                     viewModel.getHouse().updated_at = data.updated_at;
+
+                    HttpConnection.getInstance().send(getApplication(), Request.Method.POST,
+                            "houses/" + data.id + "/images", viewModel.getImageUris(), viewModel.getThumbnail(), receivedData1 -> {
+                                Gson gson1 = new Gson();
+                                Image imageData = gson1.fromJson(receivedData1, Image.class);
+                                imageViewModel.insert(imageData);
+                                Log.d("DB_INSERT", receivedData1);
+                            });
 
                     Intent intent = new Intent();
                     intent.putExtra("house_value", viewModel.getHouse());
@@ -230,23 +239,23 @@ public class HouseModifyActivity extends AppCompatActivity {
     private void modify() {
         int id = viewModel.getHouse().id;
         HttpConnection.getInstance().send(this, Request.Method.PATCH,
-                "houses/" + id, viewModel.getHouse(), new HttpConnection.OnReceiveListener() {
-                    @Override
-                    public void onReceive(String receivedData) {
-                        Gson gson = new Gson();
-                        HouseParcelableData data = gson.fromJson(receivedData, HouseParcelableData.class);
+                "houses/" + id, viewModel.getHouse(), receivedData -> {
+                    Gson gson = new Gson();
+                    House data = gson.fromJson(receivedData, House.class);
+                    viewModel.getHouse().updated_at = data.updated_at;
 
-                        HttpConnection.getInstance().send(getApplication(), Request.Method.POST,
-                                "houses/" + id + "/images", viewModel.getImageUris(), null);
+                    HttpConnection.getInstance().send(getApplication(), Request.Method.POST,
+                            "houses/" + id + "/images", viewModel.getImageUris(), viewModel.getThumbnail(), receivedData1 -> {
+                                Gson gson1 = new Gson();
+                                Image imageData = gson1.fromJson(receivedData1, Image.class);
+                                imageViewModel.updateOrInsert(imageData);
+                                Log.d("DB_INSERT", receivedData1);
+                            });
 
-                        viewModel.getHouse().updated_at = data.updated_at;
-
-                        Intent intent = new Intent();
-                        intent.putExtra("house_value", viewModel.getHouse());
-                        setResult(RESULT_OK, intent);
-                        HouseModifyActivity.super.finish();
-                    }
+                    Intent intent = new Intent();
+                    intent.putExtra("house_value", viewModel.getHouse());
+                    setResult(RESULT_OK, intent);
+                    HouseModifyActivity.super.finish();
                 });
-
     }
 }

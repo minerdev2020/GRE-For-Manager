@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private static final long FINISH_INTERVAL_TIME = 2000;
     private final HouseListAdapter saleAdapter = new HouseListAdapter(new HouseListAdapter.DiffCallback());
     private final HouseListAdapter soldAdapter = new HouseListAdapter(new HouseListAdapter.DiffCallback());
-    private HouseListViewModel viewModel;
+    private MainViewModel viewModel;
 
     private long backPressedTime = 0;
     private OneSideDrawerLayout drawerLayout;
@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         Constants.getInstance().initialize(getApplicationContext());
 
         viewModel = new ViewModelProvider(this,
-                new ViewModelProvider.AndroidViewModelFactory(getApplication())).get(HouseListViewModel.class);
+                new ViewModelProvider.AndroidViewModelFactory(getApplication())).get(MainViewModel.class);
         viewModel.getAll().observe(this, houses -> {
             saleAdapter.submitList(houses);
             soldAdapter.submitList(houses);
@@ -182,7 +182,7 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
 
-                HouseParcelableData house = data.getParcelableExtra("house_value");
+                House house = data.getParcelableExtra("house_value");
                 viewModel.update(house);
             }
 
@@ -192,7 +192,7 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
 
-                HouseParcelableData house = data.getParcelableExtra("house_value");
+                House house = data.getParcelableExtra("house_value");
                 viewModel.insert(house);
             }
         }
@@ -243,13 +243,13 @@ public class MainActivity extends AppCompatActivity {
         HttpConnection.getInstance().receive(this, "houses",
                 receivedData -> {
                     Gson gson = new Gson();
-                    HouseParcelableData[] array = gson.fromJson(receivedData, HouseParcelableData[].class);
+                    House[] array = gson.fromJson(receivedData, House[].class);
                     if (array == null) {
                         Toast.makeText(this, "데이터 수신 실패.", Toast.LENGTH_SHORT).show();
                         return;
                     }
 
-                    viewModel.insertList(array);
+                    viewModel.insert(array);
                 });
     }
 }

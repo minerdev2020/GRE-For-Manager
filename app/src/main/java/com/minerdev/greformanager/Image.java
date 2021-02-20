@@ -1,41 +1,64 @@
 package com.minerdev.greformanager;
 
-public class Image {
-    private final ImageParcelableData data;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-    public Image(ImageParcelableData data) {
-        this.data = data;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
+@Entity
+public class Image implements Parcelable {
+    @Ignore
+    public static final Creator<Image> CREATOR = new Creator<Image>() {
+        @Override
+        public Image createFromParcel(Parcel in) {
+            return new Image(in);
+        }
+
+        @Override
+        public Image[] newArray(int size) {
+            return new Image[size];
+        }
+    };
+
+    @PrimaryKey
+    public int id;
+    public String created_at;
+    public String updated_at;
+    public String title;
+    public String path;
+    public byte position;
+    public byte thumbnail;
+    public int house_id;
+
+    public Image() {
+
     }
 
-    public int getId() {
-        return data.id;
+    protected Image(Parcel in) {
+        id = in.readInt();
+        created_at = in.readString();
+        updated_at = in.readString();
+        title = in.readString();
+        path = in.readString();
+        position = in.readByte();
+        house_id = in.readInt();
     }
 
-    public String getCreatedAt() {
-        return data.created_at;
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
-    public String getUpdatedAt() {
-        return data.updated_at;
-    }
-
-    public String getTitle() {
-        return data.title;
-    }
-
-    public String getPath() {
-        return data.path;
-    }
-
-    public byte getPosition() {
-        return data.position;
-    }
-
-    public int getHouseId() {
-        return data.house_id;
-    }
-
-    public ImageParcelableData getData() {
-        return data;
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(id);
+        parcel.writeString(created_at);
+        parcel.writeString(updated_at);
+        parcel.writeString(title);
+        parcel.writeString(path);
+        parcel.writeByte(position);
+        parcel.writeInt(house_id);
     }
 }

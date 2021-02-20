@@ -13,11 +13,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.ViewHolder> {
-    private ArrayList<Uri> items = new ArrayList<>();
+    private List<Uri> items = new ArrayList<>();
     private OnItemClickListener listener = new OnItemClickListener();
-    private int thumbnailPos = 0;
+    private int thumbnail = 0;
 
     public void setOnItemClickListener(OnItemClickListener clickListener) {
         listener = clickListener;
@@ -33,7 +34,7 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.View
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.setItem(items.get(position), thumbnailPos);
+        holder.setItem(items.get(position), thumbnail);
     }
 
     @Override
@@ -57,12 +58,20 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.View
         items.remove(position);
     }
 
-    public ArrayList<Uri> getItems() {
+    public List<Uri> getItems() {
         return items;
     }
 
-    public void setItems(ArrayList<Uri> items) {
+    public void setItems(List<Uri> items) {
         this.items = items;
+    }
+
+    public int getThumbnail() {
+        return thumbnail;
+    }
+
+    public void setThumbnail(int thumbnail) {
+        this.thumbnail = thumbnail;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -118,11 +127,11 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.View
 
     public class OnItemClickListener {
         public void onDeleteButtonClick(ImageListAdapter.ViewHolder viewHolder, View view, int position) {
-            if (thumbnailPos == position) {
-                thumbnailPos = 0;
+            if (thumbnail == position) {
+                thumbnail = 0;
 
-            } else if (thumbnailPos > position) {
-                thumbnailPos--;
+            } else if (thumbnail > position) {
+                thumbnail--;
             }
 
             removeItem(position);
@@ -130,7 +139,7 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.View
         }
 
         public void onThumbnailButtonClick(ImageListAdapter.ViewHolder viewHolder, View view, int position) {
-            thumbnailPos = position;
+            thumbnail = position;
             notifyDataSetChanged();
         }
 
@@ -139,11 +148,11 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.View
                 Collections.swap(items, position - 1, position);
                 notifyDataSetChanged();
 
-                if (thumbnailPos == position) {
-                    thumbnailPos--;
+                if (thumbnail == position) {
+                    thumbnail--;
 
-                } else if (thumbnailPos == position - 1) {
-                    thumbnailPos++;
+                } else if (thumbnail == position - 1) {
+                    thumbnail++;
                 }
             }
         }
@@ -153,11 +162,11 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.View
                 Collections.swap(items, position, position + 1);
                 notifyDataSetChanged();
 
-                if (thumbnailPos == position) {
-                    thumbnailPos++;
+                if (thumbnail == position) {
+                    thumbnail++;
 
-                } else if (thumbnailPos == position + 1) {
-                    thumbnailPos--;
+                } else if (thumbnail == position + 1) {
+                    thumbnail--;
                 }
             }
         }

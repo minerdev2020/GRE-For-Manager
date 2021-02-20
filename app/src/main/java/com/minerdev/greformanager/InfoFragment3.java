@@ -18,7 +18,7 @@ public class InfoFragment3 extends Fragment implements OnSaveDataListener {
 
     private FragmentInfo3Binding binding;
     private HouseModifyViewModel viewModel;
-    private HouseParcelableData house;
+    private House house;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -58,7 +58,7 @@ public class InfoFragment3 extends Fragment implements OnSaveDataListener {
 
     @Override
     public void saveData() {
-        HouseParcelableData data = house;
+        House data = house;
 
         data.options = toggleButtonGroupOptions.getCheckedToggleButtonTextsInSingleLine();
         data.detail_info = binding.houseModify3DetailInfo.getText().toString();

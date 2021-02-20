@@ -51,7 +51,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:singleLine="true"
-                android:text="house info | house info | house info"
+                android:text="houseWrapper info | houseWrapper info | houseWrapper info"
                 android:textSize="12sp" />
 
             <TextView

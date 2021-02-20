@@ -12,10 +12,10 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class HouseListAdapter extends ListAdapter<HouseParcelableData, HouseListAdapter.ViewHolder> {
+public class HouseListAdapter extends ListAdapter<House, HouseListAdapter.ViewHolder> {
     private OnItemClickListener listener;
 
-    public HouseListAdapter(DiffUtil.ItemCallback<HouseParcelableData> diffCallback) {
+    public HouseListAdapter(DiffUtil.ItemCallback<House> diffCallback) {
         super(diffCallback);
     }
 
@@ -29,11 +29,11 @@ public class HouseListAdapter extends ListAdapter<HouseParcelableData, HouseList
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        HouseParcelableData item = getItem(position);
+        House item = getItem(position);
         holder.setItem(item);
     }
 
-    public HouseParcelableData get(int position) {
+    public House get(int position) {
         return getItem(position);
     }
 
@@ -69,25 +69,25 @@ public class HouseListAdapter extends ListAdapter<HouseParcelableData, HouseList
             });
         }
 
-        public void setItem(HouseParcelableData house) {
-            House house1 = new House(house);
+        public void setItem(House house) {
+            HouseWrapper houseWrapper1 = new HouseWrapper(house);
 
-            textView_payment.setText(house1.getPaymentType());
-            textView_price.setText(house1.getPrice());
-            textView_house_info.setText(house1.getHouseInfo());
-            textView_description.setText(house1.getDetailInfo());
+            textView_payment.setText(houseWrapper1.getPaymentType());
+            textView_price.setText(houseWrapper1.getPrice());
+            textView_house_info.setText(houseWrapper1.getHouseInfo());
+            textView_description.setText(houseWrapper1.getDetailInfo());
             imageView_profile.setImageResource(R.drawable.house);
         }
     }
 
-    public static class DiffCallback extends DiffUtil.ItemCallback<HouseParcelableData> {
+    public static class DiffCallback extends DiffUtil.ItemCallback<House> {
         @Override
-        public boolean areItemsTheSame(@NonNull HouseParcelableData oldItem, @NonNull HouseParcelableData newItem) {
+        public boolean areItemsTheSame(@NonNull House oldItem, @NonNull House newItem) {
             return oldItem == newItem;
         }
 
         @Override
-        public boolean areContentsTheSame(@NonNull HouseParcelableData oldItem, @NonNull HouseParcelableData newItem) {
+        public boolean areContentsTheSame(@NonNull House oldItem, @NonNull House newItem) {
             return oldItem.id == newItem.id;
         }
     }

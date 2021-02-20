@@ -11,7 +11,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {HouseParcelableData.class, ImageParcelableData.class}, version = 1, exportSchema = false)
+@Database(entities = {House.class, Image.class}, version = 1, exportSchema = false)
 public abstract class GreDatabase extends RoomDatabase {
     private static final int NUMBER_OF_THREADS = 4;
     public static final ExecutorService databaseWriteExecutor =

@@ -3,25 +3,36 @@ package com.minerdev.greformanager;
 import android.app.Application;
 
 import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
-
-import java.util.List;
 
 public class ImageViewModel extends AndroidViewModel {
-    private final LiveData<List<ImageParcelableData>> allImages;
     private ImageRepository repository;
 
     public ImageViewModel(Application application) {
         super(application);
         repository = new ImageRepository(application);
-        allImages = repository.getAllImages();
     }
 
-    LiveData<List<ImageParcelableData>> getAllImages() {
-        return allImages;
+    public void insert(Image image) {
+        repository.insert(image);
     }
 
-    public void insert(ImageParcelableData house) {
-        repository.insert(house);
+    public void insert(Image... images) {
+        repository.insert(images);
+    }
+
+    public void update(Image image) {
+        repository.update(image);
+    }
+
+    public void update(Image... images) {
+        repository.update(images);
+    }
+
+    public void updateOrInsert(Image image) {
+        repository.updateOrInsert(image);
+    }
+
+    public void deleteAll() {
+        repository.deleteAll();
     }
 }

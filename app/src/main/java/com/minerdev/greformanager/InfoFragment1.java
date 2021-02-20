@@ -34,7 +34,7 @@ public class InfoFragment1 extends Fragment implements OnSaveDataListener {
 
     private FragmentInfo1Binding binding;
     private HouseModifyViewModel viewModel;
-    private HouseParcelableData house;
+    private House house;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

@@ -42,7 +42,7 @@ public class HttpConnection {
         makeRequest(context, method, serverUri, json, listener);
     }
 
-    public void send(Context context, int method, String uri, HouseParcelableData data, OnReceiveListener listener) {
+    public void send(Context context, int method, String uri, House data, OnReceiveListener listener) {
         String serverUri = Constants.getInstance().DNS + "/" + uri;
         Gson gson = new Gson();
         String json = gson.toJson(data);
@@ -50,12 +50,12 @@ public class HttpConnection {
         makeRequest(context, method, serverUri, json, listener);
     }
 
-    public void send(Context context, int method, String uri, List<Uri> imageUris, OnReceiveListener listener) {
+    public void send(Context context, int method, String uri, List<Uri> imageUris, int thumbnail, OnReceiveListener listener) {
         String serverUri = Constants.getInstance().DNS + "/" + uri;
         int position = 0;
         for (Uri imageUri : imageUris) {
             Log.d("SEND_DATA", imageUri.getPath());
-            makeImageRequest(context, method, serverUri, imageUri, position, listener);
+            makeImageRequest(context, method, serverUri, imageUri, position, thumbnail, listener);
             position++;
         }
     }
@@ -103,7 +103,7 @@ public class HttpConnection {
         AppHelper.getInstance().requestQueue.add(request);
     }
 
-    private void makeImageRequest(Context context, int method, String uri, Uri imageUri, int position, OnReceiveListener listener) {
+    private void makeImageRequest(Context context, int method, String uri, Uri imageUri, int position, int thumbnail, OnReceiveListener listener) {
         File file = new File(AppHelper.getInstance().getPathFromUri(context, imageUri));
         String fileName = file.getName();
         String fileExtension = fileName.substring(fileName.lastIndexOf(".") + 1);
@@ -134,6 +134,14 @@ public class HttpConnection {
                 Map<String, String> params = new HashMap<>();
                 params.put("title", title);
                 params.put("position", String.valueOf(position));
+
+                if (position == thumbnail) {
+                    params.put("thumbnail", "1");
+
+                } else {
+                    params.put("thumbnail", "0");
+                }
+
                 return params;
             }
 

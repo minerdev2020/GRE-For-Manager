@@ -12,33 +12,42 @@ import java.util.List;
 
 @Dao
 public interface ImageDao {
-    @Query("SELECT * FROM image")
-    LiveData<List<ImageParcelableData>> getAllImages();
+    @Query("SELECT * FROM Image")
+    LiveData<List<Image>> getAllImages();
 
 //    @Query("SELECT * FROM image WHERE :options")
-//    List<ImageParcelableData> getImages(String options);
+//    List<Image> getImages(String options);
 
-    @Query("SELECT * FROM image WHERE house_id = :house_id")
-    ImageParcelableData getImages(int house_id);
+    @Query("SELECT * FROM Image WHERE house_id = :house_id")
+    LiveData<List<Image>> getImages(int house_id);
+
+    @Query("SELECT * FROM Image WHERE house_id = :house_id and position = :position")
+    Image getImage(int house_id, int position);
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    void insert(ImageParcelableData... images);
+    void insert(List<Image> images);
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    void insert(ImageParcelableData image);
+    void insert(Image... images);
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    void insert(Image image);
 
     @Update
-    void update(ImageParcelableData... images);
+    void update(List<Image> images);
 
     @Update
-    void update(ImageParcelableData image);
+    void update(Image... images);
+
+    @Update
+    void update(Image image);
 
     @Delete
-    void delete(ImageParcelableData... images);
+    void delete(Image... images);
 
     @Delete
-    void delete(ImageParcelableData image);
+    void delete(Image image);
 
-    @Query("DELETE FROM image")
+    @Query("DELETE FROM Image")
     void deleteAll();
 }
