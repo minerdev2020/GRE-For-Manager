@@ -236,6 +236,7 @@ public class HouseModifyActivity extends AppCompatActivity {
     private void add() {
         ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("데이터 전송중...");
+        progressDialog.setCancelable(false);
 
         HttpConnection.getInstance().send(this, Request.Method.POST,
                 "houses", viewModel.getHouse(), receivedData -> {
@@ -255,18 +256,23 @@ public class HouseModifyActivity extends AppCompatActivity {
                                 count++;
 
                                 if (count == viewModel.getImageUris().size()) {
+                                    progressDialog.dismiss();
+
                                     Intent intent = new Intent();
                                     intent.putExtra("house_value", viewModel.getHouse());
                                     setResult(RESULT_OK, intent);
                                     HouseModifyActivity.super.finish();
                                 }
                             });
+
+                    progressDialog.show();
                 });
     }
 
     private void modify() {
         ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("데이터 전송중...");
+        progressDialog.setCancelable(false);
 
         int id = viewModel.getHouse().id;
         HttpConnection.getInstance().send(this, Request.Method.PATCH,
@@ -280,19 +286,22 @@ public class HouseModifyActivity extends AppCompatActivity {
                             "houses/" + id + "/images", viewModel.getImageUris(), viewModel.getImages(), receivedData1 -> {
                                 Gson gson1 = new Gson();
                                 Image imageData = gson1.fromJson(receivedData1, Image.class);
-                                imageViewModel.deleteAll(id);
                                 imageViewModel.insert(imageData);
                                 Log.d("DB_INSERT", receivedData1);
 
                                 count++;
 
                                 if (count == viewModel.getImageUris().size()) {
+                                    progressDialog.dismiss();
+
                                     Intent intent = new Intent();
                                     intent.putExtra("house_value", viewModel.getHouse());
                                     setResult(RESULT_OK, intent);
                                     HouseModifyActivity.super.finish();
                                 }
                             });
+
+                    progressDialog.show();
                 });
     }
 }

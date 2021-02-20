@@ -27,6 +27,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.gson.Gson;
 
+// TODO 리스트 깜빡임, 판매상태에 따라 분류
 public class MainActivity extends AppCompatActivity {
     private static final long FINISH_INTERVAL_TIME = 2000;
     private final HouseListAdapter saleAdapter = new HouseListAdapter(new HouseListAdapter.DiffCallback());

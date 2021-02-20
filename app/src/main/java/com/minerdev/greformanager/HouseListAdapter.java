@@ -77,12 +77,12 @@ public class HouseListAdapter extends ListAdapter<House, HouseListAdapter.ViewHo
         }
 
         public void setItem(House house) {
-            HouseWrapper houseWrapper1 = new HouseWrapper(house);
+            HouseWrapper houseWrapper = new HouseWrapper(house);
 
-            textView_payment.setText(houseWrapper1.getPaymentType());
-            textView_price.setText(houseWrapper1.getPrice());
-            textView_house_info.setText(houseWrapper1.getHouseInfo());
-            textView_description.setText(houseWrapper1.getDetailInfo());
+            textView_payment.setText(houseWrapper.getPaymentType());
+            textView_price.setText(houseWrapper.getPrice());
+            textView_house_info.setText(houseWrapper.getHouseInfo());
+            textView_description.setText(houseWrapper.getDetailInfo());
             Date date = new Date(house.created_at);
             textView_upload_time.setText(date.toString());
 
