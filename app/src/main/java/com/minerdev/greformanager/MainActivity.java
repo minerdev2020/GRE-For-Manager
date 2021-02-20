@@ -27,10 +27,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.gson.Gson;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 public class MainActivity extends AppCompatActivity {
     private static final long FINISH_INTERVAL_TIME = 2000;
     private final HouseListAdapter saleAdapter = new HouseListAdapter(new HouseListAdapter.DiffCallback());
@@ -98,9 +94,12 @@ public class MainActivity extends AppCompatActivity {
 
         // NavigationView 초기화
         setNavigationView();
+    }
 
-
-        readItems();
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadItems();
     }
 
     @Override
@@ -211,7 +210,7 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout = findViewById(R.id.drawer_layout);
         drawerLayout.lockSwipe(GravityCompat.END);
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(menuItem -> {
             drawerLayout.closeDrawers();
 
@@ -244,36 +243,42 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void readItems() {
-        HttpConnection.getInstance().receive(this, "houses/latest_updated_at",
+    private void loadItems() {
+        HttpConnection.getInstance().receive(this, "houses/last-updated-at",
                 receivedData -> {
-                    Log.d("latest_updated_at", receivedData.substring(1, receivedData.length() - 9));
-                    Log.d("latest_updated_at", "" + viewModel.getLatestUpdatedAt().getValue().toString());
-                    SimpleDateFormat fm = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-                    Date serverDate = null;
-                    Date clientDate = null;
-
-                    try {
-                        serverDate = fm.parse(receivedData.substring(1, receivedData.length() - 9));
-                        clientDate = fm.parse(viewModel.getLatestUpdatedAt().getValue().toString());
-
-                    } catch (ParseException e) {
-                        e.printStackTrace();
+                    if (receivedData.equals("")) {
+                        loadItemsFromWeb();
                     }
 
-                    if (clientDate.before(serverDate)) {
-                        HttpConnection.getInstance().receive(this, "houses",
-                                receivedData1 -> {
-                                    Gson gson = new Gson();
-                                    House[] array = gson.fromJson(receivedData1, House[].class);
-                                    if (array == null) {
-                                        Toast.makeText(this, "데이터 수신 실패.", Toast.LENGTH_SHORT).show();
-                                        return;
-                                    }
-
-                                    viewModel.insert(array);
-                                });
-                    }
+                    checkUpdate(receivedData);
                 });
+    }
+
+    private void loadItemsFromWeb() {
+        HttpConnection.getInstance().receive(this, "houses",
+                receivedData -> {
+                    Gson gson = new Gson();
+                    House[] array = gson.fromJson(receivedData, House[].class);
+                    if (array == null) {
+                        Toast.makeText(this, "데이터 수신 실패.", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    viewModel.insert(array);
+                });
+    }
+
+    private void checkUpdate(String receivedData) {
+        new Thread(() -> {
+            Long serverTimestamp = Long.parseLong(receivedData);
+            Long clientTimestamp = viewModel.getLastUpdatedAt();
+            Log.d("last_updated_at", "server : " + serverTimestamp);
+            Log.d("last_updated_at", "client : " + clientTimestamp);
+
+            if (clientTimestamp == null || serverTimestamp > clientTimestamp) {
+                Log.d("last_updated_at", "load from web");
+                loadItemsFromWeb();
+            }
+        }).start();
     }
 }

@@ -46,7 +46,7 @@ public class Constants {
             Collections.addAll(DIRECTION, context.getResources().getStringArray(R.array.direction));
             Collections.addAll(BATHROOM, context.getResources().getStringArray(R.array.bathroom));
 
-            DNS = context.getResources().getString(R.string.local_server_dns);
+            DNS = context.getResources().getString(R.string.web_server_dns);
 
             isInitialized = true;
         }

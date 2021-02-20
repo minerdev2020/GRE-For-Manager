@@ -15,6 +15,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 
+import java.sql.Date;
+
 public class HouseListAdapter extends ListAdapter<House, HouseListAdapter.ViewHolder> {
     private OnItemClickListener listener;
 
@@ -81,7 +83,8 @@ public class HouseListAdapter extends ListAdapter<House, HouseListAdapter.ViewHo
             textView_price.setText(houseWrapper1.getPrice());
             textView_house_info.setText(houseWrapper1.getHouseInfo());
             textView_description.setText(houseWrapper1.getDetailInfo());
-            textView_upload_time.setText(house.created_at);
+            Date date = new Date(house.created_at);
+            textView_upload_time.setText(date.toString());
 
             Uri uri = Uri.parse(Constants.getInstance().DNS + "/storage/images/" + house.id + "/" + house.thumbnail);
             Glide.with(itemView).load(uri).into(imageView_profile);

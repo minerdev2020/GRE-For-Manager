@@ -6,21 +6,22 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 public class MainViewModel extends AndroidViewModel {
     private final LiveData<List<House>> allHouses;
-    private HouseRepository repository;
+    private final HouseRepository repository;
+    private final ImageRepository imageRepository;
 
     public MainViewModel(@NonNull Application application) {
         super(application);
         repository = new HouseRepository(application);
+        imageRepository = new ImageRepository(application);
         allHouses = repository.getAll();
     }
 
-    public LiveData<Timestamp> getLatestUpdatedAt() {
-        return repository.getLatestUpdatedAt();
+    public Long getLastUpdatedAt() {
+        return repository.getLastUpdatedAt();
     }
 
     public LiveData<List<House>> getAll() {
@@ -45,5 +46,6 @@ public class MainViewModel extends AndroidViewModel {
 
     public void deleteAll() {
         repository.deleteAll();
+        imageRepository.deleteAll();
     }
 }

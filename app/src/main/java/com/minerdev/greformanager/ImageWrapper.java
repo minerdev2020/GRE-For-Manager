@@ -2,6 +2,8 @@ package com.minerdev.greformanager;
 
 import android.net.Uri;
 
+import java.sql.Date;
+
 public class ImageWrapper {
     private final Image data;
 
@@ -14,11 +16,13 @@ public class ImageWrapper {
     }
 
     public String getCreatedAt() {
-        return data.created_at;
+        Date date = new Date(data.created_at);
+        return date.toString();
     }
 
     public String getUpdatedAt() {
-        return data.updated_at;
+        Date date = new Date(data.updated_at);
+        return date.toString();
     }
 
     public String getTitle() {

@@ -26,7 +26,6 @@ public class InfoFragment1 extends Fragment implements OnSaveDataListener {
 
     private String houseType;
     private String paymentType;
-    private boolean isFirst = false;
 
     private ArrayAdapter<String> arrayAdapterPayment;
     private ToggleButtonGroup toggleButtonGroupManageFeeContains;

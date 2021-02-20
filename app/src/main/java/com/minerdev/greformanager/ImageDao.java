@@ -7,13 +7,12 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 @Dao
 public interface ImageDao {
     @Query("SELECT updated_at FROM Image WHERE house_id = :house_id ORDER BY updated_at DESC")
-    LiveData<Timestamp> getLatestUpdatedAt(int house_id);
+    Long getLastUpdatedAt(int house_id);
 
     @Query("SELECT * FROM Image")
     LiveData<List<Image>> getAllImages();

@@ -5,19 +5,18 @@ import android.app.Application;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 public class ImageViewModel extends AndroidViewModel {
-    private ImageRepository repository;
+    private final ImageRepository repository;
 
     public ImageViewModel(Application application) {
         super(application);
         repository = new ImageRepository(application);
     }
 
-    public LiveData<Timestamp> getLatestUpdatedAt(int house_id) {
-        return repository.getLatestUpdatedAt(house_id);
+    public Long getLastUpdatedAt(int house_id) {
+        return repository.getLastUpdatedAt(house_id);
     }
 
     public LiveData<List<Image>> getOrderByPosition(int house_id) {

@@ -7,7 +7,6 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
-import java.sql.Timestamp;
 
 @Entity
 public class House implements Parcelable {
@@ -26,8 +25,8 @@ public class House implements Parcelable {
 
     @PrimaryKey
     public int id;
-    public Timestamp created_at;
-    public Timestamp updated_at;
+    public Long created_at;
+    public Long updated_at;
     public String address;
     public String number;
     public byte house_type;
@@ -61,8 +60,8 @@ public class House implements Parcelable {
 
     protected House(Parcel in) {
         id = in.readInt();
-        created_at = Timestamp.valueOf(in.readString());
-        updated_at = Timestamp.valueOf(in.readString());
+        created_at = in.readLong();
+        updated_at = in.readLong();
         address = in.readString();
         number = in.readString();
         house_type = in.readByte();
@@ -99,8 +98,8 @@ public class House implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(id);
-        dest.writeString(created_at.toString());
-        dest.writeString(updated_at.toString());
+        dest.writeLong(created_at);
+        dest.writeLong(updated_at);
         dest.writeString(address);
         dest.writeString(number);
         dest.writeByte(house_type);

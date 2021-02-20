@@ -25,7 +25,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.File;
-
+// TODO: 앨범으로 이동시 대표사진이 초기화 되는 버그 고치기
 public class ImageFragment extends Fragment implements OnSaveDataListener {
     private static final int GALLERY_REQUEST_CODE = 1;
     private final ImageListAdapter imageListAdapter = new ImageListAdapter();

@@ -4,7 +4,6 @@ import android.app.Application;
 
 import androidx.lifecycle.LiveData;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 public class ImageRepository {
@@ -17,8 +16,8 @@ public class ImageRepository {
         allImages = imageDao.getAllImages();
     }
 
-    LiveData<Timestamp> getLatestUpdatedAt(int house_id) {
-        return imageDao.getLatestUpdatedAt(house_id);
+    public Long getLastUpdatedAt(int house_id) {
+        return imageDao.getLastUpdatedAt(house_id);
     }
 
     public LiveData<List<Image>> getAllImages() {

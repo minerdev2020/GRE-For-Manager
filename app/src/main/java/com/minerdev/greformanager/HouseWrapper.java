@@ -2,6 +2,8 @@ package com.minerdev.greformanager;
 
 import android.annotation.SuppressLint;
 
+import java.sql.Date;
+
 public class HouseWrapper {
     private final House data;
 
@@ -14,11 +16,13 @@ public class HouseWrapper {
     }
 
     public String getCreatedAt() {
-        return data.created_at;
+        Date date = new Date(data.created_at);
+        return date.toString();
     }
 
     public String getUpdatedAt() {
-        return data.updated_at;
+        Date date = new Date(data.updated_at);
+        return date.toString();
     }
 
     public String getAddress() {

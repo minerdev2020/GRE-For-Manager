@@ -4,7 +4,6 @@ import android.app.Application;
 
 import androidx.lifecycle.LiveData;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 public class HouseRepository {
@@ -17,8 +16,8 @@ public class HouseRepository {
         allHouses = houseDao.getAll();
     }
 
-    public LiveData<Timestamp> getLatestUpdatedAt() {
-        return houseDao.getLatestUpdatedAt();
+    public Long getLastUpdatedAt() {
+        return houseDao.getLastUpdatedAt();
     }
 
     public LiveData<List<House>> getAll() {
