@@ -7,10 +7,10 @@ import android.widget.Toast
 import com.android.volley.AuthFailureError
 import com.android.volley.Request
 import com.android.volley.Response
-import com.android.volley.VolleyError
 import com.android.volley.toolbox.StringRequest
-import com.google.gson.Gson
 import com.google.gson.JsonObject
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import java.nio.charset.StandardCharsets
 import java.util.*
 
@@ -30,8 +30,7 @@ class HttpConnection private constructor() {
 
     fun send(context: Context, method: Int, uri: String, data: House, listener: OnReceiveListener?) {
         val serverUri: String = Constants.instance.DNS + "/api/" + uri
-        val gson = Gson()
-        val json = gson.toJson(data)
+        val json = Json.encodeToString(data)
         Log.d("SEND_DATA", json)
         makeRequest(context, method, serverUri, json, listener)
     }
@@ -48,7 +47,9 @@ class HttpConnection private constructor() {
         val request: StringRequest = object : StringRequest(method, uri,
                 Response.Listener { response ->
                     Toast.makeText(context, "데이터 전송 성공.", Toast.LENGTH_SHORT).show()
-                    listener?.onReceive(response)
+                    if (!response.isNullOrEmpty()) {
+                        listener?.onReceive(response)
+                    }
                 },
                 Response.ErrorListener { error ->
                     Toast.makeText(context, error.message, Toast.LENGTH_SHORT).show()
@@ -74,7 +75,9 @@ class HttpConnection private constructor() {
         val request: VolleyMultipartRequest = object : VolleyMultipartRequest(method, uri,
                 Response.Listener { response ->
                     Toast.makeText(context, "데이터 전송 성공.", Toast.LENGTH_SHORT).show()
-                    listener?.onReceive(String(response.data))
+                    if (response?.data != null && response.data.isNotEmpty()) {
+                        listener?.onReceive(String(response.data))
+                    }
                 },
                 Response.ErrorListener { error ->
                     Toast.makeText(context, error.message, Toast.LENGTH_LONG).show()
@@ -111,7 +114,7 @@ class HttpConnection private constructor() {
     }
 
     interface OnReceiveListener {
-        fun onReceive(receivedData: String?)
+        fun onReceive(receivedData: String)
     }
 
     private object Holder {

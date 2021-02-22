@@ -110,6 +110,7 @@ class InfoFragment1 : Fragment(), OnSaveDataListener {
     private fun initData() {
         // 데이터 읽기
         house = viewModel.house
+        if (house)
         house?.let {
             binding.houseModify1SpinnerHouseType.tag = "loadData"
             binding.houseModify1SpinnerPaymentType.tag = "loadData"
@@ -211,14 +212,17 @@ class InfoFragment1 : Fragment(), OnSaveDataListener {
     private fun showAddressDialog() {
         addressDialog = Dialog(requireContext())
         addressDialog.setContentView(R.layout.dialog_address)
+
         val webView = addressDialog.findViewById<WebView>(R.id.address_dialog_button_webView)
         webView.settings.javaScriptEnabled = true
         webView.addJavascriptInterface(AndroidBridge(), "GREApp")
         webView.loadUrl(Constants.instance.DNS + "/api/daum-address")
-        val params = addressDialog.window!!.attributes
-        params.width = ViewGroup.LayoutParams.MATCH_PARENT
-        params.height = ViewGroup.LayoutParams.MATCH_PARENT
-        addressDialog.window!!.attributes = params
+
+        val params = addressDialog.window?.attributes
+        params?.width = ViewGroup.LayoutParams.MATCH_PARENT
+        params?.height = ViewGroup.LayoutParams.MATCH_PARENT
+        addressDialog.window?.attributes = params
+
         val buttonBack = addressDialog.findViewById<Button>(R.id.address_dialog_button_back)
         buttonBack.setOnClickListener { addressDialog.dismiss() }
         addressDialog.show()
@@ -281,7 +285,8 @@ class InfoFragment1 : Fragment(), OnSaveDataListener {
         @JavascriptInterface
         fun setAddress(arg1: String?, arg2: String?, arg3: String?) {
             handler.post {
-                binding.houseModify1TextViewAddress.text = String.format("(%s) %s %s", arg1, arg2, arg3)
+                binding.houseModify1TextViewAddress.text = String.format("(%s) %s %s",
+                        arg1 ?: "", arg2 ?: "", arg3 ?: "")
                 addressDialog.dismiss()
             }
         }

@@ -23,6 +23,10 @@ class ImageViewModel(application: Application) : AndroidViewModel(application) {
         repository.insert(images)
     }
 
+    fun updateOrInsert(image: Image) {
+       repository.updateOrInsert(image)
+    }
+
     fun deleteAll(house_id: Int) {
         repository.deleteAll(house_id)
     }

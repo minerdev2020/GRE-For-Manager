@@ -7,13 +7,11 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import com.android.volley.Request
-import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.minerdev.greformanager.Geocode.OnDataReceiveListener
 import com.minerdev.greformanager.HttpConnection.OnReceiveListener
@@ -23,6 +21,8 @@ import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.MapFragment
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.overlay.Marker
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 
 class HouseDetailActivity : AppCompatActivity() {
     lateinit var houseWrapper: HouseWrapper
@@ -177,8 +177,8 @@ class HouseDetailActivity : AppCompatActivity() {
     private fun loadItems(house_id: Int) {
         HttpConnection.instance.receive(this, "houses/$house_id/images/last-updated-at",
                 object : OnReceiveListener {
-                    override fun onReceive(receivedData: String?) {
-                        if (receivedData.isNullOrEmpty()) {
+                    override fun onReceive(receivedData: String) {
+                        if (receivedData.isEmpty()) {
                             loadItemsFromWeb(house_id)
 
                         } else {
@@ -202,16 +202,14 @@ class HouseDetailActivity : AppCompatActivity() {
     private fun loadItemsFromWeb(house_id: Int) {
         HttpConnection.instance.receive(this, "houses/$house_id/images",
                 object : OnReceiveListener {
-                    override fun onReceive(receivedData: String?) {
-                        val gson = Gson()
-                        val array = gson.fromJson(receivedData, Array<Image>::class.java)
-                        if (array == null) {
-                            Toast.makeText(this@HouseDetailActivity, "데이터 수신 실패.", Toast.LENGTH_SHORT).show()
-                            return
-                        }
+                    override fun onReceive(receivedData: String) {
+                        val array = Json.decodeFromString<List<Image>>(receivedData)
+                        Log.d("last_updated_at", receivedData)
 
-                        Log.d("last_updated_at", receivedData ?: "null")
-                        imageViewModel.insert(array.toList())
+                        imageViewModel.deleteAll(house_id)
+                        for (item in array) {
+                            imageViewModel.updateOrInsert(item)
+                        }
                     }
                 })
     }

@@ -15,7 +15,6 @@ import android.widget.DatePicker
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import com.minerdev.greformanager.databinding.FragmentInfo2Binding
 
 class InfoFragment2 : Fragment(), OnSaveDataListener {
@@ -127,22 +126,22 @@ class InfoFragment2 : Fragment(), OnSaveDataListener {
     }
 
     fun initData() {
-        house = viewModel.house!!
-        houseType = Constants.instance.HOUSE_TYPE[house.house_type.toInt()]
+        if (viewModel.house != null) {
+            house = viewModel.house
+            houseType = Constants.instance.HOUSE_TYPE[house.house_type.toInt()]
 
-        // 구조 초기화 ('매물 종류'가 '주택'이나 '오피스텔'일때만 '구조' 항목이 보임)
-        val visibility = if (houseType == "주택" || houseType == "오피스텔") View.VISIBLE else View.GONE
-        binding.houseModify2TableRowStructure.visibility = visibility
-        binding.houseModify2View.visibility = visibility
-        binding.houseModify2SpinnerStructure.setSelection(0)
+            // 구조 초기화 ('매물 종류'가 '주택'이나 '오피스텔'일때만 '구조' 항목이 보임)
+            val visibility = if (houseType == "주택" || houseType == "오피스텔") View.VISIBLE else View.GONE
+            binding.houseModify2TableRowStructure.visibility = visibility
+            binding.houseModify2View.visibility = visibility
+            binding.houseModify2SpinnerStructure.setSelection(0)
 
 
-        // 화장실 위치 초기화 ('매물 종류'가 '사무실'이나 '상가, 점포'일때만 '화장실 위치' 항목이 보임)
-        binding.houseModify2TableRowLocation.visibility = if (houseType == "사무실" || houseType == "상가, 점포") View.VISIBLE else View.GONE
-        binding.houseModify2RadioGroup.clearCheck()
+            // 화장실 위치 초기화 ('매물 종류'가 '사무실'이나 '상가, 점포'일때만 '화장실 위치' 항목이 보임)
+            binding.houseModify2TableRowLocation.visibility = if (houseType == "사무실" || houseType == "상가, 점포") View.VISIBLE else View.GONE
+            binding.houseModify2RadioGroup.clearCheck()
 
-        // 데이터 읽기
-        if (house != null) {
+        } else {
             loadData()
         }
     }

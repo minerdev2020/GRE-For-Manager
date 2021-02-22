@@ -17,11 +17,13 @@ import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.navigation.NavigationView
-import com.google.gson.Gson
 import com.minerdev.greformanager.databinding.ActivityMainBinding
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 
 
 class MainActivity : AppCompatActivity() {
+    private val FINISH_INTERVAL_TIME = 2000
     private val viewModel: MainViewModel by viewModels()
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
     private val saleAdapter by lazy { HouseListAdapter(HouseListAdapter.DiffCallback()) }
@@ -35,8 +37,8 @@ class MainActivity : AppCompatActivity() {
 
         Constants.instance.initialize(applicationContext)
 
-        viewModel.allSale.observe(this, { saleAdapter.submitList(it) })
-        viewModel.allSold.observe(this, { soldAdapter.submitList(it) })
+        viewModel.allSale.observe(this, saleAdapter::submitList)
+        viewModel.allSold.observe(this, soldAdapter::submitList)
 
         // 툴바 초기화
         val toolbar = findViewById<Toolbar>(R.id.main_toolbar)
@@ -46,6 +48,7 @@ class MainActivity : AppCompatActivity() {
         // 판매중 매물 RecyclerView 및 HouseListAdapter 초기화
         binding.mainRecyclerViewSale.layoutManager = LinearLayoutManager(this)
         binding.mainRecyclerViewSale.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
+        binding.mainRecyclerViewSale.adapter = saleAdapter
 
         saleAdapter.setOnItemClickListener(object : HouseListAdapter.OnItemClickListener {
             override fun onItemClick(viewHolder: HouseListAdapter.ViewHolder, view: View, position: Int) {
@@ -55,10 +58,9 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        binding.mainRecyclerViewSale.adapter = saleAdapter
 
         binding.mainImageButtonSaleExpand.setOnClickListener {
-            it.visibility = if (it.visibility == View.VISIBLE)
+            binding.mainRecyclerViewSale.visibility = if (binding.mainRecyclerViewSale.visibility == View.VISIBLE)
                 View.GONE
             else
                 View.VISIBLE
@@ -73,6 +75,7 @@ class MainActivity : AppCompatActivity() {
         // 판매완료 매물 RecyclerView 및 HouseListAdapter 초기화
         binding.mainRecyclerViewSold.layoutManager = LinearLayoutManager(this)
         binding.mainRecyclerViewSold.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
+        binding.mainRecyclerViewSold.adapter = soldAdapter
 
         soldAdapter.setOnItemClickListener(object : HouseListAdapter.OnItemClickListener {
             override fun onItemClick(viewHolder: HouseListAdapter.ViewHolder, view: View, position: Int) {
@@ -82,7 +85,6 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        binding.mainRecyclerViewSold.adapter = soldAdapter
 
         binding.mainImageButtonSoldExpand.setOnClickListener {
             binding.mainRecyclerViewSold.visibility = if (binding.mainRecyclerViewSold.visibility == View.VISIBLE)
@@ -225,8 +227,8 @@ class MainActivity : AppCompatActivity() {
     private fun loadItems() {
         HttpConnection.instance.receive(this, "houses/last-updated-at",
                 object : HttpConnection.OnReceiveListener {
-                    override fun onReceive(receivedData: String?) {
-                        if (receivedData.isNullOrEmpty()) {
+                    override fun onReceive(receivedData: String) {
+                        if (receivedData.isEmpty()) {
                             loadItemsFromWeb()
 
                         } else {
@@ -241,6 +243,9 @@ class MainActivity : AppCompatActivity() {
             val serverTimestamp = receivedData.toLong()
             val clientTimestamp = viewModel.lastUpdatedAt
 
+            Log.d("last_updated_at", serverTimestamp.toString())
+            Log.d("last_updated_at", clientTimestamp.toString())
+
             if (serverTimestamp > clientTimestamp) {
                 loadItemsFromWeb()
             }
@@ -250,22 +255,13 @@ class MainActivity : AppCompatActivity() {
     private fun loadItemsFromWeb() {
         HttpConnection.instance.receive(this, "houses",
                 object : HttpConnection.OnReceiveListener {
-                    override fun onReceive(receivedData: String?) {
-                        val gson = Gson()
-                        val array = gson.fromJson(receivedData, Array<House>::class.java)
-
-                        if (array == null) {
-                            Toast.makeText(this@MainActivity, "데이터 수신 실패.", Toast.LENGTH_SHORT).show()
-                            return
-                        }
-
+                    override fun onReceive(receivedData: String) {
+                        val array = Json.decodeFromString<List<House>>(receivedData)
                         Log.d("last_updated_at", "load from web")
-                        viewModel.insert(array.toList())
+                        for (item in array) {
+                            viewModel.updateOrInsert(item)
+                        }
                     }
                 })
-    }
-
-    companion object {
-        private const val FINISH_INTERVAL_TIME: Long = 2000
     }
 }

@@ -15,13 +15,12 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentPagerAdapter
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import com.android.volley.Request
-import com.google.gson.Gson
 import com.minerdev.greformanager.HttpConnection.OnReceiveListener
 import com.minerdev.greformanager.databinding.ActivityHouseModifyBinding
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import java.util.*
 
 class HouseModifyActivity : AppCompatActivity() {
@@ -190,19 +189,16 @@ class HouseModifyActivity : AppCompatActivity() {
 
         HttpConnection.instance.send(this, Request.Method.POST,
                 "houses", viewModel.house!!, object : OnReceiveListener {
-            override fun onReceive(receivedData: String?) {
-                val gson = Gson()
-                val data = gson.fromJson(receivedData, House::class.java)
+            override fun onReceive(receivedData: String) {
+                val data = Json.decodeFromString<House>(receivedData)
                 viewModel.house?.id = data.id
                 viewModel.house?.created_at = data.created_at
                 viewModel.house?.updated_at = data.updated_at
 
                 HttpConnection.instance.send(application, Request.Method.POST,
                         "houses/" + data.id + "/images", viewModel.imageUris!!, viewModel.images!!, object : OnReceiveListener {
-                    override fun onReceive(receivedData: String?) {
-                        val gson1 = Gson()
-                        val imageData = gson1.fromJson(receivedData, Image::class.java)
-
+                    override fun onReceive(receivedData: String) {
+                        val imageData = Json.decodeFromString<Image>(receivedData)
                         imageViewModel.insert(imageData)
                         Log.d("DB_INSERT", receivedData ?: "null")
 
@@ -231,20 +227,16 @@ class HouseModifyActivity : AppCompatActivity() {
         val id = viewModel.house!!.id
         HttpConnection.instance.send(this, Request.Method.PATCH,
                 "houses/$id", viewModel.house!!, object : OnReceiveListener {
-            override fun onReceive(receivedData: String?) {
-                val gson = Gson()
-                val data = gson.fromJson(receivedData, House::class.java)
-
+            override fun onReceive(receivedData: String) {
+                val data = Json.decodeFromString<House>(receivedData)
                 viewModel.house?.updated_at = data.updated_at
 
                 imageViewModel.deleteAll(id)
 
                 HttpConnection.instance.send(application, Request.Method.POST,
                         "houses/$id/images", viewModel.imageUris!!, viewModel.images!!, object : OnReceiveListener {
-                    override fun onReceive(receivedData: String?) {
-                        val gson1 = Gson()
-                        val imageData = gson1.fromJson(receivedData, Image::class.java)
-
+                    override fun onReceive(receivedData: String) {
+                        val imageData = Json.decodeFromString<Image>(receivedData)
                         imageViewModel.insert(imageData)
                         Log.d("DB_INSERT", receivedData ?: "null")
 

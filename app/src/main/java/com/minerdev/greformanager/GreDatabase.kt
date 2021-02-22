@@ -23,8 +23,10 @@ abstract class GreDatabase : RoomDatabase() {
             override fun onCreate(db: SupportSQLiteDatabase) {
                 super.onCreate(db)
                 databaseWriteExecutor.execute {
-                    INSTANCE!!.houseDao().deleteAll()
-                    INSTANCE!!.imageDao().deleteAll()
+                    INSTANCE?.let {
+                        it.houseDao().deleteAll()
+                        it.imageDao().deleteAll()
+                    }
                 }
             }
         }

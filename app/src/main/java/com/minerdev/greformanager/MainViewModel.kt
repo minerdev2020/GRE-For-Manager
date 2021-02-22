@@ -30,6 +30,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         repository.update(house)
     }
 
+    fun updateOrInsert(house: House) {
+        repository.updateOrInsert(house)
+    }
+
     fun deleteAll() {
         repository.deleteAll()
         imageRepository.deleteAll()

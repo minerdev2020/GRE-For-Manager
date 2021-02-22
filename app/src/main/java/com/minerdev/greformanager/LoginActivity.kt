@@ -20,6 +20,7 @@ import com.minerdev.greformanager.databinding.ActivityLoginBinding
 import java.util.regex.Pattern
 
 class LoginActivity : AppCompatActivity() {
+    private val FINISH_INTERVAL_TIME = 2000
     private val binding by lazy { ActivityLoginBinding.inflate(layoutInflater) }
 
     private var backPressedTime: Long = 0
@@ -117,9 +118,5 @@ class LoginActivity : AppCompatActivity() {
             }
             false
         }
-    }
-
-    companion object {
-        private const val FINISH_INTERVAL_TIME: Long = 2000
     }
 }
