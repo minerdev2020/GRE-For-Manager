@@ -9,37 +9,34 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.SearchView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.navigation.NavigationView
 import com.google.gson.Gson
-import com.minerdev.greformanager.HouseListAdapter.DiffCallback
-import com.minerdev.greformanager.HttpConnection.OnReceiveListener
 import com.minerdev.greformanager.databinding.ActivityMainBinding
 
+
 class MainActivity : AppCompatActivity() {
-    private val saleAdapter = HouseListAdapter(DiffCallback())
-    private val soldAdapter = HouseListAdapter(DiffCallback())
+    private val viewModel: MainViewModel by viewModels()
+    private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
+    private val saleAdapter by lazy { HouseListAdapter(HouseListAdapter.DiffCallback()) }
+    private val soldAdapter by lazy { HouseListAdapter(HouseListAdapter.DiffCallback()) }
 
     private var backPressedTime: Long = 0
-    private var viewModel: MainViewModel = ViewModelProvider(this,
-            AndroidViewModelFactory(application)).get(MainViewModel::class.java)
-
-    private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(binding.root)
+
         Constants.instance.initialize(applicationContext)
-        viewModel.allSale.observe(this, saleAdapter::submitData)
-        viewModel.allSold.observe(this, soldAdapter::submitData)
+
+        viewModel.allSale.observe(this, { saleAdapter.submitList(it) })
+        viewModel.allSold.observe(this, { soldAdapter.submitList(it) })
 
         // 툴바 초기화
         val toolbar = findViewById<Toolbar>(R.id.main_toolbar)
@@ -50,16 +47,18 @@ class MainActivity : AppCompatActivity() {
         binding.mainRecyclerViewSale.layoutManager = LinearLayoutManager(this)
         binding.mainRecyclerViewSale.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
 
-        saleAdapter.setOnItemClickListener { _: HouseListAdapter.ViewHolder?, _: View?, position: Int ->
-            val intent = Intent(this@MainActivity, HouseDetailActivity::class.java)
-            intent.putExtra("house_value", saleAdapter[position])
-            startActivityForResult(intent, Constants.instance.HOUSE_DETAIL_ACTIVITY_REQUEST_CODE)
-        }
+        saleAdapter.setOnItemClickListener(object : HouseListAdapter.OnItemClickListener {
+            override fun onItemClick(viewHolder: HouseListAdapter.ViewHolder, view: View, position: Int) {
+                val intent = Intent(this@MainActivity, HouseDetailActivity::class.java)
+                intent.putExtra("house_value", saleAdapter[position])
+                startActivityForResult(intent, Constants.instance.HOUSE_DETAIL_ACTIVITY_REQUEST_CODE)
+            }
+        })
 
         binding.mainRecyclerViewSale.adapter = saleAdapter
 
         binding.mainImageButtonSaleExpand.setOnClickListener {
-            binding.mainRecyclerViewSale.visibility = if (binding.mainRecyclerViewSale.visibility == View.VISIBLE)
+            it.visibility = if (it.visibility == View.VISIBLE)
                 View.GONE
             else
                 View.VISIBLE
@@ -75,11 +74,13 @@ class MainActivity : AppCompatActivity() {
         binding.mainRecyclerViewSold.layoutManager = LinearLayoutManager(this)
         binding.mainRecyclerViewSold.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
 
-        soldAdapter.setOnItemClickListener { _: HouseListAdapter.ViewHolder?, _: View?, position: Int ->
-            val intent = Intent(this@MainActivity, HouseDetailActivity::class.java)
-            intent.putExtra("house_value", soldAdapter[position])
-            startActivityForResult(intent, Constants.instance.HOUSE_DETAIL_ACTIVITY_REQUEST_CODE)
-        }
+        soldAdapter.setOnItemClickListener(object : HouseListAdapter.OnItemClickListener {
+            override fun onItemClick(viewHolder: HouseListAdapter.ViewHolder, view: View, position: Int) {
+                val intent = Intent(this@MainActivity, HouseDetailActivity::class.java)
+                intent.putExtra("house_value", soldAdapter[position])
+                startActivityForResult(intent, Constants.instance.HOUSE_DETAIL_ACTIVITY_REQUEST_CODE)
+            }
+        })
 
         binding.mainRecyclerViewSold.adapter = soldAdapter
 
@@ -109,15 +110,19 @@ class MainActivity : AppCompatActivity() {
         menuInflater.inflate(R.menu.main_toolbar, menu)
 
         binding.mainSearchView.visibility = View.VISIBLE
-        binding.mainSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String): Boolean {
-                rearrangeList(query)
+        binding.mainSearchView.setOnQueryTextListener(object : android.widget.SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(p0: String?): Boolean {
+                p0?.let {
+                    rearrangeList(p0)
+                }
+
                 val manager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 manager.hideSoftInputFromWindow(currentFocus!!.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
+
                 return true
             }
 
-            override fun onQueryTextChange(newText: String): Boolean {
+            override fun onQueryTextChange(p0: String?): Boolean {
                 return true
             }
         })
@@ -219,7 +224,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun loadItems() {
         HttpConnection.instance.receive(this, "houses/last-updated-at",
-                object : OnReceiveListener {
+                object : HttpConnection.OnReceiveListener {
                     override fun onReceive(receivedData: String?) {
                         if (receivedData.isNullOrEmpty()) {
                             loadItemsFromWeb()
@@ -244,7 +249,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun loadItemsFromWeb() {
         HttpConnection.instance.receive(this, "houses",
-                object : OnReceiveListener {
+                object : HttpConnection.OnReceiveListener {
                     override fun onReceive(receivedData: String?) {
                         val gson = Gson()
                         val array = gson.fromJson(receivedData, Array<House>::class.java)

@@ -13,7 +13,7 @@ class SectionPageAdapter(fm: FragmentManager, behavior: Int) : FragmentStatePage
         fragmentTitleList.add(title)
     }
 
-    override fun getPageTitle(position: Int): CharSequence? {
+    override fun getPageTitle(position: Int): CharSequence {
         return fragmentTitleList[position]
     }
 

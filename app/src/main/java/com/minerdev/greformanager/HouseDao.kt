@@ -9,13 +9,13 @@ interface HouseDao {
     val lastUpdatedAt: Long?
 
     @get:Query("SELECT * FROM House")
-    val all: LiveData<List<House>>
+    val all: LiveData<MutableList<House>>
 
     @get:Query("SELECT * FROM House WHERE state = 0")
-    val allSale: LiveData<List<House>>
+    val allSale: LiveData<MutableList<House>>
 
     @get:Query("SELECT * FROM House WHERE state = 1")
-    val allSold: LiveData<List<House>>
+    val allSold: LiveData<MutableList<House>>
 
     @Query("SELECT * FROM House WHERE id = :id")
     operator fun get(id: Int): House?

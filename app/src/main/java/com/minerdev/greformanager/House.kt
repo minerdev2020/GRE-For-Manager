@@ -1,11 +1,12 @@
 package com.minerdev.greformanager
 
-import android.os.Parcel
 import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import kotlinx.parcelize.Parcelize
 
 @Entity
+@Parcelize
 data class House(
         @PrimaryKey var id: Int = 0,
         var created_at: Long = 0,
@@ -36,83 +37,4 @@ data class House(
         var phone: String? = null,
         var state: Byte = 0,
         var thumbnail: String? = null
-) : Parcelable {
-
-    constructor(parcel: Parcel) : this(
-            parcel.readInt(),
-            parcel.readLong(),
-            parcel.readLong(),
-            parcel.readString(),
-            parcel.readString(),
-            parcel.readByte(),
-            parcel.readByte(),
-            parcel.readByte(),
-            parcel.readInt(),
-            parcel.readInt(),
-            parcel.readInt(),
-            parcel.readInt(),
-            parcel.readInt(),
-            parcel.readString(),
-            parcel.readFloat(),
-            parcel.readFloat(),
-            parcel.readByte(),
-            parcel.readByte(),
-            parcel.readByte(),
-            parcel.readByte(),
-            parcel.readByte(),
-            parcel.readByte(),
-            parcel.readString(),
-            parcel.readString(),
-            parcel.readString(),
-            parcel.readString(),
-            parcel.readString(),
-            parcel.readByte(),
-            parcel.readString()) {
-    }
-
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeInt(id)
-        parcel.writeLong(created_at)
-        parcel.writeLong(updated_at)
-        parcel.writeString(address)
-        parcel.writeString(number)
-        parcel.writeByte(house_type)
-        parcel.writeByte(facility)
-        parcel.writeByte(payment_type)
-        parcel.writeInt(price)
-        parcel.writeInt(deposit)
-        parcel.writeInt(monthly_rent)
-        parcel.writeInt(premium)
-        parcel.writeInt(manage_fee)
-        parcel.writeString(manage_fee_contains)
-        parcel.writeFloat(area_meter)
-        parcel.writeFloat(rent_area_meter)
-        parcel.writeByte(building_floor)
-        parcel.writeByte(floor)
-        parcel.writeByte(structure)
-        parcel.writeByte(bathroom)
-        parcel.writeByte(bathroom_location)
-        parcel.writeByte(direction)
-        parcel.writeString(built_date)
-        parcel.writeString(move_date)
-        parcel.writeString(options)
-        parcel.writeString(detail_info)
-        parcel.writeString(phone)
-        parcel.writeByte(state)
-        parcel.writeString(thumbnail)
-    }
-
-    override fun describeContents(): Int {
-        return 0
-    }
-
-    companion object CREATOR : Parcelable.Creator<House> {
-        override fun createFromParcel(parcel: Parcel): House {
-            return House(parcel)
-        }
-
-        override fun newArray(size: Int): Array<House?> {
-            return arrayOfNulls(size)
-        }
-    }
-}
+) : Parcelable

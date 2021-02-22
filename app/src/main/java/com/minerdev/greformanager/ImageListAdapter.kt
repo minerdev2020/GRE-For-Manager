@@ -12,9 +12,10 @@ import com.bumptech.glide.Glide
 import java.util.*
 
 class ImageListAdapter : RecyclerView.Adapter<ImageListAdapter.ViewHolder>() {
-    var items: MutableList<Uri?>? = ArrayList()
+    var items = ArrayList<Uri>()
     private var listener = OnItemClickListener()
     var thumbnail = 0
+    
     fun setOnItemClickListener(clickListener: OnItemClickListener) {
         listener = clickListener
     }
@@ -26,59 +27,63 @@ class ImageListAdapter : RecyclerView.Adapter<ImageListAdapter.ViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.setItem(items!![position], thumbnail)
+        holder.bind(items[position], thumbnail)
     }
 
     override fun getItemCount(): Int {
-        return items!!.size
+        return items.size
     }
 
-    fun addItem(item: Uri?) {
-        items!!.add(item)
+    fun addItem(item: Uri) {
+        items.add(item)
     }
 
-    fun getItem(position: Int): Uri? {
-        return items!![position]
+    fun getItem(position: Int): Uri {
+        return items[position]
     }
 
-    fun setItem(position: Int, item: Uri?) {
-        items!![position] = item
+    fun setItem(position: Int, item: Uri) {
+        items[position] = item
     }
 
     fun removeItem(position: Int) {
-        items!!.removeAt(position)
+        items.removeAt(position)
     }
 
     class ViewHolder(itemView: View, clickListener: OnItemClickListener?) : RecyclerView.ViewHolder(itemView) {
-        private val imageView: ImageView
-        private val textView: TextView
-        fun setItem(uri: Uri?, thumbnailPos: Int) {
+        private val imageView: ImageView = itemView.findViewById(R.id.imageItem_imageView)
+        private val textView: TextView = itemView.findViewById(R.id.imageItem_textView_thumbnail)
+
+        fun bind(uri: Uri?, thumbnailPos: Int) {
             Glide.with(itemView).load(uri).into(imageView)
-            if (adapterPosition == thumbnailPos) {
+
+            if (bindingAdapterPosition == thumbnailPos) {
                 textView.visibility = View.VISIBLE
+
             } else {
                 textView.visibility = View.GONE
             }
         }
 
         init {
-            imageView = itemView.findViewById(R.id.imageItem_imageView)
-            textView = itemView.findViewById(R.id.imageItem_textView_thumbnail)
             val imageButton_delete = itemView.findViewById<ImageButton>(R.id.imageItem_imageButton_delete)
-            imageButton_delete.setOnClickListener { v: View? ->
-                clickListener?.onDeleteButtonClick(this@ViewHolder, itemView, adapterPosition)
+            imageButton_delete.setOnClickListener {
+                clickListener?.onDeleteButtonClick(this@ViewHolder, itemView, bindingAdapterPosition)
             }
+
             val imageButton_thumbnail = itemView.findViewById<ImageButton>(R.id.imageItem_imageButton_thumbnail)
-            imageButton_thumbnail.setOnClickListener { v: View? ->
-                clickListener?.onThumbnailButtonClick(this@ViewHolder, itemView, adapterPosition)
+            imageButton_thumbnail.setOnClickListener {
+                clickListener?.onThumbnailButtonClick(this@ViewHolder, itemView, bindingAdapterPosition)
             }
+
             val imageButton_up = itemView.findViewById<ImageButton>(R.id.imageItem_imageButton_up)
-            imageButton_up.setOnClickListener { v: View? ->
-                clickListener?.onUpButtonClick(this@ViewHolder, itemView, adapterPosition)
+            imageButton_up.setOnClickListener {
+                clickListener?.onUpButtonClick(this@ViewHolder, itemView, bindingAdapterPosition)
             }
+
             val imageButton_down = itemView.findViewById<ImageButton>(R.id.imageItem_imageButton_down)
-            imageButton_down.setOnClickListener { v: View? ->
-                clickListener?.onDownButtonClick(this@ViewHolder, itemView, adapterPosition)
+            imageButton_down.setOnClickListener {
+                clickListener?.onDownButtonClick(this@ViewHolder, itemView, bindingAdapterPosition)
             }
         }
     }
@@ -87,9 +92,11 @@ class ImageListAdapter : RecyclerView.Adapter<ImageListAdapter.ViewHolder>() {
         fun onDeleteButtonClick(viewHolder: ViewHolder?, view: View?, position: Int) {
             if (thumbnail == position) {
                 thumbnail = 0
+
             } else if (thumbnail > position) {
                 thumbnail--
             }
+
             removeItem(position)
             notifyDataSetChanged()
         }
@@ -103,8 +110,10 @@ class ImageListAdapter : RecyclerView.Adapter<ImageListAdapter.ViewHolder>() {
             if (position > 0) {
                 Collections.swap(items, position - 1, position)
                 notifyDataSetChanged()
+
                 if (thumbnail == position) {
                     thumbnail--
+
                 } else if (thumbnail == position - 1) {
                     thumbnail++
                 }
@@ -112,11 +121,13 @@ class ImageListAdapter : RecyclerView.Adapter<ImageListAdapter.ViewHolder>() {
         }
 
         fun onDownButtonClick(viewHolder: ViewHolder?, view: View?, position: Int) {
-            if (position < items!!.size - 1) {
+            if (position < items.size - 1) {
                 Collections.swap(items, position, position + 1)
                 notifyDataSetChanged()
+
                 if (thumbnail == position) {
                     thumbnail++
+
                 } else if (thumbnail == position + 1) {
                     thumbnail--
                 }

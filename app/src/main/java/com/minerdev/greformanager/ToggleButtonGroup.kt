@@ -86,7 +86,7 @@ class ToggleButtonGroup(private val context: Context?, var title: String) {
         }
     }
 
-    fun addToggleButtons(texts: List<String>) {
+    fun addToggleButtons(texts: Array<String>) {
         for (text in texts) {
             if (text != "") {
                 addToggleButton(text)
@@ -96,7 +96,7 @@ class ToggleButtonGroup(private val context: Context?, var title: String) {
 
     fun addToggleButtonsFromText(text: String) {
         if (text.isNotEmpty()) {
-            addToggleButtons(text.split("\\|"))
+            addToggleButtons(text.split("\\|").toTypedArray())
         }
     }
 

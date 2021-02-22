@@ -9,13 +9,13 @@ import java.util.*
 class HouseModifyViewModel : ViewModel() {
     var house: House? = null
         private set
-    var imageUris: MutableList<Uri?>? = null
-    private var images: MutableList<Image>? = null
+    var imageUris: MutableList<Uri>? = null
+    var images: MutableList<Image>? = null
     var thumbnail = 0
     var thumbnailTitle: String? = null
         private set
 
-    fun setMode(mode: String?, house: House?) {
+    fun setMode(mode: String, house: House?) {
         if (mode == "add") {
             this.house = null
             imageUris = ArrayList()
@@ -35,10 +35,6 @@ class HouseModifyViewModel : ViewModel() {
             house = House()
             return house!!
         }
-
-    fun getImages(): List<Image>? {
-        return images
-    }
 
     fun saveImages(context: Context) {
         images = ArrayList()

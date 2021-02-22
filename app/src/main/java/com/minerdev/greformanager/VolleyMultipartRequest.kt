@@ -22,19 +22,19 @@ open class VolleyMultipartRequest(method: Int, url: String?,
     }
 
     @Throws(AuthFailureError::class)
-    override fun getBody(): ByteArray {
+    override fun getBody(): ByteArray? {
         val bos = ByteArrayOutputStream()
         val dos = DataOutputStream(bos)
         try {
             // populate text payload
             val params = params
-            if (params != null && params.size > 0) {
+            if (params != null && params.isNotEmpty()) {
                 textParse(dos, params, paramsEncoding)
             }
 
             // populate data byte payload
             val data = byteData
-            if (data != null && data.size > 0) {
+            if (data != null && data.isNotEmpty()) {
                 dataParse(dos, data)
             }
 
@@ -157,17 +157,11 @@ open class VolleyMultipartRequest(method: Int, url: String?,
         dataOutputStream.writeBytes(lineEnd)
     }
 
-    inner class DataPart {
-        var fileName: String? = null
+    inner class DataPart(name: String, data: ByteArray) {
+        var fileName: String = name
             private set
-        var content: ByteArray
+        var content: ByteArray = data
             private set
         val type: String? = null
-
-        constructor() {}
-        constructor(name: String?, data: ByteArray) {
-            fileName = name
-            content = data
-        }
     }
 }

@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'kotlin-kapt'
+    id 'kotlin-parcelize'
 }
 
 android {
@@ -49,21 +50,37 @@ android {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.core:core-ktx:1.3.2'
+    implementation 'androidx.fragment:fragment-ktx:1.3.0'
+    implementation "androidx.activity:activity-ktx:1.2.0"
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.material:material:1.3.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
-    implementation 'com.google.android.gms:play-services-location:18.0.0'
-    implementation 'com.naver.maps:map-sdk:3.10.2'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+
+    // 지도 라이브러리
+    implementation 'com.naver.maps:map-sdk:3.10.2'
+
+    // HTTP 통신 라이브러리
     implementation 'com.android.volley:volley:1.1.1'
-    implementation "androidx.room:room-runtime:2.2.6"
+
+    // ViewModel과 LiveData 라이브러리
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.3.0"
-    annotationProcessor "androidx.room:room-compiler:2.2.6"
+
+    // DB 관리 라이브러리
+    implementation "androidx.room:room-runtime:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+    implementation "androidx.room:room-ktx:$room_version"
+
+    // 이미지 로딩 라이브러리
     implementation 'com.github.bumptech.glide:glide:4.12.0'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
+    kapt 'com.github.bumptech.glide:compiler:4.12.0'
+
     testImplementation 'junit:junit:4.13.2'
+
+    // 페이징을 위한 라이브러리
     implementation "androidx.paging:paging-runtime-ktx:3.0.0-beta01"
+
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 }

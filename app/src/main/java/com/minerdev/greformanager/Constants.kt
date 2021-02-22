@@ -16,24 +16,23 @@ class Constants private constructor() {
     val STRUCTURE = ArrayList<String>()
     val DIRECTION = ArrayList<String>()
     val BATHROOM = ArrayList<String>()
-    var DNS: String? = null
+    lateinit var DNS: String
 
     private var isInitialized = false
 
     fun initialize(context: Context) {
         if (!isInitialized) {
-            Collections.addAll(HOUSE_TYPE, *context.resources.getStringArray(R.array.houseType))
+            HOUSE_TYPE.addAll(context.resources.getStringArray(R.array.houseType))
 
             val temp = context.resources.getStringArray(R.array.paymentType)
-
             for (i in 0 until HOUSE_TYPE.size - 1) {
-                val list = ArrayList(listOf(*temp[i].split(" ").toTypedArray()))
+                val list = ArrayList(temp[i].split(" "))
                 PAYMENT_TYPE.add(list)
             }
 
-            Collections.addAll(STRUCTURE, *context.resources.getStringArray(R.array.structure))
-            Collections.addAll(DIRECTION, *context.resources.getStringArray(R.array.direction))
-            Collections.addAll(BATHROOM, *context.resources.getStringArray(R.array.bathroom))
+            STRUCTURE.addAll(context.resources.getStringArray(R.array.structure))
+            DIRECTION.addAll(context.resources.getStringArray(R.array.direction))
+            BATHROOM.addAll(context.resources.getStringArray(R.array.bathroom))
 
             DNS = context.resources.getString(R.string.web_server_dns)
 

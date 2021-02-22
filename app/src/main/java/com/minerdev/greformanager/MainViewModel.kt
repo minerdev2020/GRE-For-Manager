@@ -5,8 +5,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
-    val allSale: LiveData<List<House>>?
-    val allSold: LiveData<List<House>>?
+    val allSale: LiveData<MutableList<House>>
+    val allSold: LiveData<MutableList<House>>
 
     private val repository: HouseRepository = HouseRepository(application)
     private val imageRepository: ImageRepository = ImageRepository(application)

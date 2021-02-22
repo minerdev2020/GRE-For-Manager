@@ -6,12 +6,12 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentPagerAdapter
@@ -27,25 +27,20 @@ import java.util.*
 class HouseModifyActivity : AppCompatActivity() {
     private val adapter = SectionPageAdapter(supportFragmentManager,
             FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT)
-    private val handler = Handler()
-    private var count = 0
-    private var imageViewModel: ImageViewModel = ViewModelProvider(this,
-            AndroidViewModelFactory(application)).get(ImageViewModel::class.java)
-    private var viewModel: HouseModifyViewModel = ViewModelProvider(this).get(HouseModifyViewModel::class.java)
     private val onPageChangeListener: OnPageChangeListener = object : OnPageChangeListener {
         override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
 
         override fun onPageSelected(position: Int) {
             when (position) {
-                0 -> button_previous!!.isEnabled = false
+                0 -> binding.houseModifyButtonPrevious.isEnabled = false
                 1, 2 -> {
-                    button_previous!!.isEnabled = true
-                    button_next!!.visibility = View.VISIBLE
-                    button_save!!.visibility = View.GONE
+                    binding.houseModifyButtonPrevious.isEnabled = true
+                    binding.houseModifyButtonNext.visibility = View.VISIBLE
+                    binding.houseModifyButtonSave.visibility = View.GONE
                 }
                 3 -> {
-                    button_next!!.visibility = View.GONE
-                    button_save!!.visibility = View.VISIBLE
+                    binding.houseModifyButtonNext.visibility = View.GONE
+                    binding.houseModifyButtonSave.visibility = View.VISIBLE
                 }
                 else -> {
                 }
@@ -54,40 +49,44 @@ class HouseModifyActivity : AppCompatActivity() {
 
         override fun onPageScrollStateChanged(state: Int) {}
     }
-
     private val binding by lazy { ActivityHouseModifyBinding.inflate(layoutInflater) }
+    private val viewModel: HouseModifyViewModel by viewModels()
+    private val imageViewModel: ImageViewModel by viewModels()
+
+    private var count = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_house_modify)
+        setContentView(binding.root)
 
         val actionBar = supportActionBar
         actionBar?.setDisplayHomeAsUpEnabled(true)
 
         val intent = intent
         mode = intent.getStringExtra("mode")
+        mode?.let {
+            if (it == "add") {
+                actionBar?.title = "매물 추가"
+                viewModel.setMode(it, null)
 
-        if (mode == "add") {
-            actionBar?.setTitle("매물 추가")
-            viewModel.setMode(mode, null)
+            } else if (it == "modify") {
+                actionBar?.title = "매물 정보 수정"
+                val house: House? = intent.getParcelableExtra("house_value")
 
-        } else if (mode == "modify") {
-            actionBar?.setTitle("매물 정보 수정")
-            val house: House? = intent.getParcelableExtra("house_value")
+                viewModel.setMode(it, house)
 
-            viewModel.setMode(mode, house)
-
-            imageViewModel.getOrderByPosition(house!!.id).observe(this, { images: List<Image> ->
-                val uris: List<Uri> = ArrayList()
-                for (image in images) {
-                    uris.add(Uri.parse(Constants.instance.DNS + "/storage/images/" + image!!.house_id + "/" + image.title))
-                    if (image.thumbnail.toInt() == 1) {
-                        viewModel.thumbnail = image.position.toInt()
+                imageViewModel.getOrderByPosition(house!!.id).observe(this, { images: List<Image> ->
+                    val uris = ArrayList<Uri>()
+                    for (image in images) {
+                        uris.add(Uri.parse(Constants.instance.DNS + "/storage/images/" + image.house_id + "/" + image.title))
+                        if (image.thumbnail.toInt() == 1) {
+                            viewModel.thumbnail = image.position.toInt()
+                        }
                     }
-                }
 
-                viewModel.imageUris?.addAll(uris)
-            })
+                    viewModel.imageUris?.addAll(uris)
+                })
+            }
         }
 
         binding.houseModifyButtonNext.setOnClickListener { toNextPage() }
@@ -99,10 +98,6 @@ class HouseModifyActivity : AppCompatActivity() {
         binding.houseModifyButtonSave.visibility = View.GONE
         binding.houseModifyButtonSave.setOnClickListener { askSave() }
         setViewPager()
-    }
-
-    override fun onResume() {
-        super.onResume()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -118,13 +113,14 @@ class HouseModifyActivity : AppCompatActivity() {
         val builder = AlertDialog.Builder(this)
         builder.setMessage("저장하지 않고 돌아가시겠습니까?")
         builder.setIcon(R.drawable.ic_round_help_24)
-        builder.setPositiveButton("확인") { dialog: DialogInterface?, which: Int -> super@HouseModifyActivity.finish() }
-        builder.setNegativeButton("취소") { dialog: DialogInterface, which: Int -> dialog.dismiss() }
+        builder.setPositiveButton("확인") { _: DialogInterface?, _: Int -> super@HouseModifyActivity.finish() }
+        builder.setNegativeButton("취소") { dialog: DialogInterface, _: Int -> dialog.dismiss() }
         val alertDialog = builder.create()
         alertDialog.show()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         adapter.getItem(binding.houseModifyViewPager.currentItem).onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
@@ -162,10 +158,11 @@ class HouseModifyActivity : AppCompatActivity() {
         val listener = adapter.getItem(current) as OnSaveDataListener
         if (listener.checkData()) {
             listener.saveData()
+
             val builder = AlertDialog.Builder(this)
             builder.setMessage("저장하시겠습니까?")
             builder.setIcon(R.drawable.ic_round_help_24)
-            builder.setPositiveButton("확인") { dialog: DialogInterface?, which: Int ->
+            builder.setPositiveButton("확인") { _: DialogInterface, _: Int ->
                 viewModel.house?.thumbnail = viewModel.thumbnailTitle
 
                 count = 0
@@ -177,9 +174,10 @@ class HouseModifyActivity : AppCompatActivity() {
                     modify()
                 }
             }
-            builder.setNegativeButton("취소") { dialog: DialogInterface, which: Int -> dialog.dismiss() }
+            builder.setNegativeButton("취소") { dialog: DialogInterface, _: Int -> dialog.dismiss() }
             val alertDialog = builder.create()
             alertDialog.show()
+
         } else {
             Toast.makeText(applicationContext, "error", Toast.LENGTH_SHORT).show()
         }

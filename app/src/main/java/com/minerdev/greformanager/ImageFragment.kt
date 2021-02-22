@@ -17,18 +17,18 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.minerdev.greformanager.databinding.FragmentImageBinding
 import java.io.File
+import java.util.*
 
 // TODO: 앨범으로 이동시 대표사진이 초기화 되는 버그 고치기
 class ImageFragment : Fragment(), OnSaveDataListener {
     private val imageListAdapter = ImageListAdapter()
-    private var viewModel: HouseModifyViewModel = ViewModelProvider(requireActivity()).get(HouseModifyViewModel::class.java)
-
     private val binding by lazy { FragmentImageBinding.inflate(layoutInflater) }
+    private val viewModel: HouseModifyViewModel by viewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -40,11 +40,11 @@ class ImageFragment : Fragment(), OnSaveDataListener {
         binding.houseModifyRecyclerView.adapter = imageListAdapter
         binding.houseModifyRecyclerView.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
 
-        binding.houseModifyImageButtonAdd.setOnClickListener { v: View? ->
-            val permissionChecked = ContextCompat.checkSelfPermission(context!!, Manifest.permission.READ_EXTERNAL_STORAGE)
+        binding.houseModifyImageButtonAdd.setOnClickListener {
+            val permissionChecked = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
 
             if (permissionChecked != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(activity!!, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 101)
+                ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 101)
 
             } else {
                 if (imageListAdapter.itemCount < 9) {
@@ -66,15 +66,19 @@ class ImageFragment : Fragment(), OnSaveDataListener {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+
         if (requestCode == GALLERY_REQUEST_CODE) {
-            if (resultCode == Activity.RESULT_OK && data != null && data.data != null) {
-                val selectedImageUri = data.data ?: return
-                val path: String = AppHelper.instance.getPathFromUri(context, selectedImageUri)
+            if (resultCode == Activity.RESULT_OK) {
+                val selectedImageUri = data!!.data ?: return
+                val path: String = AppHelper.instance.getPathFromUri(requireContext(), selectedImageUri)
                 val file = File(path)
+
                 if (!file.exists() || !file.canRead()) {
                     Toast.makeText(context, "사진이 존재 하지않거나 읽을 수 없습니다!", Toast.LENGTH_SHORT).show()
+
                 } else if (file.length() > Constants.instance.FILE_MAX_SIZE) {
                     Toast.makeText(context, "사진의 크기는 10MB 보다 작아야 합니다!", Toast.LENGTH_SHORT).show()
+
                 } else {
                     imageListAdapter.addItem(selectedImageUri)
                     imageListAdapter.notifyDataSetChanged()
@@ -85,20 +89,23 @@ class ImageFragment : Fragment(), OnSaveDataListener {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         when (requestCode) {
-            101 -> if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                showAlbum()
-            } else {
-                val alertDialog = AlertDialog.Builder(context)
-                alertDialog.setTitle("앱 권한")
-                alertDialog.setMessage("해당 앱의 원활한 기능을 이용하시려면 애플리케이션 정보>권한에서 '저장공간' 권한을 허용해 주십시오.")
-                alertDialog.setPositiveButton("권한설정") { dialog: DialogInterface, which: Int ->
-                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).setData(Uri.parse("package:" + context!!.packageName))
-                    startActivity(intent)
-                    dialog.cancel()
+            101 ->
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    showAlbum()
+
+                } else {
+                    val alertDialog = AlertDialog.Builder(context)
+                    alertDialog.setTitle("앱 권한")
+                    alertDialog.setMessage("해당 앱의 원활한 기능을 이용하시려면 애플리케이션 정보>권한에서 '저장공간' 권한을 허용해 주십시오.")
+                    alertDialog.setPositiveButton("권한설정") { dialog: DialogInterface, which: Int ->
+                        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).setData(Uri.parse("package:" + requireContext().packageName))
+                        startActivity(intent)
+                        dialog.cancel()
+                    }
+                    alertDialog.setNegativeButton("취소") { dialog: DialogInterface, which: Int -> dialog.cancel() }
+                    alertDialog.show()
                 }
-                alertDialog.setNegativeButton("취소") { dialog: DialogInterface, which: Int -> dialog.cancel() }
-                alertDialog.show()
-            }
+
             else -> {
             }
         }
@@ -109,13 +116,15 @@ class ImageFragment : Fragment(), OnSaveDataListener {
     }
 
     override fun saveData() {
-        viewModel.imageUris = imageListAdapter.items
-        viewModel.thumbnail = imageListAdapter.thumbnail
-        viewModel.saveImages(context)
+        context?.let {
+            viewModel.imageUris = imageListAdapter.items
+            viewModel.thumbnail = imageListAdapter.thumbnail
+            viewModel.saveImages(it)
+        }
     }
 
-    fun initData() {
-        imageListAdapter.items = viewModel.imageUris
+    private fun initData() {
+        imageListAdapter.items = viewModel.imageUris as ArrayList<Uri>
         imageListAdapter.thumbnail = viewModel.thumbnail
         imageListAdapter.notifyDataSetChanged()
     }

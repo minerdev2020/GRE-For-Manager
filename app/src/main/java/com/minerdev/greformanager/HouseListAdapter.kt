@@ -7,12 +7,12 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 
-class HouseListAdapter(diffCallback: DiffCallback) : PagingDataAdapter<House, HouseListAdapter.ViewHolder>(diffCallback) {
+class HouseListAdapter(diffCallback: DiffCallback) : ListAdapter<House, HouseListAdapter.ViewHolder>(diffCallback) {
     private var listener: OnItemClickListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -23,7 +23,7 @@ class HouseListAdapter(diffCallback: DiffCallback) : PagingDataAdapter<House, Ho
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = getItem(position)
-        holder.setItem(item!!)
+        holder.bind(item!!)
     }
 
     operator fun get(position: Int): House? {
@@ -39,36 +39,30 @@ class HouseListAdapter(diffCallback: DiffCallback) : PagingDataAdapter<House, Ho
     }
 
     class ViewHolder(itemView: View, clickListener: OnItemClickListener?) : RecyclerView.ViewHolder(itemView) {
-        private val textView_payment: TextView
-        private val textView_price: TextView
-        private val textView_house_info: TextView
-        private val textView_description: TextView
-        private val textView_upload_time: TextView
-        private val imageView_profile: ImageView
+        private val textView_payment: TextView = itemView.findViewById(R.id.houseItem_textView_payment_type)
+        private val textView_price: TextView = itemView.findViewById(R.id.houseItem_textView_price)
+        private val textView_house_info: TextView = itemView.findViewById(R.id.houseItem_textView_house_info)
+        private val textView_description: TextView = itemView.findViewById(R.id.houseItem_textView_description)
+        private val textView_upload_time: TextView = itemView.findViewById(R.id.houseItem_textView_upload_time)
+        private val imageView_profile: ImageView = itemView.findViewById(R.id.houseItem_imageView_profile)
 
-        fun setItem(house: House) {
+        fun bind(house: House) {
             val houseWrapper = HouseWrapper(house)
 
             textView_payment.text = houseWrapper.paymentType
             textView_price.text = houseWrapper.price
             textView_house_info.text = houseWrapper.houseInfo
             textView_description.text = houseWrapper.detailInfo
-            textView_upload_time.setText(AppHelper.instance.getDiffTimeMsg(house.created_at))
+            textView_upload_time.text = AppHelper.instance.getDiffTimeMsg(house.created_at)
 
             val uri = Uri.parse(Constants.instance.DNS + "/storage/images/" + house.id + "/" + house.thumbnail)
             Glide.with(itemView).load(uri).into(imageView_profile)
         }
 
         init {
-            textView_payment = itemView.findViewById(R.id.houseItem_textView_payment_type)
-            textView_price = itemView.findViewById(R.id.houseItem_textView_price)
-            textView_house_info = itemView.findViewById(R.id.houseItem_textView_house_info)
-            textView_description = itemView.findViewById(R.id.houseItem_textView_description)
-            textView_upload_time = itemView.findViewById(R.id.houseItem_textView_upload_time)
-            imageView_profile = itemView.findViewById(R.id.houseItem_imageView_profile)
             val linearLayout = itemView.findViewById<LinearLayout>(R.id.houseItem_layout)
-            linearLayout.setOnClickListener { v: View? ->
-                clickListener?.onItemClick(this@ViewHolder, itemView, adapterPosition)
+            linearLayout.setOnClickListener {
+                clickListener?.onItemClick(this@ViewHolder, itemView, bindingAdapterPosition)
             }
         }
     }

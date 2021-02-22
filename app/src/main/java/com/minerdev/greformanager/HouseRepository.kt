@@ -5,9 +5,9 @@ import androidx.lifecycle.LiveData
 
 class HouseRepository(application: Application) {
     private val houseDao: HouseDao?
-    val all: LiveData<List<House>>
-    val allSale: LiveData<List<House>>
-    val allSold: LiveData<List<House>>
+    val all: LiveData<MutableList<House>>
+    val allSale: LiveData<MutableList<House>>
+    val allSold: LiveData<MutableList<House>>
 
     val lastUpdatedAt: Long?
         get() = houseDao?.lastUpdatedAt

@@ -8,12 +8,10 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.databinding.BindingConversion
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
 import com.android.volley.Request
 import com.google.gson.Gson
 import com.google.gson.JsonObject
@@ -27,15 +25,13 @@ import com.naver.maps.map.NaverMap
 import com.naver.maps.map.overlay.Marker
 
 class HouseDetailActivity : AppCompatActivity() {
-    private val adapter = ImageAdapter()
-    private var originalState = 0
+    lateinit var houseWrapper: HouseWrapper
 
-    private val imageViewModel by lazy {
-        ViewModelProvider(this,
-                AndroidViewModelFactory(application)).get(ImageViewModel::class.java)
-    }
+    private val adapter = ImageAdapter()
+    private val imageViewModel: ImageViewModel by viewModels()
+
     private lateinit var binding: ActivityHouseDetailBinding
-    private lateinit var houseWrapper: HouseWrapper
+    private var originalState = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,7 +46,7 @@ class HouseDetailActivity : AppCompatActivity() {
         setSupportActionBar(binding.houseDetailToolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        imageViewModel.getOrderByPosition(data.id)!!.observe(this, Observer { images: List<Image?>? ->
+        imageViewModel.getOrderByPosition(data.id).observe(this, Observer { images: List<Image> ->
             adapter.addImages(images)
             adapter.notifyDataSetChanged()
         })
@@ -132,13 +128,13 @@ class HouseDetailActivity : AppCompatActivity() {
         binding.houseDetailFlowLayoutOptions.removeAllViews()
 
         val toggleButtonGroupManageFee = ToggleButtonGroup(this, "ManageFee")
-        toggleButtonGroupManageFee.addToggleButtons(houseWrapper.manageFeeContains.split("\\|"))
+        toggleButtonGroupManageFee.addToggleButtons(houseWrapper.manageFeeContains.split("\\|").toTypedArray())
         for (toggleButton in toggleButtonGroupManageFee.toggleButtons) {
             binding.houseDetailFlowLayoutManageFee.addView(toggleButton)
         }
 
         val toggleButtonGroupOptions = ToggleButtonGroup(this, "Options")
-        toggleButtonGroupOptions.addToggleButtons(houseWrapper.options.split("\\|"))
+        toggleButtonGroupOptions.addToggleButtons(houseWrapper.options.split("\\|").toTypedArray())
         for (toggleButton in toggleButtonGroupOptions.toggleButtons) {
             binding.houseDetailFlowLayoutOptions.addView(toggleButton)
         }
@@ -215,13 +211,12 @@ class HouseDetailActivity : AppCompatActivity() {
                         }
 
                         Log.d("last_updated_at", receivedData ?: "null")
-                        imageViewModel.insert(*array)
+                        imageViewModel.insert(array.toList())
                     }
                 })
     }
 
     companion object {
-        @BindingConversion
         fun convertBooleanToVisibility(visible: Boolean): Int {
             return if (visible) View.VISIBLE else View.GONE
         }

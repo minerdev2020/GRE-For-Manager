@@ -10,7 +10,7 @@ import com.google.gson.Gson
 import java.util.*
 
 class Geocode private constructor() {
-    private var result: GeocodeResult? = null
+    private lateinit var result: GeocodeResult
     private var listener: OnDataReceiveListener? = null
 
     fun setOnDataReceiveListener(listener: OnDataReceiveListener?) {
@@ -18,20 +18,19 @@ class Geocode private constructor() {
     }
 
     fun getQueryResponseFromNaver(context: Context, address: String) {
-        val apiURL = context.getString(R.string.naver_open_api_geocode) + "?query=" + address
-        val request: StringRequest = object : StringRequest(Method.GET, apiURL,
-                Response.Listener { response: String? ->
+        val apiUrl = context.getString(R.string.naver_open_api_geocode) + "?query=" + address
+        val request = object : StringRequest(Method.GET, apiUrl,
+                Response.Listener { response ->
                     try {
                         val gson = Gson()
                         result = gson.fromJson(response, GeocodeResult::class.java)
-                        if (result != null) {
-                            listener!!.parseData(result)
-                        }
+                        listener?.parseData(result)
+
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }
                 },
-                Response.ErrorListener { error: VolleyError -> Toast.makeText(context, error.message, Toast.LENGTH_SHORT).show() }
+                Response.ErrorListener { error -> Toast.makeText(context, error.message, Toast.LENGTH_SHORT).show() }
         ) {
             @Throws(AuthFailureError::class)
             override fun getParams(): Map<String, String> {
@@ -43,8 +42,10 @@ class Geocode private constructor() {
                 val client_id = context.getString(R.string.client_id)
                 val client_secret = context.getString(R.string.client_secret)
                 val params: MutableMap<String, String> = HashMap()
+
                 params[context.getString(R.string.api_key_id_header)] = client_id
                 params[context.getString(R.string.api_key_header)] = client_secret
+
                 return params
             }
         }

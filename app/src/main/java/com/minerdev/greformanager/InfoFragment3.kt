@@ -11,9 +11,9 @@ import androidx.lifecycle.ViewModelProvider
 import com.minerdev.greformanager.databinding.FragmentInfo3Binding
 
 class InfoFragment3 : Fragment(), OnSaveDataListener {
-    private var toggleButtonGroupOptions: ToggleButtonGroup? = null
-    private var binding: FragmentInfo3Binding? = null
-    private var viewModel: HouseModifyViewModel? = null
+    private lateinit var toggleButtonGroupOptions: ToggleButtonGroup
+    private lateinit var binding: FragmentInfo3Binding
+    private lateinit var viewModel: HouseModifyViewModel
     private var house: House? = null
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
@@ -23,15 +23,16 @@ class InfoFragment3 : Fragment(), OnSaveDataListener {
 
         // 옵션 정보 초기화
         toggleButtonGroupOptions = ToggleButtonGroup(context, "옵션 항목")
-        toggleButtonGroupOptions!!.addToggleButtons(*resources.getStringArray(R.array.option))
-        for (toggleButton in toggleButtonGroupOptions.getToggleButtons()) {
+        toggleButtonGroupOptions.addToggleButtons(resources.getStringArray(R.array.option))
+        for (toggleButton in toggleButtonGroupOptions.toggleButtons) {
             binding.houseModify3FlowLayoutOption.addView(toggleButton)
         }
 
 
         // 담당자 정보 초기화
         binding.houseModify3EditTextPhone.addTextChangedListener(PhoneNumberFormattingTextWatcher())
-        return binding.getRoot()
+
+        return binding.root
     }
 
     override fun onResume() {
@@ -40,34 +41,34 @@ class InfoFragment3 : Fragment(), OnSaveDataListener {
     }
 
     override fun checkData(): Boolean {
-        return if (binding!!.houseModify3EditTextPhone.text.toString() == "") {
-            false
-        } else true
+        return binding.houseModify3EditTextPhone.text.toString() != ""
     }
 
     override fun saveData() {
         val data = house
-        data!!.options = toggleButtonGroupOptions.getCheckedToggleButtonTextsInSingleLine()
-        data.detail_info = binding!!.houseModify3DetailInfo.text.toString()
-        data.phone = binding!!.houseModify3EditTextPhone.text.toString()
+        data?.let {
+            it.options = toggleButtonGroupOptions.checkedToggleButtonTextsInSingleLine
+            it.detail_info = binding.houseModify3DetailInfo.text.toString()
+            it.phone = binding.houseModify3EditTextPhone.text.toString()
+        }
     }
 
     fun initData() {
         // 데이터 읽기
-        house = viewModel.getHouse()
-        if (house != null) {
-            loadData()
-        }
+        house = viewModel.house
+        house?.let { loadData(it) }
     }
 
-    private fun loadData() {
-        if (house!!.options != null && house!!.options != "") {
-            val optionsTexts = house!!.options!!.split("\\|").toTypedArray()
-            for (text in optionsTexts) {
-                toggleButtonGroupOptions!!.setToggleButtonCheckedState(text, true)
+    private fun loadData(house: House) {
+        if (!house.options.isNullOrEmpty()) {
+            val optionsTexts = house.options?.split("\\|")?.toTypedArray()
+            optionsTexts?.let {
+                for (text in it) {
+                    toggleButtonGroupOptions.setToggleButtonCheckedState(text, true)
+                }
             }
         }
-        binding!!.houseModify3DetailInfo.setText(house!!.detail_info)
-        binding!!.houseModify3EditTextPhone.setText(house!!.phone)
+        binding.houseModify3DetailInfo.setText(house.detail_info)
+        binding.houseModify3EditTextPhone.setText(house.phone)
     }
 }

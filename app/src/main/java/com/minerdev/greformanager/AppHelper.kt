@@ -10,15 +10,15 @@ import java.io.FileInputStream
 class AppHelper private constructor() {
     var requestQueue: RequestQueue? = null
 
-    fun getPathFromUri(context: Context?, uri: Uri?): String {
-        val cursor = context!!.contentResolver.query(uri!!, null, null, null, null)
+    fun getPathFromUri(context: Context, uri: Uri): String {
+        val cursor = context.contentResolver.query(uri, null, null, null, null)
         cursor!!.moveToNext()
         val path = cursor.getString(cursor.getColumnIndex("_data"))
         cursor.close()
         return path
     }
 
-    fun getByteArrayFromUri(context: Context?, uri: Uri?): ByteArray {
+    fun getByteArrayFromUri(context: Context, uri: Uri): ByteArray {
         val file = File(getPathFromUri(context, uri))
         val byteArrayOutputStream = ByteArrayOutputStream()
         val buf = ByteArray(1024)
@@ -26,10 +26,13 @@ class AppHelper private constructor() {
         if (file.exists() && file.canRead()) {
             try {
                 val inputStream = FileInputStream(file)
+
                 while (inputStream.read(buf).also { size = it } != -1) {
                     byteArrayOutputStream.write(buf, 0, size)
                 }
+
                 inputStream.close()
+
             } catch (e: Exception) {
                 e.printStackTrace()
             }

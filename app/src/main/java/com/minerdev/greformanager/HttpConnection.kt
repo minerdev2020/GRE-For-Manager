@@ -4,7 +4,10 @@ import android.content.Context
 import android.net.Uri
 import android.util.Log
 import android.widget.Toast
-import com.android.volley.*
+import com.android.volley.AuthFailureError
+import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.VolleyError
 import com.android.volley.toolbox.StringRequest
 import com.google.gson.Gson
 import com.google.gson.JsonObject
@@ -43,11 +46,11 @@ class HttpConnection private constructor() {
 
     private fun makeRequest(context: Context, method: Int, uri: String, json: String?, listener: OnReceiveListener?) {
         val request: StringRequest = object : StringRequest(method, uri,
-                Response.Listener { response: String? ->
+                Response.Listener { response ->
                     Toast.makeText(context, "데이터 전송 성공.", Toast.LENGTH_SHORT).show()
                     listener?.onReceive(response)
                 },
-                Response.ErrorListener { error: VolleyError ->
+                Response.ErrorListener { error ->
                     Toast.makeText(context, error.message, Toast.LENGTH_SHORT).show()
                     Log.e("HTTP_ERROR", error.message ?: "null")
                 }
@@ -67,13 +70,13 @@ class HttpConnection private constructor() {
         AppHelper.instance.requestQueue?.add(request)
     }
 
-    private fun makeImageRequest(context: Context, method: Int, uri: String, imageUri: Uri?, image: Image?, listener: OnReceiveListener?) {
+    private fun makeImageRequest(context: Context, method: Int, uri: String, imageUri: Uri, image: Image, listener: OnReceiveListener?) {
         val request: VolleyMultipartRequest = object : VolleyMultipartRequest(method, uri,
-                Response.Listener { response: NetworkResponse ->
+                Response.Listener { response ->
                     Toast.makeText(context, "데이터 전송 성공.", Toast.LENGTH_SHORT).show()
                     listener?.onReceive(String(response.data))
                 },
-                Response.ErrorListener { error: VolleyError ->
+                Response.ErrorListener { error ->
                     Toast.makeText(context, error.message, Toast.LENGTH_LONG).show()
                     Log.e("HTTP_ERROR", error.message ?: "null")
                 }
@@ -81,20 +84,23 @@ class HttpConnection private constructor() {
             @Throws(AuthFailureError::class)
             override fun getParams(): Map<String, String> {
                 val params: MutableMap<String, String> = HashMap()
-                params["title"] = image!!.title!!
+                params["title"] = image.title!!
                 params["position"] = image.position.toString()
+
                 if (image.thumbnail.toInt() == 1) {
                     params["thumbnail"] = "1"
+
                 } else {
                     params["thumbnail"] = "0"
                 }
+
                 return params
             }
 
-            override val byteData: Map<String, DataPart>?
+            override val byteData: Map<String, DataPart>
                 get() {
                     val params: MutableMap<String, DataPart> = HashMap()
-                    params["image"] = DataPart(image!!.title, AppHelper.instance.getByteArrayFromUri(context, imageUri))
+                    params["image"] = DataPart(image.title!!, AppHelper.instance.getByteArrayFromUri(context, imageUri))
                     return params
                 }
         }
