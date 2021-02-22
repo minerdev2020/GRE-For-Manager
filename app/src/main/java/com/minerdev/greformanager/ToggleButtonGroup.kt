@@ -7,8 +7,8 @@ import android.widget.ToggleButton
 import java.util.*
 
 class ToggleButtonGroup(private val context: Context?, var title: String) {
-    val toggleButtons: ArrayList<ToggleButton> = ArrayList()
-    private val toggleButtonCheckedStates: HashMap<String, Boolean> = HashMap()
+    val toggleButtons = ArrayList<ToggleButton>()
+    private val toggleButtonCheckedStates = HashMap<String, Boolean>()
 
     val checkedToggleButtons: ArrayList<ToggleButton>
         get() {
@@ -18,15 +18,16 @@ class ToggleButtonGroup(private val context: Context?, var title: String) {
                     checkedToggleButtons.add(button)
                 }
             }
+
             return checkedToggleButtons
         }
 
-    fun getToggleButtonCheckedState(buttonText: String?): Boolean? {
+    fun getToggleButtonCheckedState(buttonText: String): Boolean? {
         return if (toggleButtonCheckedStates.size == 0) {
             null
         } else {
             val result = toggleButtonCheckedStates[buttonText]
-            result != null && result
+            result
         }
     }
 
@@ -86,9 +87,9 @@ class ToggleButtonGroup(private val context: Context?, var title: String) {
         }
     }
 
-    fun addToggleButtons(texts: Array<String>) {
+    fun addToggleButtons(texts: List<String>) {
         for (text in texts) {
-            if (text != "") {
+            if (text.isNotEmpty()) {
                 addToggleButton(text)
             }
         }
@@ -96,7 +97,7 @@ class ToggleButtonGroup(private val context: Context?, var title: String) {
 
     fun addToggleButtonsFromText(text: String) {
         if (text.isNotEmpty()) {
-            addToggleButtons(text.split("\\|").toTypedArray())
+            addToggleButtons(text.split('|'))
         }
     }
 

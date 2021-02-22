@@ -17,25 +17,27 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.minerdev.greformanager.databinding.FragmentImageBinding
 import java.io.File
-import java.util.*
 
 // TODO: 앨범으로 이동시 대표사진이 초기화 되는 버그 고치기
 class ImageFragment : Fragment(), OnSaveDataListener {
     private val imageListAdapter = ImageListAdapter()
     private val binding by lazy { FragmentImageBinding.inflate(layoutInflater) }
-    private val viewModel: HouseModifyViewModel by viewModels()
+    private val viewModel: HouseModifyViewModel by activityViewModels {
+        object : ViewModelProvider.Factory {
+            override fun <T : ViewModel?> create(modelClass: Class<T>) = HouseModifyViewModel() as T
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        val rootView = inflater.inflate(R.layout.fragment_image, container, false) as ViewGroup
-
+                              savedInstanceState: Bundle?): View {
         val manager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-
         binding.houseModifyRecyclerView.layoutManager = manager
         binding.houseModifyRecyclerView.adapter = imageListAdapter
         binding.houseModifyRecyclerView.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
@@ -56,7 +58,7 @@ class ImageFragment : Fragment(), OnSaveDataListener {
             }
         }
 
-        return rootView
+        return binding.root
     }
 
     override fun onResume() {
@@ -80,7 +82,7 @@ class ImageFragment : Fragment(), OnSaveDataListener {
                     Toast.makeText(context, "사진의 크기는 10MB 보다 작아야 합니다!", Toast.LENGTH_SHORT).show()
 
                 } else {
-                    imageListAdapter.addItem(selectedImageUri)
+                    imageListAdapter.addItem(context, selectedImageUri)
                     imageListAdapter.notifyDataSetChanged()
                 }
             }
@@ -97,12 +99,12 @@ class ImageFragment : Fragment(), OnSaveDataListener {
                     val alertDialog = AlertDialog.Builder(context)
                     alertDialog.setTitle("앱 권한")
                     alertDialog.setMessage("해당 앱의 원활한 기능을 이용하시려면 애플리케이션 정보>권한에서 '저장공간' 권한을 허용해 주십시오.")
-                    alertDialog.setPositiveButton("권한설정") { dialog: DialogInterface, which: Int ->
+                    alertDialog.setPositiveButton("권한설정") { dialog: DialogInterface, _: Int ->
                         val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).setData(Uri.parse("package:" + requireContext().packageName))
                         startActivity(intent)
                         dialog.cancel()
                     }
-                    alertDialog.setNegativeButton("취소") { dialog: DialogInterface, which: Int -> dialog.cancel() }
+                    alertDialog.setNegativeButton("취소") { dialog: DialogInterface, _: Int -> dialog.cancel() }
                     alertDialog.show()
                 }
 
@@ -111,25 +113,25 @@ class ImageFragment : Fragment(), OnSaveDataListener {
         }
     }
 
+    private fun initData() {
+        imageListAdapter.imageUris = viewModel.imageUris
+        imageListAdapter.images = viewModel.images
+        imageListAdapter.thumbnail = viewModel.thumbnail
+        imageListAdapter.notifyDataSetChanged()
+    }
+
     override fun checkData(): Boolean {
         return imageListAdapter.itemCount > 0
     }
 
     override fun saveData() {
-        context?.let {
-            viewModel.imageUris = imageListAdapter.items
-            viewModel.thumbnail = imageListAdapter.thumbnail
-            viewModel.saveImages(it)
-        }
+        viewModel.imageUris = imageListAdapter.imageUris
+        viewModel.images = imageListAdapter.images
+        viewModel.thumbnail = imageListAdapter.thumbnail
+        viewModel.saveImages()
     }
 
-    private fun initData() {
-        imageListAdapter.items = viewModel.imageUris as ArrayList<Uri>
-        imageListAdapter.thumbnail = viewModel.thumbnail
-        imageListAdapter.notifyDataSetChanged()
-    }
-
-    fun showAlbum() {
+    private fun showAlbum() {
         val intent = Intent()
         intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
         intent.action = Intent.ACTION_PICK

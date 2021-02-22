@@ -1,5 +1,6 @@
 package com.minerdev.greformanager
 
+import android.content.Context
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
@@ -9,16 +10,15 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import java.io.File
 import java.util.*
+import kotlin.collections.ArrayList
 
 class ImageListAdapter : RecyclerView.Adapter<ImageListAdapter.ViewHolder>() {
-    var items = ArrayList<Uri>()
+    var imageUris = ArrayList<Uri>()
+    var images = ArrayList<Image>()
     private var listener = OnItemClickListener()
     var thumbnail = 0
-    
-    fun setOnItemClickListener(clickListener: OnItemClickListener) {
-        listener = clickListener
-    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -27,27 +27,41 @@ class ImageListAdapter : RecyclerView.Adapter<ImageListAdapter.ViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(items[position], thumbnail)
+        holder.bind(imageUris[position], thumbnail)
     }
 
     override fun getItemCount(): Int {
-        return items.size
+        return imageUris.size
     }
 
-    fun addItem(item: Uri) {
-        items.add(item)
-    }
-
-    fun getItem(position: Int): Uri {
-        return items[position]
-    }
-
-    fun setItem(position: Int, item: Uri) {
-        items[position] = item
+    fun addItem(context: Context?, item: Uri) {
+        context?.let {
+            images.add(addImage(it, item))
+            imageUris.add(item)
+        }
     }
 
     fun removeItem(position: Int) {
-        items.removeAt(position)
+        images.removeAt(position)
+        imageUris.removeAt(position)
+    }
+
+    private fun addImage(context: Context, uri: Uri): Image {
+        val image = Image()
+        val file = File(AppHelper.instance.getPathFromUri(context, uri))
+        val fileName: String = file.name
+        val fileExtension = fileName.substring(fileName.lastIndexOf(".") + 1)
+        image.title = System.currentTimeMillis().toString() + "." + fileExtension
+        image.position = imageUris.size.toByte()
+
+        if (image.position == thumbnail.toByte()) {
+            image.thumbnail = 1
+
+        } else {
+            image.thumbnail = 0
+        }
+
+        return image
     }
 
     class ViewHolder(itemView: View, clickListener: OnItemClickListener?) : RecyclerView.ViewHolder(itemView) {
@@ -108,7 +122,8 @@ class ImageListAdapter : RecyclerView.Adapter<ImageListAdapter.ViewHolder>() {
 
         fun onUpButtonClick(viewHolder: ViewHolder?, view: View?, position: Int) {
             if (position > 0) {
-                Collections.swap(items, position - 1, position)
+                Collections.swap(imageUris, position - 1, position)
+                Collections.swap(images, position - 1, position)
                 notifyDataSetChanged()
 
                 if (thumbnail == position) {
@@ -121,8 +136,9 @@ class ImageListAdapter : RecyclerView.Adapter<ImageListAdapter.ViewHolder>() {
         }
 
         fun onDownButtonClick(viewHolder: ViewHolder?, view: View?, position: Int) {
-            if (position < items.size - 1) {
-                Collections.swap(items, position, position + 1)
+            if (position < imageUris.size - 1) {
+                Collections.swap(imageUris, position, position + 1)
+                Collections.swap(images, position, position + 1)
                 notifyDataSetChanged()
 
                 if (thumbnail == position) {

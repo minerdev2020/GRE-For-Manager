@@ -13,8 +13,8 @@ data class House(
         @PrimaryKey var id: Int = 0,
         var created_at: Long = 0,
         var updated_at: Long = 0,
-        var address: String? = null,
-        var number: String? = null,
+        var address: String = "",
+        var number: String = "",
         var house_type: Byte = 0,
         var facility: Byte = 0,
         var payment_type: Byte = 0,
@@ -32,11 +32,11 @@ data class House(
         var bathroom: Byte = 0,
         var bathroom_location: Byte = 0,
         var direction: Byte = 0,
-        var built_date: String? = null,
+        var built_date: String = "",
         var move_date: String? = null,
         var options: String? = null,
-        var detail_info: String? = null,
-        var phone: String? = null,
+        var detail_info: String = "",
+        var phone: String = "",
         var state: Byte = 0,
-        var thumbnail: String? = null
+        var thumbnail: String = ""
 ) : Parcelable

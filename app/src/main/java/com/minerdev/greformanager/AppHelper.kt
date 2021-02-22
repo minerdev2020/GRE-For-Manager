@@ -12,10 +12,14 @@ class AppHelper private constructor() {
 
     fun getPathFromUri(context: Context, uri: Uri): String {
         val cursor = context.contentResolver.query(uri, null, null, null, null)
-        cursor!!.moveToNext()
-        val path = cursor.getString(cursor.getColumnIndex("_data"))
-        cursor.close()
-        return path
+        cursor?.let {
+            it.moveToNext()
+            val path = it.getString(it.getColumnIndex("_data"))
+            it.close()
+            return path
+        }
+
+        return ""
     }
 
     fun getByteArrayFromUri(context: Context, uri: Uri): ByteArray {
@@ -42,31 +46,15 @@ class AppHelper private constructor() {
 
     fun getDiffTimeMsg(since: Long): String {
         var diffTime = System.currentTimeMillis() / 1000 - since
+
         val msg: String
         when {
-            diffTime < 60 -> {
-                msg = "방금전"
-            }
-
-            60.let { diffTime /= it; diffTime } < 60 -> {
-                msg = diffTime.toString() + "분전"
-            }
-
-            60.let { diffTime /= it; diffTime } < 24 -> {
-                msg = diffTime.toString() + "시간전"
-            }
-
-            24.let { diffTime /= it; diffTime } < 30 -> {
-                msg = diffTime.toString() + "일전"
-            }
-
-            30.let { diffTime /= it; diffTime } < 12 -> {
-                msg = diffTime.toString() + "개월전"
-            }
-
-            else -> {
-                msg = diffTime.toString() + "년전"
-            }
+            diffTime < 60 -> msg = "방금전"
+            60.let { diffTime /= it; diffTime } < 60 -> msg = diffTime.toString() + "분전"
+            60.let { diffTime /= it; diffTime } < 24 -> msg = diffTime.toString() + "시간전"
+            24.let { diffTime /= it; diffTime } < 30 -> msg = diffTime.toString() + "일전"
+            30.let { diffTime /= it; diffTime } < 12 -> msg = diffTime.toString() + "개월전"
+            else -> msg = diffTime.toString() + "년전"
         }
 
         return msg

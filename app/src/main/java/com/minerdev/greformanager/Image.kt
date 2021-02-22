@@ -13,7 +13,7 @@ data class Image(
         @PrimaryKey var id: Int = 0,
         var created_at: Long = 0,
         var updated_at: Long = 0,
-        var title: String? = null,
+        var title: String = "",
         var path: String? = null,
         var position: Byte = 0,
         var thumbnail: Byte = 0,

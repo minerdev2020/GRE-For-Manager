@@ -87,7 +87,7 @@ class HttpConnection private constructor() {
             @Throws(AuthFailureError::class)
             override fun getParams(): Map<String, String> {
                 val params: MutableMap<String, String> = HashMap()
-                params["title"] = image.title!!
+                params["title"] = image.title
                 params["position"] = image.position.toString()
 
                 if (image.thumbnail.toInt() == 1) {
@@ -103,7 +103,7 @@ class HttpConnection private constructor() {
             override val byteData: Map<String, DataPart>
                 get() {
                     val params: MutableMap<String, DataPart> = HashMap()
-                    params["image"] = DataPart(image.title!!, AppHelper.instance.getByteArrayFromUri(context, imageUri))
+                    params["image"] = DataPart(image.title, AppHelper.instance.getByteArrayFromUri(context, imageUri))
                     return params
                 }
         }

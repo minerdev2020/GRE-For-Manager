@@ -14,11 +14,17 @@ import android.widget.CompoundButton
 import android.widget.DatePicker
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.minerdev.greformanager.databinding.FragmentInfo2Binding
 
 class InfoFragment2 : Fragment(), OnSaveDataListener {
-    private val viewModel: HouseModifyViewModel by viewModels()
+    private val viewModel: HouseModifyViewModel by activityViewModels {
+        object : ViewModelProvider.Factory {
+            override fun <T : ViewModel?> create(modelClass: Class<T>) = HouseModifyViewModel() as T
+        }
+    }
 
     private lateinit var binding: FragmentInfo2Binding
     private lateinit var houseType: String
@@ -69,6 +75,24 @@ class InfoFragment2 : Fragment(), OnSaveDataListener {
         initData()
     }
 
+    private fun initData() {
+        house = viewModel.house
+        houseType = Constants.instance.HOUSE_TYPE[house.house_type.toInt()]
+
+        // 구조 초기화 ('매물 종류'가 '주택'이나 '오피스텔'일때만 '구조' 항목이 보임)
+        val visibility = if (houseType == "주택" || houseType == "오피스텔") View.VISIBLE else View.GONE
+        binding.houseModify2TableRowStructure.visibility = visibility
+        binding.houseModify2View.visibility = visibility
+        binding.houseModify2SpinnerStructure.setSelection(0)
+
+
+        // 화장실 위치 초기화 ('매물 종류'가 '사무실'이나 '상가, 점포'일때만 '화장실 위치' 항목이 보임)
+        binding.houseModify2TableRowLocation.visibility = if (houseType == "사무실" || houseType == "상가, 점포") View.VISIBLE else View.GONE
+        binding.houseModify2RadioGroup.clearCheck()
+
+        loadData()
+    }
+
     override fun checkData(): Boolean {
         if (binding.houseModify2EditTextAreaMeter.text.toString() == "") {
             return false
@@ -108,70 +132,37 @@ class InfoFragment2 : Fragment(), OnSaveDataListener {
         house.area_meter = parseFloat(binding.houseModify2EditTextAreaMeter.text.toString())
         house.rent_area_meter = parseFloat(binding.houseModify2EditTextRentAreaMeter.text.toString())
         house.building_floor = parseInt(binding.houseModify2EditTextBuildingFloor.text.toString()).toByte()
+
         if (binding.houseModify2CheckBoxUnderground.isChecked) {
             house.floor = -1
+
         } else {
-            house.floor = binding.houseModify2EditTextFloor.text.toString().toByte()
+            val floor = binding.houseModify2EditTextFloor.text.toString()
+            house.floor = if (floor.isNotEmpty()) floor.toByte() else 0
         }
+
         house.structure = binding.houseModify2SpinnerStructure.selectedItemPosition.toByte()
         house.bathroom = binding.houseModify2SpinnerBathroom.selectedItemPosition.toByte()
+
         if (binding.houseModify2RadioButtonOutside.isChecked) {
             house.bathroom_location = 0
+
         } else {
             house.bathroom_location = 1
         }
+
         house.direction = binding.houseModify2SpinnerDirection.selectedItemId.toByte()
         house.built_date = binding.houseModify2TextViewBuiltDate.text.toString()
         house.move_date = binding.houseModify2TextViewMoveDate.text.toString()
     }
 
-    fun initData() {
-        if (viewModel.house != null) {
-            house = viewModel.house
-            houseType = Constants.instance.HOUSE_TYPE[house.house_type.toInt()]
-
-            // 구조 초기화 ('매물 종류'가 '주택'이나 '오피스텔'일때만 '구조' 항목이 보임)
-            val visibility = if (houseType == "주택" || houseType == "오피스텔") View.VISIBLE else View.GONE
-            binding.houseModify2TableRowStructure.visibility = visibility
-            binding.houseModify2View.visibility = visibility
-            binding.houseModify2SpinnerStructure.setSelection(0)
-
-
-            // 화장실 위치 초기화 ('매물 종류'가 '사무실'이나 '상가, 점포'일때만 '화장실 위치' 항목이 보임)
-            binding.houseModify2TableRowLocation.visibility = if (houseType == "사무실" || houseType == "상가, 점포") View.VISIBLE else View.GONE
-            binding.houseModify2RadioGroup.clearCheck()
-
-        } else {
-            loadData()
-        }
-    }
-
     @SuppressLint("DefaultLocale")
     private fun loadData() {
-        binding.houseModify2EditTextAreaMeter.setText(if (house.area_meter == 0f)
-            ""
-        else
-            house.area_meter.toString())
-
-        binding.houseModify2EditTextRentAreaMeter.setText(if (house.rent_area_meter == 0f)
-            ""
-        else
-            house.rent_area_meter.toString())
-
-        binding.houseModify2EditTextAreaPyeong.setText(if (house.area_meter == 0f)
-            ""
-        else
-            String.format("%.2f", house.area_meter * Constants.instance.METER_TO_PYEONG))
-
-        binding.houseModify2EditTextRentAreaPyeong.setText(if (house.rent_area_meter == 0f)
-            ""
-        else
-            String.format("%.2f", house.rent_area_meter * Constants.instance.METER_TO_PYEONG))
-
-        binding.houseModify2EditTextBuildingFloor.setText(if (house.building_floor.toInt() == 0)
-            ""
-        else
-            house.building_floor.toString())
+        binding.houseModify2EditTextAreaMeter.setText(if (house.area_meter == 0f) "" else house.area_meter.toString())
+        binding.houseModify2EditTextRentAreaMeter.setText(if (house.rent_area_meter == 0f) "" else house.rent_area_meter.toString())
+        binding.houseModify2EditTextAreaPyeong.setText(if (house.area_meter == 0f) "" else String.format("%.2f", house.area_meter * Constants.instance.METER_TO_PYEONG))
+        binding.houseModify2EditTextRentAreaPyeong.setText(if (house.rent_area_meter == 0f) "" else String.format("%.2f", house.rent_area_meter * Constants.instance.METER_TO_PYEONG))
+        binding.houseModify2EditTextBuildingFloor.setText(if (house.building_floor.toInt() == 0) "" else house.building_floor.toString())
 
         if (house.floor.toInt() == -1) {
             binding.houseModify2CheckBoxUnderground.isChecked = true
@@ -193,7 +184,7 @@ class InfoFragment2 : Fragment(), OnSaveDataListener {
         binding.houseModify2SpinnerDirection.setSelection(house.direction.toInt())
         binding.houseModify2TextViewBuiltDate.text = house.built_date
 
-        if (house.move_date == null || house.move_date == "") {
+        if (house.move_date == "") {
             binding.houseModify2CheckBoxMoveNow.isChecked = true
 
         } else {
@@ -222,14 +213,14 @@ class InfoFragment2 : Fragment(), OnSaveDataListener {
 
     private fun setCheckBoxes() {
         // 층 초기화
-        binding.houseModify2CheckBoxUnderground.setOnCheckedChangeListener { buttonView: CompoundButton?, isChecked: Boolean ->
+        binding.houseModify2CheckBoxUnderground.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
             binding.houseModify2EditTextFloor.setText("")
             binding.houseModify2EditTextFloor.isEnabled = !isChecked
         }
 
 
         // 입주 가능일 초기화
-        binding.houseModify2CheckBoxMoveNow.setOnCheckedChangeListener { buttonView: CompoundButton?, isChecked: Boolean ->
+        binding.houseModify2CheckBoxMoveNow.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
             binding.houseModify2TextViewMoveDate.text = ""
             binding.houseModify2ImageButtonMoveDate.isEnabled = !isChecked
         }
@@ -313,7 +304,7 @@ class InfoFragment2 : Fragment(), OnSaveDataListener {
         val datePickerDialog = Dialog(requireContext())
         datePickerDialog.setContentView(R.layout.dialog_date_picker)
         val buttonBack = datePickerDialog.findViewById<Button>(R.id.date_picker_dialog_button_back)
-        buttonBack.setOnClickListener { v: View? -> datePickerDialog.dismiss() }
+        buttonBack.setOnClickListener { datePickerDialog.dismiss() }
         val buttonSelect = datePickerDialog.findViewById<Button>(R.id.date_picker_dialog_button_select)
         buttonSelect.setOnClickListener { v: View? ->
             val datePicker = datePickerDialog.findViewById<DatePicker>(R.id.date_picker_dialog_datePicker)
@@ -324,16 +315,16 @@ class InfoFragment2 : Fragment(), OnSaveDataListener {
         datePickerDialog.show()
     }
 
-    private fun parseInt(number: String?): Int {
-        return if (number == null || number == "") {
+    private fun parseInt(number: String): Int {
+        return if (number == "") {
             0
         } else {
             number.toInt()
         }
     }
 
-    private fun parseFloat(number: String?): Float {
-        return if (number == null || number == "") {
+    private fun parseFloat(number: String): Float {
+        return if (number == "") {
             0F
         } else {
             number.toFloat()

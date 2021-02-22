@@ -128,13 +128,13 @@ class HouseDetailActivity : AppCompatActivity() {
         binding.houseDetailFlowLayoutOptions.removeAllViews()
 
         val toggleButtonGroupManageFee = ToggleButtonGroup(this, "ManageFee")
-        toggleButtonGroupManageFee.addToggleButtons(houseWrapper.manageFeeContains.split("\\|").toTypedArray())
+        toggleButtonGroupManageFee.addToggleButtons(houseWrapper.manageFeeContains.split('|'))
         for (toggleButton in toggleButtonGroupManageFee.toggleButtons) {
             binding.houseDetailFlowLayoutManageFee.addView(toggleButton)
         }
 
         val toggleButtonGroupOptions = ToggleButtonGroup(this, "Options")
-        toggleButtonGroupOptions.addToggleButtons(houseWrapper.options.split("\\|").toTypedArray())
+        toggleButtonGroupOptions.addToggleButtons(houseWrapper.options.split('|'))
         for (toggleButton in toggleButtonGroupOptions.toggleButtons) {
             binding.houseDetailFlowLayoutOptions.addView(toggleButton)
         }
