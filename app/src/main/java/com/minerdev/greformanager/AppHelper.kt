@@ -8,6 +8,7 @@ import java.io.File
 import java.io.FileInputStream
 
 class AppHelper private constructor() {
+    var context: Context? = null
     var requestQueue: RequestQueue? = null
 
     fun getPathFromUri(context: Context, uri: Uri): String {
@@ -22,8 +23,8 @@ class AppHelper private constructor() {
         return ""
     }
 
-    fun getByteArrayFromUri(context: Context, uri: Uri): ByteArray {
-        val file = File(getPathFromUri(context, uri))
+    fun getByteArrayFromUri(uri: Uri): ByteArray {
+        val file = File(getPathFromUri(context!!, uri))
         val byteArrayOutputStream = ByteArrayOutputStream()
         val buf = ByteArray(1024)
         var size: Int

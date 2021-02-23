@@ -20,9 +20,9 @@ import androidx.lifecycle.ViewModelProvider
 import com.minerdev.greformanager.databinding.FragmentInfo2Binding
 
 class InfoFragment2 : Fragment(), OnSaveDataListener {
-    private val viewModel: HouseModifyViewModel by activityViewModels {
+    private val viewModel: SharedViewModel by activityViewModels {
         object : ViewModelProvider.Factory {
-            override fun <T : ViewModel?> create(modelClass: Class<T>) = HouseModifyViewModel() as T
+            override fun <T : ViewModel?> create(modelClass: Class<T>) = SharedViewModel() as T
         }
     }
 
@@ -94,17 +94,16 @@ class InfoFragment2 : Fragment(), OnSaveDataListener {
     }
 
     override fun checkData(): Boolean {
-        if (binding.etAreaMeter.text.toString() == "") {
+        if (binding.etAreaMeter.text.isNullOrEmpty()) {
             return false
         }
-        if (binding.etRentAreaMeter.text.toString() == "") {
+        if (binding.etRentAreaMeter.text.isNullOrEmpty()) {
             return false
         }
-        if (binding.etBuildingFloor.text.toString() == "") {
+        if (binding.etBuildingFloor.text.isNullOrEmpty()) {
             return false
         }
-        if (!binding.cbUnderground.isChecked
-                && binding.etFloor.text.toString() == "") {
+        if (!binding.cbUnderground.isChecked && binding.etFloor.text.isNullOrEmpty()) {
             return false
         }
         if ((houseType == "주택" || houseType == "오피스텔")
@@ -121,11 +120,14 @@ class InfoFragment2 : Fragment(), OnSaveDataListener {
         if (binding.spnDirection.selectedItemId == 0L) {
             return false
         }
-        if (binding.tvBuiltDate.text.toString() == "") {
+        if (binding.tvBuiltDate.text.isNullOrEmpty()) {
+            return false
+        }
+        if (!binding.cbMoveNow.isChecked && binding.tvMoveDate.text.isNullOrEmpty()) {
             return false
         }
 
-        return !(!binding.cbMoveNow.isChecked && binding.tvMoveDate.text.toString() == "")
+        return true
     }
 
     override fun saveData() {

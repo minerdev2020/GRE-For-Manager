@@ -3,18 +3,15 @@ package com.minerdev.greformanager
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
 import com.android.volley.Request
 import com.google.gson.JsonObject
 import com.minerdev.greformanager.Geocode.OnDataReceiveListener
-import com.minerdev.greformanager.HttpConnection.OnReceiveListener
 import com.minerdev.greformanager.databinding.ActivityHouseDetailBinding
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraUpdate
@@ -28,7 +25,7 @@ class HouseDetailActivity : AppCompatActivity() {
     lateinit var houseWrapper: HouseWrapper
 
     private val adapter = ImageSliderAdapter()
-    private val imageViewModel: ImageViewModel by viewModels()
+    private val viewModel: HouseModifyViewModel by viewModels()
 
     private lateinit var binding: ActivityHouseDetailBinding
     private var originalState = 0
@@ -46,7 +43,7 @@ class HouseDetailActivity : AppCompatActivity() {
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        imageViewModel.getOrderByPosition(data.id).observe(this, Observer { images: List<Image> ->
+        viewModel.getOrderByPosition(data.id).observe(this, { images: List<Image> ->
             adapter.addImages(images)
             adapter.notifyDataSetChanged()
         })
@@ -67,7 +64,7 @@ class HouseDetailActivity : AppCompatActivity() {
             binding.flowLayoutOptions.addView(toggleButton)
         }
 
-        loadItems(data.id)
+        viewModel.loadImages(data.id)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -98,13 +95,15 @@ class HouseDetailActivity : AppCompatActivity() {
         if (originalState != houseWrapper.data.state.toInt()) {
             val data = JsonObject()
             data.addProperty("state", houseWrapper.data.state)
-            HttpConnection.instance.send(this, Request.Method.PATCH,
-                    "houses/" + houseWrapper.data.id, data, null)
+            HttpConnection.instance.send(Request.Method.PATCH,
+                    "houses/" + houseWrapper.data.id, data, object : HttpConnection.OnReceiveListener {
+                override fun onReceive(receivedData: String) {
+                    val house = Json.decodeFromString<House>(receivedData)
+                    viewModel.modify(house)
+                }
+            })
         }
 
-        val intent = Intent()
-        intent.putExtra("house_value", houseWrapper.data)
-        setResult(Activity.RESULT_OK, intent)
         super.finish()
     }
 
@@ -158,7 +157,6 @@ class HouseDetailActivity : AppCompatActivity() {
             uiSettings.setAllGesturesEnabled(false)
 
             Geocode.instance.getQueryResponseFromNaver(this@HouseDetailActivity, houseWrapper.address.substring(8))
-
             Geocode.instance.setOnDataReceiveListener(object : OnDataReceiveListener {
                 override fun parseData(result: GeocodeResult?) {
                     result?.let {
@@ -172,46 +170,6 @@ class HouseDetailActivity : AppCompatActivity() {
                 }
             })
         }
-    }
-
-    private fun loadItems(house_id: Int) {
-        HttpConnection.instance.receive(this, "houses/$house_id/images/last-updated-at",
-                object : OnReceiveListener {
-                    override fun onReceive(receivedData: String) {
-                        if (receivedData.isEmpty()) {
-                            loadItemsFromWeb(house_id)
-
-                        } else {
-                            checkUpdate(house_id, receivedData)
-                        }
-                    }
-                })
-    }
-
-    private fun checkUpdate(house_id: Int, receivedData: String) {
-        Thread {
-            val serverTimestamp = receivedData.toLong()
-            val clientTimestamp = imageViewModel.getLastUpdatedAt(house_id) ?: 0
-
-            if (serverTimestamp > clientTimestamp) {
-                loadItemsFromWeb(house_id)
-            }
-        }.start()
-    }
-
-    private fun loadItemsFromWeb(house_id: Int) {
-        HttpConnection.instance.receive(this, "houses/$house_id/images",
-                object : OnReceiveListener {
-                    override fun onReceive(receivedData: String) {
-                        val array = Json.decodeFromString<List<Image>>(receivedData)
-                        Log.d("last_updated_at", receivedData)
-
-                        imageViewModel.deleteAll(house_id)
-                        for (item in array) {
-                            imageViewModel.updateOrInsert(item)
-                        }
-                    }
-                })
     }
 
     companion object {

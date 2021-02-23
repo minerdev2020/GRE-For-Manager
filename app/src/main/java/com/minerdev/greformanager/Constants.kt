@@ -34,7 +34,7 @@ class Constants private constructor() {
             DIRECTION.addAll(context.resources.getStringArray(R.array.direction))
             BATHROOM.addAll(context.resources.getStringArray(R.array.bathroom))
 
-            DNS = context.resources.getString(R.string.web_server_dns)
+            DNS = context.resources.getString(R.string.local_server_dns)
 
             isInitialized = true
         }

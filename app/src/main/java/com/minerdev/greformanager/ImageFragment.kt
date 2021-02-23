@@ -25,13 +25,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.minerdev.greformanager.databinding.FragmentImageBinding
 import java.io.File
 
-// TODO: 앨범으로 이동시 대표사진이 초기화 되는 버그 고치기
 class ImageFragment : Fragment(), OnSaveDataListener {
     private val imageListAdapter = ImageListAdapter()
     private val binding by lazy { FragmentImageBinding.inflate(layoutInflater) }
-    private val viewModel: HouseModifyViewModel by activityViewModels {
+    private val viewModel: SharedViewModel by activityViewModels {
         object : ViewModelProvider.Factory {
-            override fun <T : ViewModel?> create(modelClass: Class<T>) = HouseModifyViewModel() as T
+            override fun <T : ViewModel?> create(modelClass: Class<T>) = SharedViewModel() as T
         }
     }
 
@@ -50,6 +49,7 @@ class ImageFragment : Fragment(), OnSaveDataListener {
 
             } else {
                 if (imageListAdapter.itemCount < 9) {
+                    saveData()
                     showAlbum()
 
                 } else {

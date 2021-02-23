@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -18,8 +17,6 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.navigation.NavigationView
 import com.minerdev.greformanager.databinding.ActivityMainBinding
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
 
 
 class MainActivity : AppCompatActivity() {
@@ -54,7 +51,7 @@ class MainActivity : AppCompatActivity() {
             override fun onItemClick(viewHolder: HouseListAdapter.ViewHolder, view: View, position: Int) {
                 val intent = Intent(this@MainActivity, HouseDetailActivity::class.java)
                 intent.putExtra("house_value", saleAdapter[position])
-                startActivityForResult(intent, Constants.instance.HOUSE_DETAIL_ACTIVITY_REQUEST_CODE)
+                startActivity(intent)
             }
         })
 
@@ -81,7 +78,7 @@ class MainActivity : AppCompatActivity() {
             override fun onItemClick(viewHolder: HouseListAdapter.ViewHolder, view: View, position: Int) {
                 val intent = Intent(this@MainActivity, HouseDetailActivity::class.java)
                 intent.putExtra("house_value", soldAdapter[position])
-                startActivityForResult(intent, Constants.instance.HOUSE_DETAIL_ACTIVITY_REQUEST_CODE)
+                startActivity(intent)
             }
         })
 
@@ -105,7 +102,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        loadItems()
+        viewModel.loadHouses()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -142,7 +139,7 @@ class MainActivity : AppCompatActivity() {
             R.id.main_menu_add -> {
                 val intent = Intent(this, HouseModifyActivity::class.java)
                 intent.putExtra("mode", "add")
-                startActivityForResult(intent, Constants.instance.HOUSE_MODIFY_ACTIVITY_REQUEST_CODE)
+                startActivity(intent)
             }
 
             R.id.main_menu_my_menu -> binding.drawerLayout.openDrawer(GravityCompat.END)
@@ -176,26 +173,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == Constants.instance.HOUSE_DETAIL_ACTIVITY_REQUEST_CODE) {
-            if (resultCode == Activity.RESULT_OK) {
-                val house: House? = data?.getParcelableExtra("house_value")
-                house?.let {
-                    viewModel.insert(house)
-                }
-            }
-
-        } else if (requestCode == Constants.instance.HOUSE_MODIFY_ACTIVITY_REQUEST_CODE) {
-            if (resultCode == Activity.RESULT_OK) {
-                val house: House? = data?.getParcelableExtra("house_value")
-                house?.let {
-                    viewModel.insert(house)
-                }
-            }
-        }
-    }
-
     private fun rearrangeList(keyword: String) {
 
     }
@@ -222,46 +199,5 @@ class MainActivity : AppCompatActivity() {
             }
             true
         }
-    }
-
-    private fun loadItems() {
-        HttpConnection.instance.receive(this, "houses/last-updated-at",
-                object : HttpConnection.OnReceiveListener {
-                    override fun onReceive(receivedData: String) {
-                        if (receivedData.isEmpty()) {
-                            loadItemsFromWeb()
-
-                        } else {
-                            checkUpdate(receivedData)
-                        }
-                    }
-                })
-    }
-
-    private fun checkUpdate(receivedData: String) {
-        Thread {
-            val serverTimestamp = receivedData.toLong()
-            val clientTimestamp = viewModel.lastUpdatedAt
-
-            Log.d("last_updated_at", serverTimestamp.toString())
-            Log.d("last_updated_at", clientTimestamp.toString())
-
-            if (serverTimestamp > clientTimestamp) {
-                loadItemsFromWeb()
-            }
-        }.start()
-    }
-
-    private fun loadItemsFromWeb() {
-        HttpConnection.instance.receive(this, "houses",
-                object : HttpConnection.OnReceiveListener {
-                    override fun onReceive(receivedData: String) {
-                        val array = Json.decodeFromString<List<House>>(receivedData)
-                        Log.d("last_updated_at", "load from web")
-                        for (item in array) {
-                            viewModel.updateOrInsert(item)
-                        }
-                    }
-                })
     }
 }

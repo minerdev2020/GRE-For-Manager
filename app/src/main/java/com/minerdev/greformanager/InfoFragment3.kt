@@ -13,9 +13,9 @@ import androidx.lifecycle.ViewModelProvider
 import com.minerdev.greformanager.databinding.FragmentInfo3Binding
 
 class InfoFragment3 : Fragment(), OnSaveDataListener {
-    private val viewModel: HouseModifyViewModel by activityViewModels {
+    private val viewModel: SharedViewModel by activityViewModels {
         object : ViewModelProvider.Factory {
-            override fun <T : ViewModel?> create(modelClass: Class<T>) = HouseModifyViewModel() as T
+            override fun <T : ViewModel?> create(modelClass: Class<T>) = SharedViewModel() as T
         }
     }
 
@@ -54,7 +54,14 @@ class InfoFragment3 : Fragment(), OnSaveDataListener {
     }
 
     override fun checkData(): Boolean {
-        return binding.etPhone.text.toString() != ""
+        if (binding.textInputEtDetailInfo.text.isNullOrEmpty()) {
+            return false
+        }
+        if (binding.etPhone.text.isNullOrEmpty()) {
+            return false
+        }
+
+        return true
     }
 
     override fun saveData() {

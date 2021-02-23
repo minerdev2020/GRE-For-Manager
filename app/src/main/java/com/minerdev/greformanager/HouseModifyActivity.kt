@@ -1,12 +1,9 @@
 package com.minerdev.greformanager
 
-import android.app.ProgressDialog
 import android.content.Context
 import android.content.DialogInterface
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -16,11 +13,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
-import com.android.volley.Request
-import com.minerdev.greformanager.HttpConnection.OnReceiveListener
 import com.minerdev.greformanager.databinding.ActivityHouseModifyBinding
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
 import java.util.*
 
 class HouseModifyActivity : AppCompatActivity() {
@@ -48,11 +41,12 @@ class HouseModifyActivity : AppCompatActivity() {
 
         override fun onPageScrollStateChanged(state: Int) {}
     }
+    private val sharedViewModel: SharedViewModel by viewModels()
     private val viewModel: HouseModifyViewModel by viewModels()
-    private val imageViewModel: ImageViewModel by viewModels()
     private val binding by lazy { ActivityHouseModifyBinding.inflate(layoutInflater) }
 
     private var count = 0
+    private var mode: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,18 +65,18 @@ class HouseModifyActivity : AppCompatActivity() {
             actionBar?.title = "매물 정보 수정"
 
             val house: House = intent.getParcelableExtra("house_value")!!
-            viewModel.house = house
-            imageViewModel.getOrderByPosition(viewModel.house.id).observe(this, { images: List<Image> ->
+            sharedViewModel.house = house
+            viewModel.getOrderByPosition(sharedViewModel.house.id).observe(this, { images: List<Image> ->
                 val uris = ArrayList<Uri>()
                 for (image in images) {
                     uris.add(Uri.parse(Constants.instance.DNS + "/storage/images/" + image.house_id + "/" + image.title))
                     if (image.thumbnail.toInt() == 1) {
-                        viewModel.thumbnail = image.position.toInt()
+                        sharedViewModel.thumbnail = image.position.toInt()
                     }
                 }
 
-                viewModel.images = images as ArrayList<Image>
-                viewModel.imageUris.addAll(uris)
+                sharedViewModel.images = images as ArrayList<Image>
+                sharedViewModel.imageUris.addAll(uris)
             })
         }
 
@@ -163,15 +157,15 @@ class HouseModifyActivity : AppCompatActivity() {
             builder.setMessage("저장하시겠습니까?")
             builder.setIcon(R.drawable.ic_round_help_24)
             builder.setPositiveButton("확인") { _: DialogInterface, _: Int ->
-                viewModel.house.thumbnail = viewModel.thumbnailTitle
+                sharedViewModel.house.thumbnail = sharedViewModel.thumbnailTitle
 
                 count = 0
 
                 if (mode == "add") {
-                    add()
+                    viewModel.add(sharedViewModel.house, sharedViewModel.imageUris, sharedViewModel.images)
 
                 } else if (mode == "modify") {
-                    modify()
+                    viewModel.modify(sharedViewModel.house, sharedViewModel.imageUris, sharedViewModel.images)
                 }
             }
             builder.setNegativeButton("취소") { dialog: DialogInterface, _: Int -> dialog.dismiss() }
@@ -181,84 +175,5 @@ class HouseModifyActivity : AppCompatActivity() {
         } else {
             Toast.makeText(applicationContext, "error", Toast.LENGTH_SHORT).show()
         }
-    }
-
-    private fun add() {
-        val progressDialog = ProgressDialog(this)
-        progressDialog.setMessage("데이터 전송중...")
-        progressDialog.setCancelable(false)
-
-        HttpConnection.instance.send(this, Request.Method.POST,
-                "houses", viewModel.house, object : OnReceiveListener {
-            override fun onReceive(receivedData: String) {
-                val data = Json.decodeFromString<House>(receivedData)
-                viewModel.house.id = data.id
-                viewModel.house.created_at = data.created_at
-                viewModel.house.updated_at = data.updated_at
-
-                HttpConnection.instance.send(application, Request.Method.POST,
-                        "houses/" + data.id + "/images", viewModel.imageUris, viewModel.images, object : OnReceiveListener {
-                    override fun onReceive(receivedData: String) {
-                        val imageData = Json.decodeFromString<Image>(receivedData)
-                        imageViewModel.insert(imageData)
-                        Log.d("DB_INSERT", receivedData)
-
-                        count++
-
-                        if (count == viewModel.imageUris.size) {
-                            progressDialog.dismiss()
-                            val intent = Intent()
-                            intent.putExtra("house_value", viewModel.house)
-                            setResult(RESULT_OK, intent)
-                            super@HouseModifyActivity.finish()
-                        }
-                    }
-                })
-
-                progressDialog.show()
-            }
-        })
-    }
-
-    private fun modify() {
-        val progressDialog = ProgressDialog(this)
-        progressDialog.setMessage("데이터 전송중...")
-        progressDialog.setCancelable(false)
-
-        val id = viewModel.house.id
-        HttpConnection.instance.send(this, Request.Method.PATCH,
-                "houses/$id", viewModel.house, object : OnReceiveListener {
-            override fun onReceive(receivedData: String) {
-                val data = Json.decodeFromString<House>(receivedData)
-                viewModel.house.updated_at = data.updated_at
-
-                imageViewModel.deleteAll(id)
-
-                HttpConnection.instance.send(application, Request.Method.POST,
-                        "houses/$id/images", viewModel.imageUris, viewModel.images, object : OnReceiveListener {
-                    override fun onReceive(receivedData: String) {
-                        val imageData = Json.decodeFromString<Image>(receivedData)
-                        imageViewModel.insert(imageData)
-                        Log.d("DB_INSERT", receivedData)
-
-                        count++
-
-                        if (count == viewModel.imageUris.size) {
-                            progressDialog.dismiss()
-                            val intent = Intent()
-                            intent.putExtra("house_value", viewModel.house)
-                            setResult(RESULT_OK, intent)
-                            super@HouseModifyActivity.finish()
-                        }
-                    }
-                })
-
-                progressDialog.show()
-            }
-        })
-    }
-
-    companion object {
-        private var mode: String? = null
     }
 }

@@ -23,9 +23,9 @@ import com.minerdev.greformanager.databinding.FragmentInfo1Binding
 
 class InfoFragment1 : Fragment(), OnSaveDataListener {
     private val handler = Handler()
-    private val viewModel: HouseModifyViewModel by activityViewModels {
+    private val viewModel: SharedViewModel by activityViewModels {
         object : ViewModelProvider.Factory {
-            override fun <T : ViewModel?> create(modelClass: Class<T>) = HouseModifyViewModel() as T
+            override fun <T : ViewModel?> create(modelClass: Class<T>) = SharedViewModel() as T
         }
     }
 
@@ -77,26 +77,26 @@ class InfoFragment1 : Fragment(), OnSaveDataListener {
     }
 
     override fun checkData(): Boolean {
-        if (binding.tvAddress.text.toString() == "") return false
-        if (binding.etNumber.text.toString() == "") return false
+        if (binding.tvAddress.text.isNullOrEmpty()) return false
+        if (binding.etNumber.text.isNullOrEmpty()) return false
         if (binding.spnHouseType.selectedItemId == 0L) return false
         if (binding.spnPaymentType.selectedItemId == 0L) return false
 
         if (!(paymentType == "월세" || paymentType == "단기임대" || paymentType == "임대")
-                && binding.etPrice.text.toString() == "") {
+                && binding.etPrice.text.isNullOrEmpty()) {
             return false
-
         } else if ((paymentType == "월세" || paymentType == "단기임대" || paymentType == "임대")
-                && (binding.etDeposit.text.toString() == "" || binding.etMonthlyRent.text.toString() == "")) {
+                && (binding.etDeposit.text.isNullOrEmpty() || binding.etMonthlyRent.text.isNullOrEmpty())) {
+            return false
+        }
+        if (houseType == "상가, 점포" && paymentType == "임대" && binding.etPremium.text.isNullOrEmpty()) {
+            return false
+        }
+        if (!binding.cbManageFee.isChecked && binding.etManageFee.text.isNullOrEmpty()) {
             return false
         }
 
-        if (houseType == "상가, 점포" && paymentType == "임대"
-                && binding.etPremium.text.toString() == "") {
-            return false
-        }
-
-        return !(!binding.cbManageFee.isChecked && binding.etManageFee.text.toString() == "")
+        return true
     }
 
     override fun saveData() {

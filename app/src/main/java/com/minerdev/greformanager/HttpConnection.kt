@@ -1,10 +1,7 @@
 package com.minerdev.greformanager
 
-import android.content.Context
 import android.net.Uri
 import android.util.Log
-import android.widget.Toast
-import com.android.volley.AuthFailureError
 import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
@@ -12,57 +9,68 @@ import com.google.gson.JsonObject
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.nio.charset.StandardCharsets
-import java.util.*
 
 class HttpConnection private constructor() {
-    fun receive(context: Context, uri: String, listener: OnReceiveListener?) {
+    fun receive(uri: String, listener: OnReceiveListener?) {
         val serverUri: String = Constants.instance.DNS + "/api/" + uri
-        Log.d("SEND_DATA", serverUri)
-        makeRequest(context, Request.Method.GET, serverUri, null, listener)
+        Log.d("HTTP_DATA", "receive : $serverUri")
+        makeHouseRequest(Request.Method.GET, serverUri, null, listener)
     }
 
-    fun send(context: Context, method: Int, uri: String, data: JsonObject, listener: OnReceiveListener?) {
+    fun receive(uri: String, clientLastUpdatedAt: Long?, listener: OnReceiveListener?) {
+        val serverUri: String = Constants.instance.DNS + "/api/" + uri
+        Log.d("HTTP_DATA", "receive : $serverUri, $clientLastUpdatedAt")
+        makeHouseRequest(Request.Method.GET, serverUri, clientLastUpdatedAt.toString(), listener)
+    }
+
+    fun send(method: Int, uri: String, data: JsonObject, listener: OnReceiveListener?) {
         val serverUri: String = Constants.instance.DNS + "/api/" + uri
         val json = data.toString()
-        Log.d("SEND_DATA", json)
-        makeRequest(context, method, serverUri, json, listener)
+        Log.d("HTTP_DATA", "send : $json")
+        makeHouseRequest(method, serverUri, json, listener)
     }
 
-    fun send(context: Context, method: Int, uri: String, data: House, listener: OnReceiveListener?) {
+    fun send(method: Int, uri: String, data: House, listener: OnReceiveListener?) {
         val serverUri: String = Constants.instance.DNS + "/api/" + uri
         val json = Json.encodeToString(data)
-        Log.d("SEND_DATA", json)
-        makeRequest(context, method, serverUri, json, listener)
+        val prettyJson = Json { prettyPrint = true }
+        Log.d("HTTP_DATA", "send : \n" + prettyJson.encodeToString(data))
+        makeHouseRequest(method, serverUri, json, listener)
     }
 
-    fun send(context: Context, method: Int, uri: String, imageUris: List<Uri>, images: List<Image>, listener: OnReceiveListener?) {
+    fun send(method: Int, uri: String, imageUris: List<Uri>, images: List<Image>, listener: OnReceiveListener?) {
         val serverUri: String = Constants.instance.DNS + "/api/" + uri
         for (i in imageUris.indices) {
-            imageUris[i].path?.let { Log.d("SEND_DATA", it) }
-            makeImageRequest(context, method, serverUri, imageUris[i], images[i], listener)
+            imageUris[i].path?.let { Log.d("HTTP_DATA", "send : $it") }
+            makeImageRequest(method, serverUri, imageUris[i], images[i], listener)
         }
     }
 
-    private fun makeRequest(context: Context, method: Int, uri: String, json: String?, listener: OnReceiveListener?) {
+    private fun makeHouseRequest(method: Int, uri: String, json: String?, listener: OnReceiveListener?) {
         val request: StringRequest = object : StringRequest(method, uri,
                 Response.Listener { response ->
-                    Toast.makeText(context, "데이터 전송 성공.", Toast.LENGTH_SHORT).show()
+                    Log.d("HTTP_DATA", "makeHouseRequest response : $response")
+
                     if (!response.isNullOrEmpty()) {
                         listener?.onReceive(response)
                     }
                 },
                 Response.ErrorListener { error ->
-                    Toast.makeText(context, error.message, Toast.LENGTH_SHORT).show()
-                    Log.e("HTTP_ERROR", error.message ?: "null")
+                    Log.e("HTTP_DATA", "makeHouseRequest error : " + error.message)
                 }
         ) {
-            @Throws(AuthFailureError::class)
+            override fun getParams(): MutableMap<String, String> {
+                val params = HashMap<String, String>()
+                params["client_last_updated_at"] = json ?: ""
+                return params
+            }
+
             override fun getBody(): ByteArray {
-                return if (json == null || json == "") super.getBody() else json.toByteArray(StandardCharsets.UTF_8)
+                return if (json.isNullOrEmpty()) super.getBody() else json.toByteArray(StandardCharsets.UTF_8)
             }
 
             override fun getBodyContentType(): String {
-                return if (json == null || json == "") super.getBodyContentType() else "application/json"
+                return if (json.isNullOrEmpty()) super.getBodyContentType() else "application/json"
             }
         }
 
@@ -71,21 +79,22 @@ class HttpConnection private constructor() {
         AppHelper.instance.requestQueue?.add(request)
     }
 
-    private fun makeImageRequest(context: Context, method: Int, uri: String, imageUri: Uri, image: Image, listener: OnReceiveListener?) {
+    private fun makeImageRequest(method: Int, uri: String, imageUri: Uri, image: Image, listener: OnReceiveListener?) {
         val request: VolleyMultipartRequest = object : VolleyMultipartRequest(method, uri,
                 Response.Listener { response ->
-                    Toast.makeText(context, "데이터 전송 성공.", Toast.LENGTH_SHORT).show()
-                    if (response?.data != null && response.data.isNotEmpty()) {
-                        listener?.onReceive(String(response.data))
+                    Log.d("HTTP_DATA", "makeImageRequest response")
+
+                    response?.let {
+                        if (it.data != null && it.data.isNotEmpty()) {
+                            listener?.onReceive(String(it.data))
+                        }
                     }
                 },
                 Response.ErrorListener { error ->
-                    Toast.makeText(context, error.message, Toast.LENGTH_LONG).show()
-                    Log.e("HTTP_ERROR", error.message ?: "null")
+                    Log.e("HTTP_DATA", "makeImageRequest error : " + error.message)
                 }
         ) {
-            @Throws(AuthFailureError::class)
-            override fun getParams(): Map<String, String> {
+            override fun getParams(): MutableMap<String, String> {
                 val params: MutableMap<String, String> = HashMap()
                 params["title"] = image.title
                 params["position"] = image.position.toString()
@@ -103,7 +112,7 @@ class HttpConnection private constructor() {
             override val byteData: Map<String, DataPart>
                 get() {
                     val params: MutableMap<String, DataPart> = HashMap()
-                    params["image"] = DataPart(image.title, AppHelper.instance.getByteArrayFromUri(context, imageUri))
+                    params["image"] = DataPart(image.title, AppHelper.instance.getByteArrayFromUri(imageUri))
                     return params
                 }
         }
