@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import java.util.*
 
-class ImageAdapter : RecyclerView.Adapter<ImageAdapter.ViewHolder>() {
+class ImageSliderAdapter : RecyclerView.Adapter<ImageSliderAdapter.ViewHolder>() {
     private val imageList: MutableList<Image> = ArrayList()
 
     fun addImages(imageList: List<Image>) {
@@ -34,7 +34,7 @@ class ImageAdapter : RecyclerView.Adapter<ImageAdapter.ViewHolder>() {
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val imageView: ImageView = itemView.findViewById(R.id.item_image_slider_imageView)
+        private val imageView: ImageView = itemView.findViewById(R.id.imageView)
 
         fun setItem(uri: Uri) {
             Glide.with(itemView).load(uri).into(imageView)

@@ -39,24 +39,24 @@ class HouseListAdapter(diffCallback: DiffCallback) : ListAdapter<House, HouseLis
     }
 
     class ViewHolder(itemView: View, clickListener: OnItemClickListener?) : RecyclerView.ViewHolder(itemView) {
-        private val textView_payment: TextView = itemView.findViewById(R.id.houseItem_textView_payment_type)
-        private val textView_price: TextView = itemView.findViewById(R.id.houseItem_textView_price)
-        private val textView_house_info: TextView = itemView.findViewById(R.id.houseItem_textView_house_info)
-        private val textView_description: TextView = itemView.findViewById(R.id.houseItem_textView_description)
-        private val textView_upload_time: TextView = itemView.findViewById(R.id.houseItem_textView_upload_time)
-        private val imageView_profile: ImageView = itemView.findViewById(R.id.houseItem_imageView_profile)
+        private val tvPaymentType: TextView = itemView.findViewById(R.id.tv_payment_type)
+        private val tvPrice: TextView = itemView.findViewById(R.id.tv_price)
+        private val tvHouseInfo: TextView = itemView.findViewById(R.id.tv_house_info)
+        private val tvDescription: TextView = itemView.findViewById(R.id.tv_description)
+        private val tvUploadTime: TextView = itemView.findViewById(R.id.tv_upload_time)
+        private val ivProfile: ImageView = itemView.findViewById(R.id.iv_profile)
 
         fun bind(house: House) {
             val houseWrapper = HouseWrapper(house)
 
-            textView_payment.text = houseWrapper.paymentType
-            textView_price.text = houseWrapper.price
-            textView_house_info.text = houseWrapper.houseInfo
-            textView_description.text = houseWrapper.detailInfo
-            textView_upload_time.text = AppHelper.instance.getDiffTimeMsg(house.created_at)
+            tvPaymentType.text = houseWrapper.paymentType
+            tvPrice.text = houseWrapper.price
+            tvHouseInfo.text = houseWrapper.houseInfo
+            tvDescription.text = houseWrapper.detailInfo
+            tvUploadTime.text = AppHelper.instance.getDiffTimeMsg(house.created_at)
 
             val uri = Uri.parse(Constants.instance.DNS + "/storage/images/" + house.id + "/" + house.thumbnail)
-            Glide.with(itemView).load(uri).into(imageView_profile)
+            Glide.with(itemView).load(uri).into(ivProfile)
         }
 
         init {

@@ -50,7 +50,7 @@
                             android:layout_gravity="center">
 
                             <com.google.android.material.internal.FlowLayout
-                                android:id="@+id/house_modify_3_flowLayout_option"
+                                android:id="@+id/flowLayout_option"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent" />
                         </LinearLayout>
@@ -83,7 +83,7 @@
                         app:hintEnabled="false">
 
                         <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/house_modify_3_detail_info"
+                            android:id="@+id/textInput_et_detail_info"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:gravity="left|top"
@@ -122,12 +122,12 @@
                             <TextView
                                 style="@style/TextAppearance.AppCompat.Body1"
                                 android:layout_width="@dimen/house_modify_text_width"
-                                android:layout_height="@dimen/house_modify_widget_height"
+                                android:layout_height="match_parent"
                                 android:gravity="center"
                                 android:text="전화번호" />
 
                             <EditText
-                                android:id="@+id/house_modify_3_editText_phone"
+                                android:id="@+id/et_phone"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_marginHorizontal="10dp"

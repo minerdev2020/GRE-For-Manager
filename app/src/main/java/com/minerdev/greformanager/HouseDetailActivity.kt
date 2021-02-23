@@ -27,7 +27,7 @@ import kotlinx.serialization.json.Json
 class HouseDetailActivity : AppCompatActivity() {
     lateinit var houseWrapper: HouseWrapper
 
-    private val adapter = ImageAdapter()
+    private val adapter = ImageSliderAdapter()
     private val imageViewModel: ImageViewModel by viewModels()
 
     private lateinit var binding: ActivityHouseDetailBinding
@@ -43,7 +43,7 @@ class HouseDetailActivity : AppCompatActivity() {
         originalState = data!!.state.toInt()
         houseWrapper = HouseWrapper(data)
 
-        setSupportActionBar(binding.houseDetailToolbar)
+        setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         imageViewModel.getOrderByPosition(data.id).observe(this, Observer { images: List<Image> ->
@@ -51,20 +51,20 @@ class HouseDetailActivity : AppCompatActivity() {
             adapter.notifyDataSetChanged()
         })
 
-        binding.houseDetailViewPager2Image.adapter = adapter
+        binding.viewPager2.adapter = adapter
 
         setMapFragment()
 
         val toggleButtonGroupManageFee = ToggleButtonGroup(this, "ManageFee")
         toggleButtonGroupManageFee.addToggleButtonsFromText(houseWrapper.manageFeeContains)
         for (toggleButton in toggleButtonGroupManageFee.toggleButtons) {
-            binding.houseDetailFlowLayoutManageFee.addView(toggleButton)
+            binding.flowLayoutManageFee.addView(toggleButton)
         }
 
         val toggleButtonGroupOptions = ToggleButtonGroup(this, "Options")
         toggleButtonGroupOptions.addToggleButtonsFromText(houseWrapper.options)
         for (toggleButton in toggleButtonGroupOptions.toggleButtons) {
-            binding.houseDetailFlowLayoutOptions.addView(toggleButton)
+            binding.flowLayoutOptions.addView(toggleButton)
         }
 
         loadItems(data.id)
@@ -124,19 +124,19 @@ class HouseDetailActivity : AppCompatActivity() {
 
     private fun refreshUI() {
         binding.invalidateAll()
-        binding.houseDetailFlowLayoutManageFee.removeAllViews()
-        binding.houseDetailFlowLayoutOptions.removeAllViews()
+        binding.flowLayoutManageFee.removeAllViews()
+        binding.flowLayoutOptions.removeAllViews()
 
         val toggleButtonGroupManageFee = ToggleButtonGroup(this, "ManageFee")
         toggleButtonGroupManageFee.addToggleButtons(houseWrapper.manageFeeContains.split('|'))
         for (toggleButton in toggleButtonGroupManageFee.toggleButtons) {
-            binding.houseDetailFlowLayoutManageFee.addView(toggleButton)
+            binding.flowLayoutManageFee.addView(toggleButton)
         }
 
         val toggleButtonGroupOptions = ToggleButtonGroup(this, "Options")
         toggleButtonGroupOptions.addToggleButtons(houseWrapper.options.split('|'))
         for (toggleButton in toggleButtonGroupOptions.toggleButtons) {
-            binding.houseDetailFlowLayoutOptions.addView(toggleButton)
+            binding.flowLayoutOptions.addView(toggleButton)
         }
 
         setMapFragment()

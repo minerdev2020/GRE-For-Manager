@@ -65,8 +65,8 @@ class ImageListAdapter : RecyclerView.Adapter<ImageListAdapter.ViewHolder>() {
     }
 
     class ViewHolder(itemView: View, clickListener: OnItemClickListener?) : RecyclerView.ViewHolder(itemView) {
-        private val imageView: ImageView = itemView.findViewById(R.id.imageItem_imageView)
-        private val textView: TextView = itemView.findViewById(R.id.imageItem_textView_thumbnail)
+        private val imageView: ImageView = itemView.findViewById(R.id.imageView)
+        private val textView: TextView = itemView.findViewById(R.id.tv_thumbnail)
 
         fun bind(uri: Uri?, thumbnailPos: Int) {
             Glide.with(itemView).load(uri).into(imageView)
@@ -80,23 +80,23 @@ class ImageListAdapter : RecyclerView.Adapter<ImageListAdapter.ViewHolder>() {
         }
 
         init {
-            val imageButton_delete = itemView.findViewById<ImageButton>(R.id.imageItem_imageButton_delete)
-            imageButton_delete.setOnClickListener {
+            val imageBtnDelete = itemView.findViewById<ImageButton>(R.id.image_btn_delete)
+            imageBtnDelete.setOnClickListener {
                 clickListener?.onDeleteButtonClick(this@ViewHolder, itemView, bindingAdapterPosition)
             }
 
-            val imageButton_thumbnail = itemView.findViewById<ImageButton>(R.id.imageItem_imageButton_thumbnail)
-            imageButton_thumbnail.setOnClickListener {
+            val imageBtnThumbnail = itemView.findViewById<ImageButton>(R.id.image_btn_thumbnail)
+            imageBtnThumbnail.setOnClickListener {
                 clickListener?.onThumbnailButtonClick(this@ViewHolder, itemView, bindingAdapterPosition)
             }
 
-            val imageButton_up = itemView.findViewById<ImageButton>(R.id.imageItem_imageButton_up)
-            imageButton_up.setOnClickListener {
+            val imageBtnUp = itemView.findViewById<ImageButton>(R.id.image_btn_up)
+            imageBtnUp.setOnClickListener {
                 clickListener?.onUpButtonClick(this@ViewHolder, itemView, bindingAdapterPosition)
             }
 
-            val imageButton_down = itemView.findViewById<ImageButton>(R.id.imageItem_imageButton_down)
-            imageButton_down.setOnClickListener {
+            val imageBtnDown = itemView.findViewById<ImageButton>(R.id.image_btn_down)
+            imageBtnDown.setOnClickListener {
                 clickListener?.onDownButtonClick(this@ViewHolder, itemView, bindingAdapterPosition)
             }
         }

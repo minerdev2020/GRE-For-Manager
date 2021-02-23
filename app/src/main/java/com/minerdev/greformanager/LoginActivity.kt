@@ -70,9 +70,9 @@ class LoginActivity : AppCompatActivity() {
 
             } else {
                 Snackbar.make(view, "아이디나 패스워드가 틀렸습니다!", Snackbar.LENGTH_LONG).show()
-
-                binding.loginEditTextPw.setText("")
+                binding.textInputEtPw.setText("")
             }
+
         } else {
             Snackbar.make(view, "아이디나 패스워드가 비어있습니다!", Snackbar.LENGTH_LONG).show()
         }
@@ -84,14 +84,13 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun setupButtons() {
-        binding.loginButtonLogin.setOnClickListener { view: View ->
-            val id = binding.loginEditTextId.text.toString()
-            tryLogin(view, id, binding.loginEditTextPw.text.toString())
+        binding.btnLogin.setOnClickListener {
+            tryLogin(it, binding.textInputEtId.text.toString(), binding.textInputEtPw.text.toString())
         }
     }
 
     private fun setupEditTexts() {
-        binding.loginEditTextId.filters = arrayOf(InputFilter { source: CharSequence, _: Int, _: Int, _: Spanned?, _: Int, _: Int ->
+        binding.textInputEtId.filters = arrayOf(InputFilter { source: CharSequence, _: Int, _: Int, _: Spanned?, _: Int, _: Int ->
             val pattern = Pattern.compile("^[a-zA-Z0-9]*$")
             if (source == "" || pattern.matcher(source).matches()) {
                 return@InputFilter source
@@ -99,7 +98,7 @@ class LoginActivity : AppCompatActivity() {
             ""
         }, LengthFilter(8))
 
-        binding.loginEditTextPw.filters = arrayOf(InputFilter { source: CharSequence, _: Int, _: Int, _: Spanned?, _: Int, _: Int ->
+        binding.textInputEtPw.filters = arrayOf(InputFilter { source: CharSequence, _: Int, _: Int, _: Spanned?, _: Int, _: Int ->
             val pattern = Pattern.compile("^[a-zA-Z0-9]*$")
             if (source == "" || pattern.matcher(source).matches()) {
                 return@InputFilter source
@@ -107,12 +106,12 @@ class LoginActivity : AppCompatActivity() {
             ""
         }, LengthFilter(8))
 
-        binding.loginEditTextPw.setOnEditorActionListener { _: TextView?, i: Int, keyEvent: KeyEvent? ->
+        binding.textInputEtPw.setOnEditorActionListener { _: TextView?, i: Int, keyEvent: KeyEvent? ->
             if (keyEvent?.keyCode == KeyEvent.KEYCODE_ENTER || i == EditorInfo.IME_ACTION_DONE) {
                 val manager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 manager.hideSoftInputFromWindow(currentFocus!!.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
 
-                binding.loginButtonLogin.performClick()
+                binding.btnLogin.performClick()
 
                 return@setOnEditorActionListener true
             }

@@ -32,12 +32,12 @@ class InfoFragment3 : Fragment(), OnSaveDataListener {
         toggleButtonGroupOptions = ToggleButtonGroup(context, "옵션 항목")
         toggleButtonGroupOptions.addToggleButtons(resources.getStringArray(R.array.option).toList())
         for (toggleButton in toggleButtonGroupOptions.toggleButtons) {
-            binding.houseModify3FlowLayoutOption.addView(toggleButton)
+            binding.flowLayoutOption.addView(toggleButton)
         }
 
 
         // 담당자 정보 초기화
-        binding.houseModify3EditTextPhone.addTextChangedListener(PhoneNumberFormattingTextWatcher())
+        binding.etPhone.addTextChangedListener(PhoneNumberFormattingTextWatcher())
 
         return binding.root
     }
@@ -54,13 +54,13 @@ class InfoFragment3 : Fragment(), OnSaveDataListener {
     }
 
     override fun checkData(): Boolean {
-        return binding.houseModify3EditTextPhone.text.toString() != ""
+        return binding.etPhone.text.toString() != ""
     }
 
     override fun saveData() {
         house.options = toggleButtonGroupOptions.checkedToggleButtonTextsInSingleLine
-        house.detail_info = binding.houseModify3DetailInfo.text.toString()
-        house.phone = binding.houseModify3EditTextPhone.text.toString()
+        house.detail_info = binding.textInputEtDetailInfo.text.toString()
+        house.phone = binding.etPhone.text.toString()
     }
 
     private fun loadData(house: House) {
@@ -71,7 +71,7 @@ class InfoFragment3 : Fragment(), OnSaveDataListener {
             }
         }
 
-        binding.houseModify3DetailInfo.setText(house.detail_info)
-        binding.houseModify3EditTextPhone.setText(house.phone)
+        binding.textInputEtDetailInfo.setText(house.detail_info)
+        binding.etPhone.setText(house.phone)
     }
 }

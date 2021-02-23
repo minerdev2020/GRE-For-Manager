@@ -2,7 +2,7 @@
 <com.minerdev.greformanager.OneSideDrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/drawer_layout"
+    android:id="@+id/drawerLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
@@ -13,7 +13,7 @@
         android:orientation="vertical">
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/main_toolbar"
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?attr/colorPrimary"
@@ -22,7 +22,7 @@
             app:menu="@menu/main_toolbar">
 
             <SearchView
-                android:id="@+id/main_searchView"
+                android:id="@+id/searchView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
@@ -59,7 +59,7 @@
                             android:text="판매중" />
 
                         <ImageButton
-                            android:id="@+id/main_imageButton_sale_expand"
+                            android:id="@+id/image_btn_sale_expand"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:backgroundTint="#FFFFFFFF"
@@ -67,7 +67,7 @@
                     </LinearLayout>
 
                     <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/main_recyclerView_sale"
+                        android:id="@+id/recyclerView_sale"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent" />
                 </LinearLayout>
@@ -92,7 +92,7 @@
                             android:text="판매완료" />
 
                         <ImageButton
-                            android:id="@+id/main_imageButton_sold_expand"
+                            android:id="@+id/image_btn_sold_expand"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:backgroundTint="#FFFFFFFF"
@@ -100,7 +100,7 @@
                     </LinearLayout>
 
                     <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/main_recyclerView_sold"
+                        android:id="@+id/recyclerView_sold"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent" />
                 </LinearLayout>

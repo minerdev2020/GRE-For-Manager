@@ -38,11 +38,11 @@ class ImageFragment : Fragment(), OnSaveDataListener {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
         val manager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-        binding.houseModifyRecyclerView.layoutManager = manager
-        binding.houseModifyRecyclerView.adapter = imageListAdapter
-        binding.houseModifyRecyclerView.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
+        binding.recyclerView.layoutManager = manager
+        binding.recyclerView.adapter = imageListAdapter
+        binding.recyclerView.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
 
-        binding.houseModifyImageButtonAdd.setOnClickListener {
+        binding.imageBtnAdd.setOnClickListener {
             val permissionChecked = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
 
             if (permissionChecked != PackageManager.PERMISSION_GRANTED) {

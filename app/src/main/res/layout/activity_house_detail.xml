@@ -17,7 +17,7 @@
         tools:context=".HouseDetailActivity">
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/house_detail_toolbar"
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?attr/colorPrimary"
@@ -43,7 +43,7 @@
                     android:orientation="vertical">
 
                     <androidx.viewpager2.widget.ViewPager2
-                        android:id="@+id/house_detail_viewPager2_image"
+                        android:id="@+id/viewPager2"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="#FFEEEEEE" />
@@ -70,7 +70,6 @@
                             android:orientation="horizontal">
 
                             <TextView
-                                android:id="@+id/house_detail_textView_paymentType"
                                 style="@style/TextAppearance.AppCompat.Title"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -82,7 +81,6 @@
                                 android:layout_height="wrap_content" />
 
                             <TextView
-                                android:id="@+id/house_detail_textView_price"
                                 style="@style/TextAppearance.AppCompat.Headline"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -106,7 +104,6 @@
                                 android:layout_height="wrap_content" />
 
                             <TextView
-                                android:id="@+id/house_detail_textView_number"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
@@ -115,7 +112,6 @@
                         </LinearLayout>
 
                         <TextView
-                            android:id="@+id/house_detail_textView_address"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center"
@@ -132,7 +128,6 @@
                         android:paddingVertical="10dp">
 
                         <TextView
-                            android:id="@+id/house_detail_textView_brief_info"
                             style="@style/TextAppearance.AppCompat.Body1"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -174,7 +169,7 @@
                                 android:layout_gravity="center">
 
                                 <com.google.android.material.internal.FlowLayout
-                                    android:id="@+id/house_detail_flowLayout_manage_fee"
+                                    android:id="@+id/flowLayout_manage_fee"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent" />
                             </LinearLayout>
@@ -218,7 +213,6 @@
                                     android:text="전용 면적" />
 
                                 <TextView
-                                    android:id="@+id/house_detail_textView_area"
                                     style="@style/TextAppearance.AppCompat.Body1"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
@@ -240,7 +234,6 @@
                                     android:text="임대 면적" />
 
                                 <TextView
-                                    android:id="@+id/house_detail_textView_rent_area"
                                     style="@style/TextAppearance.AppCompat.Body1"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
@@ -262,7 +255,6 @@
                                     android:text="건물 층수" />
 
                                 <TextView
-                                    android:id="@+id/house_detail_textView_building_floor"
                                     style="@style/TextAppearance.AppCompat.Body1"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
@@ -285,7 +277,6 @@
                                     android:text="해당 층" />
 
                                 <TextView
-                                    android:id="@+id/house_detail_textView_floor"
                                     style="@style/TextAppearance.AppCompat.Body1"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
@@ -308,7 +299,6 @@
                                     android:text="구조" />
 
                                 <TextView
-                                    android:id="@+id/house_detail_textView_structure"
                                     style="@style/TextAppearance.AppCompat.Body1"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
@@ -332,7 +322,6 @@
                                     android:text="화장실 갯수" />
 
                                 <TextView
-                                    android:id="@+id/house_detail_textView_bathroom"
                                     style="@style/TextAppearance.AppCompat.Body1"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
@@ -355,7 +344,6 @@
                                     android:text="화장실 위치" />
 
                                 <TextView
-                                    android:id="@+id/house_detail_textView_bathroom_location"
                                     style="@style/TextAppearance.AppCompat.Body1"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
@@ -379,7 +367,6 @@
                                     android:text="방향" />
 
                                 <TextView
-                                    android:id="@+id/house_detail_textView_direction"
                                     style="@style/TextAppearance.AppCompat.Body1"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
@@ -402,7 +389,6 @@
 
 
                                 <TextView
-                                    android:id="@+id/house_detail_textView_built_date"
                                     style="@style/TextAppearance.AppCompat.Body1"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
@@ -424,7 +410,6 @@
                                     android:text="입주가능일" />
 
                                 <TextView
-                                    android:id="@+id/house_detail_textView_move_date"
                                     style="@style/TextAppearance.AppCompat.Body1"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
@@ -460,7 +445,7 @@
                             android:padding="10dp">
 
                             <com.google.android.material.internal.FlowLayout
-                                android:id="@+id/house_detail_flowLayout_options"
+                                android:id="@+id/flowLayout_options"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent" />
                         </LinearLayout>
@@ -505,7 +490,6 @@
                             android:text="상세 정보" />
 
                         <TextView
-                            android:id="@+id/house_detail_textView_detail_info"
                             style="@style/TextAppearance.AppCompat.Body1"
                             android:layout_width="match_parent"
                             android:layout_height="200dp"
@@ -518,7 +502,6 @@
         </ScrollView>
 
         <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/house_detail_switch"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="#FFEEEEEE"

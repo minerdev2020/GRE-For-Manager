@@ -41,14 +41,14 @@ class MainActivity : AppCompatActivity() {
         viewModel.allSold.observe(this, soldAdapter::submitList)
 
         // 툴바 초기화
-        val toolbar = findViewById<Toolbar>(R.id.main_toolbar)
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
 
 
         // 판매중 매물 RecyclerView 및 HouseListAdapter 초기화
-        binding.mainRecyclerViewSale.layoutManager = LinearLayoutManager(this)
-        binding.mainRecyclerViewSale.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
-        binding.mainRecyclerViewSale.adapter = saleAdapter
+        binding.recyclerViewSale.layoutManager = LinearLayoutManager(this)
+        binding.recyclerViewSale.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
+        binding.recyclerViewSale.adapter = saleAdapter
 
         saleAdapter.setOnItemClickListener(object : HouseListAdapter.OnItemClickListener {
             override fun onItemClick(viewHolder: HouseListAdapter.ViewHolder, view: View, position: Int) {
@@ -59,13 +59,13 @@ class MainActivity : AppCompatActivity() {
         })
 
 
-        binding.mainImageButtonSaleExpand.setOnClickListener {
-            binding.mainRecyclerViewSale.visibility = if (binding.mainRecyclerViewSale.visibility == View.VISIBLE)
+        binding.imageBtnSaleExpand.setOnClickListener {
+            binding.recyclerViewSale.visibility = if (binding.recyclerViewSale.visibility == View.VISIBLE)
                 View.GONE
             else
                 View.VISIBLE
 
-            binding.mainImageButtonSaleExpand.setImageResource(if (binding.mainRecyclerViewSale.visibility == View.VISIBLE)
+            binding.imageBtnSaleExpand.setImageResource(if (binding.recyclerViewSale.visibility == View.VISIBLE)
                 R.drawable.ic_round_expand_less_24
             else
                 R.drawable.ic_round_expand_more_24)
@@ -73,9 +73,9 @@ class MainActivity : AppCompatActivity() {
 
 
         // 판매완료 매물 RecyclerView 및 HouseListAdapter 초기화
-        binding.mainRecyclerViewSold.layoutManager = LinearLayoutManager(this)
-        binding.mainRecyclerViewSold.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
-        binding.mainRecyclerViewSold.adapter = soldAdapter
+        binding.recyclerViewSold.layoutManager = LinearLayoutManager(this)
+        binding.recyclerViewSold.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
+        binding.recyclerViewSold.adapter = soldAdapter
 
         soldAdapter.setOnItemClickListener(object : HouseListAdapter.OnItemClickListener {
             override fun onItemClick(viewHolder: HouseListAdapter.ViewHolder, view: View, position: Int) {
@@ -86,13 +86,13 @@ class MainActivity : AppCompatActivity() {
         })
 
 
-        binding.mainImageButtonSoldExpand.setOnClickListener {
-            binding.mainRecyclerViewSold.visibility = if (binding.mainRecyclerViewSold.visibility == View.VISIBLE)
+        binding.imageBtnSoldExpand.setOnClickListener {
+            binding.recyclerViewSold.visibility = if (binding.recyclerViewSold.visibility == View.VISIBLE)
                 View.GONE
             else
                 View.VISIBLE
 
-            binding.mainImageButtonSoldExpand.setImageResource(if (binding.mainRecyclerViewSold.visibility == View.VISIBLE)
+            binding.imageBtnSoldExpand.setImageResource(if (binding.recyclerViewSold.visibility == View.VISIBLE)
                 R.drawable.ic_round_expand_less_24
             else
                 R.drawable.ic_round_expand_more_24)
@@ -111,8 +111,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main_toolbar, menu)
 
-        binding.mainSearchView.visibility = View.VISIBLE
-        binding.mainSearchView.setOnQueryTextListener(object : android.widget.SearchView.OnQueryTextListener {
+        binding.searchView.visibility = View.VISIBLE
+        binding.searchView.setOnQueryTextListener(object : android.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(p0: String?): Boolean {
                 p0?.let {
                     rearrangeList(p0)
@@ -129,8 +129,8 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        binding.mainSearchView.setOnCloseListener {
-            binding.mainSearchView.onActionViewCollapsed()
+        binding.searchView.setOnCloseListener {
+            binding.searchView.onActionViewCollapsed()
             true
         }
 
@@ -160,8 +160,8 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        if (binding.mainSearchView.hasFocus()) {
-            binding.mainSearchView.onActionViewCollapsed()
+        if (binding.searchView.hasFocus()) {
+            binding.searchView.onActionViewCollapsed()
             return
         }
 

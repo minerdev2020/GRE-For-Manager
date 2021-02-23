@@ -31,15 +31,15 @@ class HouseModifyActivity : AppCompatActivity() {
 
         override fun onPageSelected(position: Int) {
             when (position) {
-                0 -> binding.houseModifyButtonPrevious.isEnabled = false
+                0 -> binding.btnPrevious.isEnabled = false
                 1, 2 -> {
-                    binding.houseModifyButtonPrevious.isEnabled = true
-                    binding.houseModifyButtonNext.visibility = View.VISIBLE
-                    binding.houseModifyButtonSave.visibility = View.GONE
+                    binding.btnPrevious.isEnabled = true
+                    binding.btnNext.visibility = View.VISIBLE
+                    binding.btnSave.visibility = View.GONE
                 }
                 3 -> {
-                    binding.houseModifyButtonNext.visibility = View.GONE
-                    binding.houseModifyButtonSave.visibility = View.VISIBLE
+                    binding.btnNext.visibility = View.GONE
+                    binding.btnSave.visibility = View.VISIBLE
                 }
                 else -> {
                 }
@@ -86,17 +86,17 @@ class HouseModifyActivity : AppCompatActivity() {
             })
         }
 
-        binding.houseModifyButtonNext.setOnClickListener { toNextPage() }
-        binding.houseModifyButtonPrevious.isEnabled = false
-        binding.houseModifyButtonPrevious.setOnClickListener {
+        binding.btnNext.setOnClickListener { toNextPage() }
+        binding.btnPrevious.isEnabled = false
+        binding.btnPrevious.setOnClickListener {
             hideKeyboard()
-            val current = binding.houseModifyViewPager.currentItem
+            val current = binding.viewPager.currentItem
             val listener = adapter.getItem(current) as OnSaveDataListener
             listener.saveData()
-            binding.houseModifyViewPager.currentItem = binding.houseModifyViewPager.currentItem - 1
+            binding.viewPager.currentItem = binding.viewPager.currentItem - 1
         }
-        binding.houseModifyButtonSave.visibility = View.GONE
-        binding.houseModifyButtonSave.setOnClickListener { askSave() }
+        binding.btnSave.visibility = View.GONE
+        binding.btnSave.setOnClickListener { askSave() }
         setViewPager()
     }
 
@@ -121,16 +121,16 @@ class HouseModifyActivity : AppCompatActivity() {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        adapter.getItem(binding.houseModifyViewPager.currentItem).onRequestPermissionsResult(requestCode, permissions, grantResults)
+        adapter.getItem(binding.viewPager.currentItem).onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
     private fun setViewPager() {
-        binding.houseModifyViewPager.addOnPageChangeListener(onPageChangeListener)
+        binding.viewPager.addOnPageChangeListener(onPageChangeListener)
         adapter.addFragment(InfoFragment1(), "매물 정보 입력")
         adapter.addFragment(InfoFragment2(), "매물 정보 입력")
         adapter.addFragment(InfoFragment3(), "매물 정보 입력")
         adapter.addFragment(ImageFragment(), "매물 사진 선택")
-        binding.houseModifyViewPager.adapter = adapter
+        binding.viewPager.adapter = adapter
     }
 
     private fun hideKeyboard() {
@@ -142,11 +142,11 @@ class HouseModifyActivity : AppCompatActivity() {
 
     private fun toNextPage() {
         hideKeyboard()
-        val current = binding.houseModifyViewPager.currentItem
+        val current = binding.viewPager.currentItem
         val listener = adapter.getItem(current) as OnSaveDataListener
         if (listener.checkData()) {
             listener.saveData()
-            binding.houseModifyViewPager.currentItem = current + 1
+            binding.viewPager.currentItem = current + 1
         } else {
             Toast.makeText(applicationContext, "error", Toast.LENGTH_SHORT).show()
         }
@@ -154,7 +154,7 @@ class HouseModifyActivity : AppCompatActivity() {
 
     private fun askSave() {
         hideKeyboard()
-        val current = binding.houseModifyViewPager.currentItem
+        val current = binding.viewPager.currentItem
         val listener = adapter.getItem(current) as OnSaveDataListener
         if (listener.checkData()) {
             listener.saveData()

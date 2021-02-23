@@ -25,7 +25,7 @@
                 android:text="매물 사진 추가" />
 
             <ImageButton
-                android:id="@+id/house_modify_imageButton_add"
+                android:id="@+id/image_btn_add"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:backgroundTint="#FFEEEEEE"
@@ -34,7 +34,7 @@
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/house_modify_recyclerView"
+        android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />

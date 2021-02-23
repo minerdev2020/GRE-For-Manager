@@ -48,21 +48,21 @@ class InfoFragment2 : Fragment(), OnSaveDataListener {
 
 
         // 준공년월 초기화
-        binding.houseModify2ImageButtonBuiltDate.setOnClickListener {
+        binding.imageBtnBuiltDate.setOnClickListener {
             showDatePickerDialog(object : OnClickListener {
                 override fun onClick(v: View?, result: String?) {
-                    binding.houseModify2TextViewBuiltDate.text = result
+                    binding.tvBuiltDate.text = result
                 }
             })
         }
 
 
         // 입주가능일 초기화
-        binding.houseModify2ImageButtonMoveDate.isEnabled = false
-        binding.houseModify2ImageButtonMoveDate.setOnClickListener {
+        binding.imageBtnMoveDate.isEnabled = false
+        binding.imageBtnMoveDate.setOnClickListener {
             showDatePickerDialog(object : OnClickListener {
                 override fun onClick(v: View?, result: String?) {
-                    binding.houseModify2TextViewMoveDate.text = result
+                    binding.tvMoveDate.text = result
                 }
             })
         }
@@ -81,114 +81,114 @@ class InfoFragment2 : Fragment(), OnSaveDataListener {
 
         // 구조 초기화 ('매물 종류'가 '주택'이나 '오피스텔'일때만 '구조' 항목이 보임)
         val visibility = if (houseType == "주택" || houseType == "오피스텔") View.VISIBLE else View.GONE
-        binding.houseModify2TableRowStructure.visibility = visibility
-        binding.houseModify2View.visibility = visibility
-        binding.houseModify2SpinnerStructure.setSelection(0)
+        binding.trStructure.visibility = visibility
+        binding.view.visibility = visibility
+        binding.spnStructure.setSelection(0)
 
 
         // 화장실 위치 초기화 ('매물 종류'가 '사무실'이나 '상가, 점포'일때만 '화장실 위치' 항목이 보임)
-        binding.houseModify2TableRowLocation.visibility = if (houseType == "사무실" || houseType == "상가, 점포") View.VISIBLE else View.GONE
-        binding.houseModify2RadioGroup.clearCheck()
+        binding.trLocation.visibility = if (houseType == "사무실" || houseType == "상가, 점포") View.VISIBLE else View.GONE
+        binding.radioGroup.clearCheck()
 
         loadData()
     }
 
     override fun checkData(): Boolean {
-        if (binding.houseModify2EditTextAreaMeter.text.toString() == "") {
+        if (binding.etAreaMeter.text.toString() == "") {
             return false
         }
-        if (binding.houseModify2EditTextRentAreaMeter.text.toString() == "") {
+        if (binding.etRentAreaMeter.text.toString() == "") {
             return false
         }
-        if (binding.houseModify2EditTextBuildingFloor.text.toString() == "") {
+        if (binding.etBuildingFloor.text.toString() == "") {
             return false
         }
-        if (!binding.houseModify2CheckBoxUnderground.isChecked
-                && binding.houseModify2EditTextFloor.text.toString() == "") {
+        if (!binding.cbUnderground.isChecked
+                && binding.etFloor.text.toString() == "") {
             return false
         }
         if ((houseType == "주택" || houseType == "오피스텔")
-                && binding.houseModify2SpinnerStructure.selectedItemId == 0L) {
+                && binding.spnStructure.selectedItemId == 0L) {
             return false
         }
-        if (binding.houseModify2SpinnerBathroom.selectedItemId == 0L) {
+        if (binding.spnBathroom.selectedItemId == 0L) {
             return false
         }
         if ((houseType == "사무실" || houseType == "상가, 점포")
-                && binding.houseModify2RadioGroup.checkedRadioButtonId == -1) {
+                && binding.radioGroup.checkedRadioButtonId == -1) {
             return false
         }
-        if (binding.houseModify2SpinnerDirection.selectedItemId == 0L) {
+        if (binding.spnDirection.selectedItemId == 0L) {
             return false
         }
-        if (binding.houseModify2TextViewBuiltDate.text.toString() == "") {
+        if (binding.tvBuiltDate.text.toString() == "") {
             return false
         }
-        return !(!binding.houseModify2CheckBoxMoveNow.isChecked
-                && binding.houseModify2TextViewMoveDate.text.toString() == "")
+
+        return !(!binding.cbMoveNow.isChecked && binding.tvMoveDate.text.toString() == "")
     }
 
     override fun saveData() {
-        house.area_meter = parseFloat(binding.houseModify2EditTextAreaMeter.text.toString())
-        house.rent_area_meter = parseFloat(binding.houseModify2EditTextRentAreaMeter.text.toString())
-        house.building_floor = parseInt(binding.houseModify2EditTextBuildingFloor.text.toString()).toByte()
+        house.area_meter = parseFloat(binding.etAreaMeter.text.toString())
+        house.rent_area_meter = parseFloat(binding.etRentAreaMeter.text.toString())
+        house.building_floor = parseInt(binding.etBuildingFloor.text.toString()).toByte()
 
-        if (binding.houseModify2CheckBoxUnderground.isChecked) {
+        if (binding.cbUnderground.isChecked) {
             house.floor = -1
 
         } else {
-            val floor = binding.houseModify2EditTextFloor.text.toString()
+            val floor = binding.etFloor.text.toString()
             house.floor = if (floor.isNotEmpty()) floor.toByte() else 0
         }
 
-        house.structure = binding.houseModify2SpinnerStructure.selectedItemPosition.toByte()
-        house.bathroom = binding.houseModify2SpinnerBathroom.selectedItemPosition.toByte()
+        house.structure = binding.spnStructure.selectedItemPosition.toByte()
+        house.bathroom = binding.spnBathroom.selectedItemPosition.toByte()
 
-        if (binding.houseModify2RadioButtonOutside.isChecked) {
+        if (binding.rbOutside.isChecked) {
             house.bathroom_location = 0
 
         } else {
             house.bathroom_location = 1
         }
 
-        house.direction = binding.houseModify2SpinnerDirection.selectedItemId.toByte()
-        house.built_date = binding.houseModify2TextViewBuiltDate.text.toString()
-        house.move_date = binding.houseModify2TextViewMoveDate.text.toString()
+        house.direction = binding.spnDirection.selectedItemId.toByte()
+        house.built_date = binding.tvBuiltDate.text.toString()
+        house.move_date = binding.tvMoveDate.text.toString()
     }
 
     @SuppressLint("DefaultLocale")
     private fun loadData() {
-        binding.houseModify2EditTextAreaMeter.setText(if (house.area_meter == 0f) "" else house.area_meter.toString())
-        binding.houseModify2EditTextRentAreaMeter.setText(if (house.rent_area_meter == 0f) "" else house.rent_area_meter.toString())
-        binding.houseModify2EditTextAreaPyeong.setText(if (house.area_meter == 0f) "" else String.format("%.2f", house.area_meter * Constants.instance.METER_TO_PYEONG))
-        binding.houseModify2EditTextRentAreaPyeong.setText(if (house.rent_area_meter == 0f) "" else String.format("%.2f", house.rent_area_meter * Constants.instance.METER_TO_PYEONG))
-        binding.houseModify2EditTextBuildingFloor.setText(if (house.building_floor.toInt() == 0) "" else house.building_floor.toString())
+        binding.etAreaMeter.setText(if (house.area_meter == 0f) "" else house.area_meter.toString())
+        binding.etRentAreaMeter.setText(if (house.rent_area_meter == 0f) "" else house.rent_area_meter.toString())
+        binding.etAreaPyeong.setText(if (house.area_meter == 0f) "" else String.format("%.2f", house.area_meter * Constants.instance.METER_TO_PYEONG))
+        binding.etRentAreaPyeong.setText(if (house.rent_area_meter == 0f) "" else String.format("%.2f", house.rent_area_meter * Constants.instance.METER_TO_PYEONG))
+        binding.etBuildingFloor.setText(if (house.building_floor.toInt() == 0) "" else house.building_floor.toString())
 
         if (house.floor.toInt() == -1) {
-            binding.houseModify2CheckBoxUnderground.isChecked = true
+            binding.cbUnderground.isChecked = true
 
         } else {
-            binding.houseModify2EditTextFloor.setText(if (house.floor.toInt() == 0) "" else house.floor.toString())
+            binding.etFloor.setText(if (house.floor.toInt() == 0) "" else house.floor.toString())
         }
 
-        binding.houseModify2SpinnerStructure.setSelection(house.structure.toInt())
-        binding.houseModify2SpinnerBathroom.setSelection(house.bathroom.toInt())
+        binding.spnStructure.setSelection(house.structure.toInt())
+        binding.spnBathroom.setSelection(house.bathroom.toInt())
 
         if (house.bathroom_location.toInt() == 0) {
-            binding.houseModify2RadioButtonOutside.isChecked = true
+            binding.rbOutside.isChecked = true
 
         } else {
-            binding.houseModify2RadioButtonInside.isChecked = true
+            binding.rbInside.isChecked = true
         }
 
-        binding.houseModify2SpinnerDirection.setSelection(house.direction.toInt())
-        binding.houseModify2TextViewBuiltDate.text = house.built_date
+        binding.spnDirection.setSelection(house.direction.toInt())
+        binding.tvBuiltDate.text = house.built_date
 
         if (house.move_date == "") {
-            binding.houseModify2CheckBoxMoveNow.isChecked = true
+            binding.cbMoveNow.isChecked = true
 
         } else {
-            binding.houseModify2TextViewMoveDate.text = house.move_date
+            binding.tvMoveDate.text = house.move_date
         }
     }
 
@@ -196,49 +196,49 @@ class InfoFragment2 : Fragment(), OnSaveDataListener {
         // 구조 초기화
         val arrayAdapterStructure = ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_dropdown_item)
         arrayAdapterStructure.addAll(*resources.getStringArray(R.array.structure))
-        binding.houseModify2SpinnerStructure.adapter = arrayAdapterStructure
+        binding.spnStructure.adapter = arrayAdapterStructure
 
 
         // 욕실 갯수 초기화
         val arrayAdapterBathroom = ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_dropdown_item)
         arrayAdapterBathroom.addAll(*resources.getStringArray(R.array.bathroom))
-        binding.houseModify2SpinnerBathroom.adapter = arrayAdapterBathroom
+        binding.spnBathroom.adapter = arrayAdapterBathroom
 
 
         // 방향 초기화
         val arrayAdapterDirection = ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_dropdown_item)
         arrayAdapterDirection.addAll(*resources.getStringArray(R.array.direction))
-        binding.houseModify2SpinnerDirection.adapter = arrayAdapterDirection
+        binding.spnDirection.adapter = arrayAdapterDirection
     }
 
     private fun setCheckBoxes() {
         // 층 초기화
-        binding.houseModify2CheckBoxUnderground.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
-            binding.houseModify2EditTextFloor.setText("")
-            binding.houseModify2EditTextFloor.isEnabled = !isChecked
+        binding.cbUnderground.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
+            binding.etFloor.setText("")
+            binding.etFloor.isEnabled = !isChecked
         }
 
 
         // 입주 가능일 초기화
-        binding.houseModify2CheckBoxMoveNow.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
-            binding.houseModify2TextViewMoveDate.text = ""
-            binding.houseModify2ImageButtonMoveDate.isEnabled = !isChecked
+        binding.cbMoveNow.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
+            binding.tvMoveDate.text = ""
+            binding.imageBtnMoveDate.isEnabled = !isChecked
         }
     }
 
     @SuppressLint("DefaultLocale")
     private fun setAreaEditTexts() {
         // 전용 면적 초기화
-        binding.houseModify2EditTextAreaPyeong.addTextChangedListener(object : TextWatcher {
+        binding.etAreaPyeong.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                if (binding.houseModify2EditTextAreaPyeong.hasFocus()) {
+                if (binding.etAreaPyeong.hasFocus()) {
                     val temp = s.toString()
                     if (temp == "") {
-                        binding.houseModify2EditTextAreaMeter.setText("")
+                        binding.etAreaMeter.setText("")
                     } else {
                         val area = temp.toFloat()
-                        binding.houseModify2EditTextAreaMeter.setText(String.format("%.2f",
+                        binding.etAreaMeter.setText(String.format("%.2f",
                                 area * Constants.instance.PYEONG_TO_METER))
                     }
                 }
@@ -246,16 +246,16 @@ class InfoFragment2 : Fragment(), OnSaveDataListener {
 
             override fun afterTextChanged(s: Editable) {}
         })
-        binding.houseModify2EditTextAreaMeter.addTextChangedListener(object : TextWatcher {
+        binding.etAreaMeter.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                if (binding.houseModify2EditTextAreaMeter.hasFocus()) {
+                if (binding.etAreaMeter.hasFocus()) {
                     val temp = s.toString()
                     if (temp == "") {
-                        binding.houseModify2EditTextAreaPyeong.setText("")
+                        binding.etAreaPyeong.setText("")
                     } else {
                         val area = temp.toFloat()
-                        binding.houseModify2EditTextAreaPyeong.setText(String.format("%.2f",
+                        binding.etAreaPyeong.setText(String.format("%.2f",
                                 area * Constants.instance.METER_TO_PYEONG))
                     }
                 }
@@ -266,32 +266,32 @@ class InfoFragment2 : Fragment(), OnSaveDataListener {
 
 
         // 임대 면적 초기화
-        binding.houseModify2EditTextRentAreaPyeong.addTextChangedListener(object : TextWatcher {
+        binding.etRentAreaPyeong.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                if (binding.houseModify2EditTextRentAreaPyeong.hasFocus()) {
+                if (binding.etRentAreaPyeong.hasFocus()) {
                     val temp = s.toString()
                     if (temp == "") {
-                        binding.houseModify2EditTextRentAreaMeter.setText("")
+                        binding.etRentAreaMeter.setText("")
                     } else {
                         val area = temp.toFloat()
-                        binding.houseModify2EditTextRentAreaMeter.setText(String.format("%.2f", area * 3.305))
+                        binding.etRentAreaMeter.setText(String.format("%.2f", area * 3.305))
                     }
                 }
             }
 
             override fun afterTextChanged(s: Editable) {}
         })
-        binding.houseModify2EditTextRentAreaMeter.addTextChangedListener(object : TextWatcher {
+        binding.etRentAreaMeter.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                if (binding.houseModify2EditTextRentAreaMeter.hasFocus()) {
+                if (binding.etRentAreaMeter.hasFocus()) {
                     val temp = s.toString()
                     if (temp == "") {
-                        binding.houseModify2EditTextRentAreaPyeong.setText("")
+                        binding.etRentAreaPyeong.setText("")
                     } else {
                         val area = temp.toFloat()
-                        binding.houseModify2EditTextRentAreaPyeong.setText(String.format("%.2f", area * 0.3025))
+                        binding.etRentAreaPyeong.setText(String.format("%.2f", area * 0.3025))
                     }
                 }
             }
@@ -303,15 +303,18 @@ class InfoFragment2 : Fragment(), OnSaveDataListener {
     private fun showDatePickerDialog(listener: OnClickListener?) {
         val datePickerDialog = Dialog(requireContext())
         datePickerDialog.setContentView(R.layout.dialog_date_picker)
-        val buttonBack = datePickerDialog.findViewById<Button>(R.id.date_picker_dialog_button_back)
+
+        val buttonBack = datePickerDialog.findViewById<Button>(R.id.btn_back)
         buttonBack.setOnClickListener { datePickerDialog.dismiss() }
-        val buttonSelect = datePickerDialog.findViewById<Button>(R.id.date_picker_dialog_button_select)
+
+        val buttonSelect = datePickerDialog.findViewById<Button>(R.id.btn_select)
         buttonSelect.setOnClickListener { v: View? ->
-            val datePicker = datePickerDialog.findViewById<DatePicker>(R.id.date_picker_dialog_datePicker)
+            val datePicker = datePickerDialog.findViewById<DatePicker>(R.id.datePicker)
             val date = datePicker.year.toString() + "." + datePicker.month + "." + datePicker.dayOfMonth
             listener?.onClick(v, date)
             datePickerDialog.dismiss()
         }
+
         datePickerDialog.show()
     }
 

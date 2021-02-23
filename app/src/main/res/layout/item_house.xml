@@ -12,7 +12,7 @@
         android:background="?attr/selectableItemBackground">
 
         <ImageView
-            android:id="@+id/houseItem_imageView_profile"
+            android:id="@+id/iv_profile"
             android:layout_width="100dp"
             android:layout_height="match_parent"
             android:layout_margin="2dp" />
@@ -29,7 +29,7 @@
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:id="@+id/houseItem_textView_payment_type"
+                    android:id="@+id/tv_payment_type"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="매매"
@@ -37,7 +37,7 @@
                     android:textSize="15sp" />
 
                 <TextView
-                    android:id="@+id/houseItem_textView_price"
+                    android:id="@+id/tv_price"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="5dp"
@@ -46,7 +46,7 @@
             </LinearLayout>
 
             <TextView
-                android:id="@+id/houseItem_textView_house_info"
+                android:id="@+id/tv_house_info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:singleLine="true"
@@ -54,7 +54,7 @@
                 android:textSize="12sp" />
 
             <TextView
-                android:id="@+id/houseItem_textView_description"
+                android:id="@+id/tv_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:singleLine="true"
@@ -62,7 +62,7 @@
                 android:textSize="12sp" />
 
             <TextView
-                android:id="@+id/houseItem_textView_upload_time"
+                android:id="@+id/tv_upload_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="1주전"

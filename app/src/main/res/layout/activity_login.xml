@@ -32,7 +32,7 @@
             android:layout_height="match_parent">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/login_editText_id"
+                android:id="@+id/textInput_et_id"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:ems="10"
@@ -48,7 +48,7 @@
             app:passwordToggleEnabled="true">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/login_editText_pw"
+                android:id="@+id/textInput_et_pw"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:ems="10"
@@ -64,7 +64,7 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/login_button_login"
+                android:id="@+id/btn_login"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"

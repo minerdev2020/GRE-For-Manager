@@ -44,7 +44,7 @@
                             android:orientation="horizontal">
 
                             <TextView
-                                android:id="@+id/house_modify_1_textView_address"
+                                android:id="@+id/tv_address"
                                 style="@style/TextAppearance.AppCompat.Body1"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -52,7 +52,7 @@
                                 android:hint="주소를 선택해주세요." />
 
                             <com.google.android.material.button.MaterialButton
-                                android:id="@+id/house_modify_1_materialButton_search"
+                                android:id="@+id/material_btn_search"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="검색"
@@ -99,7 +99,7 @@
                                 android:text="매물 번호" />
 
                             <EditText
-                                android:id="@+id/house_modify_1_editText_number"
+                                android:id="@+id/et_number"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginHorizontal="20dp"
@@ -125,7 +125,7 @@
                                 android:orientation="horizontal">
 
                                 <Spinner
-                                    android:id="@+id/house_modify_1_spinner_houseType"
+                                    android:id="@+id/spn_houseType"
                                     android:layout_width="0dp"
                                     android:layout_height="match_parent"
                                     android:layout_weight="1"
@@ -136,7 +136,7 @@
                                     android:layout_height="wrap_content" />
 
                                 <CheckBox
-                                    android:id="@+id/house_modify_1_checkBox_facility"
+                                    android:id="@+id/cb_facility"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:checked="false"
@@ -165,7 +165,7 @@
                                 android:paddingHorizontal="40dp">
 
                                 <Spinner
-                                    android:id="@+id/house_modify_1_spinner_paymentType"
+                                    android:id="@+id/spn_paymentType"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:spinnerMode="dialog" />
@@ -175,7 +175,7 @@
                         <View style="@style/Divider" />
 
                         <TableRow
-                            android:id="@+id/house_modify_1_tableRow_price"
+                            android:id="@+id/tr_price"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent">
 
@@ -193,7 +193,7 @@
                                 android:paddingHorizontal="40dp">
 
                                 <EditText
-                                    android:id="@+id/house_modify_1_editText_price"
+                                    android:id="@+id/et_price"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
@@ -208,7 +208,7 @@
                         </TableRow>
 
                         <TableRow
-                            android:id="@+id/house_modify_1_tableRow_deposit"
+                            android:id="@+id/tr_deposit"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:visibility="gone">
@@ -227,7 +227,7 @@
                                 android:paddingHorizontal="40dp">
 
                                 <EditText
-                                    android:id="@+id/house_modify_1_editText_deposit"
+                                    android:id="@+id/et_deposit"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
@@ -242,7 +242,7 @@
                         </TableRow>
 
                         <TableRow
-                            android:id="@+id/house_modify_1_tableRow_monthly_rent"
+                            android:id="@+id/tr_monthly_rent"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:visibility="gone">
@@ -261,7 +261,7 @@
                                 android:paddingHorizontal="40dp">
 
                                 <EditText
-                                    android:id="@+id/house_modify_1_editText_monthly_rent"
+                                    android:id="@+id/et_monthly_rent"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
@@ -276,7 +276,7 @@
                         </TableRow>
 
                         <TableRow
-                            android:id="@+id/house_modify_1_tableRow_premium"
+                            android:id="@+id/tr_premium"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:visibility="gone">
@@ -295,7 +295,7 @@
                                 android:paddingHorizontal="40dp">
 
                                 <EditText
-                                    android:id="@+id/house_modify_1_editText_premium"
+                                    android:id="@+id/et_premium"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
@@ -329,7 +329,7 @@
                                 android:paddingHorizontal="20dp">
 
                                 <EditText
-                                    android:id="@+id/house_modify_1_editText_manage_fee"
+                                    android:id="@+id/et_manage_fee"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
@@ -347,7 +347,7 @@
                                     android:layout_height="wrap_content" />
 
                                 <CheckBox
-                                    android:id="@+id/house_modify_1_checkBox_manage_fee"
+                                    android:id="@+id/cb_manage_fee"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:checked="true"
@@ -366,7 +366,7 @@
                                 android:layout_span="2">
 
                                 <com.google.android.material.internal.FlowLayout
-                                    android:id="@+id/house_modify_1_flowLayout_manage_fee"
+                                    android:id="@+id/flowLayout_manage_fee"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:visibility="gone" />

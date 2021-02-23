@@ -5,7 +5,7 @@
     android:orientation="vertical">
 
     <DatePicker
-        android:id="@+id/date_picker_dialog_datePicker"
+        android:id="@+id/datePicker"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:calendarViewShown="false"
@@ -17,14 +17,14 @@
         android:gravity="end">
 
         <Button
-            android:id="@+id/date_picker_dialog_button_back"
+            android:id="@+id/btn_back"
             style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="뒤로가기" />
 
         <Button
-            android:id="@+id/date_picker_dialog_button_select"
+            android:id="@+id/btn_select"
             style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"

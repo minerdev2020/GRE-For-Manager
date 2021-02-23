@@ -43,7 +43,7 @@ class InfoFragment1 : Fragment(), OnSaveDataListener {
 
 
         // 주소 입력 초기화
-        binding.houseModify1MaterialButtonSearch.setOnClickListener { showAddressDialog() }
+        binding.materialBtnSearch.setOnClickListener { showAddressDialog() }
 
 
         // 스피너 초기화
@@ -58,7 +58,7 @@ class InfoFragment1 : Fragment(), OnSaveDataListener {
         toggleButtonGroupManageFeeContains = ToggleButtonGroup(context, "관리비 항목")
         toggleButtonGroupManageFeeContains.addToggleButtons(resources.getStringArray(R.array.manage_fee).toList())
         for (toggleButton in toggleButtonGroupManageFeeContains.toggleButtons) {
-            binding.houseModify1FlowLayoutManageFee.addView(toggleButton)
+            binding.flowLayoutManageFee.addView(toggleButton)
         }
         return binding.root
     }
@@ -71,47 +71,46 @@ class InfoFragment1 : Fragment(), OnSaveDataListener {
     private fun initData() {
         // 데이터 읽기
         house = viewModel.house
-        binding.houseModify1SpinnerHouseType.tag = "loadData"
-        binding.houseModify1SpinnerPaymentType.tag = "loadData"
+        binding.spnHouseType.tag = "loadData"
+        binding.spnPaymentType.tag = "loadData"
         loadData(house)
     }
 
     override fun checkData(): Boolean {
-        if (binding.houseModify1TextViewAddress.text.toString() == "") return false
-        if (binding.houseModify1EditTextNumber.text.toString() == "") return false
-        if (binding.houseModify1SpinnerHouseType.selectedItemId == 0L) return false
-        if (binding.houseModify1SpinnerPaymentType.selectedItemId == 0L) return false
+        if (binding.tvAddress.text.toString() == "") return false
+        if (binding.etNumber.text.toString() == "") return false
+        if (binding.spnHouseType.selectedItemId == 0L) return false
+        if (binding.spnPaymentType.selectedItemId == 0L) return false
 
         if (!(paymentType == "월세" || paymentType == "단기임대" || paymentType == "임대")
-                && binding.houseModify1EditTextPrice.text.toString() == "") {
+                && binding.etPrice.text.toString() == "") {
             return false
 
         } else if ((paymentType == "월세" || paymentType == "단기임대" || paymentType == "임대")
-                && (binding.houseModify1EditTextDeposit.text.toString() == "" || binding.houseModify1EditTextMonthlyRent.text.toString() == "")) {
+                && (binding.etDeposit.text.toString() == "" || binding.etMonthlyRent.text.toString() == "")) {
             return false
         }
 
         if (houseType == "상가, 점포" && paymentType == "임대"
-                && binding.houseModify1EditTextPremium.text.toString() == "") {
+                && binding.etPremium.text.toString() == "") {
             return false
         }
 
-        return !(!binding.houseModify1CheckBoxManageFee.isChecked
-                && binding.houseModify1EditTextManageFee.text.toString() == "")
+        return !(!binding.cbManageFee.isChecked && binding.etManageFee.text.toString() == "")
     }
 
     override fun saveData() {
         house.apply {
-            address = binding.houseModify1TextViewAddress.text.toString()
-            number = binding.houseModify1EditTextNumber.text.toString()
-            house_type = binding.houseModify1SpinnerHouseType.selectedItemPosition.toByte()
-            facility = (if (binding.houseModify1CheckBoxFacility.isChecked) 1 else 0).toByte()
-            payment_type = binding.houseModify1SpinnerPaymentType.selectedItemPosition.toByte()
-            price = parseInt(binding.houseModify1EditTextPrice.text.toString())
-            deposit = parseInt(binding.houseModify1EditTextDeposit.text.toString())
-            monthly_rent = parseInt(binding.houseModify1EditTextMonthlyRent.text.toString())
-            premium = parseInt(binding.houseModify1EditTextPremium.text.toString())
-            manage_fee = parseInt(binding.houseModify1EditTextManageFee.text.toString())
+            address = binding.tvAddress.text.toString()
+            number = binding.etNumber.text.toString()
+            house_type = binding.spnHouseType.selectedItemPosition.toByte()
+            facility = (if (binding.cbFacility.isChecked) 1 else 0).toByte()
+            payment_type = binding.spnPaymentType.selectedItemPosition.toByte()
+            price = parseInt(binding.etPrice.text.toString())
+            deposit = parseInt(binding.etDeposit.text.toString())
+            monthly_rent = parseInt(binding.etMonthlyRent.text.toString())
+            premium = parseInt(binding.etPremium.text.toString())
+            manage_fee = parseInt(binding.etManageFee.text.toString())
             manage_fee_contains = toggleButtonGroupManageFeeContains.checkedToggleButtonTextsInSingleLine
         }
     }
@@ -124,25 +123,25 @@ class InfoFragment1 : Fragment(), OnSaveDataListener {
             ""
         }
 
-        binding.houseModify1TextViewAddress.text = house.address
-        binding.houseModify1EditTextNumber.setText(house.number)
-        binding.houseModify1SpinnerHouseType.setSelection(house.house_type.toInt())
+        binding.tvAddress.text = house.address
+        binding.etNumber.setText(house.number)
+        binding.spnHouseType.setSelection(house.house_type.toInt())
 
         arrayAdapterPayment.clear()
         if (house.house_type > 0) {
             arrayAdapterPayment.addAll(Constants.instance.PAYMENT_TYPE[house.house_type - 1])
         }
 
-        binding.houseModify1SpinnerPaymentType.setSelection(house.payment_type.toInt())
-        binding.houseModify1CheckBoxFacility.isChecked = house.facility.toInt() == 1
-        binding.houseModify1EditTextPrice.setText(if (house.price == 0) "" else house.price.toString())
-        binding.houseModify1EditTextDeposit.setText(if (house.deposit == 0) "" else house.deposit.toString())
-        binding.houseModify1EditTextMonthlyRent.setText(if (house.monthly_rent == 0) "" else house.monthly_rent.toString())
-        binding.houseModify1EditTextPremium.setText(if (house.premium == 0) "" else house.premium.toString())
+        binding.spnPaymentType.setSelection(house.payment_type.toInt())
+        binding.cbFacility.isChecked = house.facility.toInt() == 1
+        binding.etPrice.setText(if (house.price == 0) "" else house.price.toString())
+        binding.etDeposit.setText(if (house.deposit == 0) "" else house.deposit.toString())
+        binding.etMonthlyRent.setText(if (house.monthly_rent == 0) "" else house.monthly_rent.toString())
+        binding.etPremium.setText(if (house.premium == 0) "" else house.premium.toString())
 
         if (house.manage_fee > 0) {
-            binding.houseModify1CheckBoxManageFee.isChecked = false
-            binding.houseModify1EditTextManageFee.setText(house.manage_fee.toString())
+            binding.cbManageFee.isChecked = false
+            binding.etManageFee.setText(house.manage_fee.toString())
         }
 
         house.manage_fee_contains?.let {
@@ -156,31 +155,31 @@ class InfoFragment1 : Fragment(), OnSaveDataListener {
     private fun setSpinners() {
         // 계약 형태 초기화
         arrayAdapterPayment = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item)
-        binding.houseModify1SpinnerPaymentType.adapter = arrayAdapterPayment
-        binding.houseModify1SpinnerPaymentType.onItemSelectedListener = object : OnItemSelectedListener {
+        binding.spnPaymentType.adapter = arrayAdapterPayment
+        binding.spnPaymentType.onItemSelectedListener = object : OnItemSelectedListener {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                if (binding.houseModify1SpinnerPaymentType.tag == null) {
+                if (binding.spnPaymentType.tag == null) {
                     onPaymentTypeItemSelected()
 
                 } else {
-                    binding.houseModify1SpinnerPaymentType.tag = null
+                    binding.spnPaymentType.tag = null
 
                     if (paymentType == "월세" || paymentType == "단기임대" || paymentType == "임대") {
-                        binding.houseModify1TableRowPrice.visibility = View.GONE
-                        binding.houseModify1TableRowDeposit.visibility = View.VISIBLE
-                        binding.houseModify1TableRowMonthlyRent.visibility = View.VISIBLE
+                        binding.trPrice.visibility = View.GONE
+                        binding.trDeposit.visibility = View.VISIBLE
+                        binding.trMonthlyRent.visibility = View.VISIBLE
 
                     } else {
-                        binding.houseModify1TableRowPrice.visibility = View.VISIBLE
-                        binding.houseModify1TableRowDeposit.visibility = View.GONE
-                        binding.houseModify1TableRowMonthlyRent.visibility = View.GONE
+                        binding.trPrice.visibility = View.VISIBLE
+                        binding.trDeposit.visibility = View.GONE
+                        binding.trMonthlyRent.visibility = View.GONE
                     }
 
                     if (houseType == "상가, 점포" && paymentType == "임대") {
-                        binding.houseModify1TableRowPremium.visibility = View.VISIBLE
+                        binding.trPremium.visibility = View.VISIBLE
 
                     } else {
-                        binding.houseModify1TableRowPremium.visibility = View.GONE
+                        binding.trPremium.visibility = View.GONE
                     }
                 }
             }
@@ -192,15 +191,15 @@ class InfoFragment1 : Fragment(), OnSaveDataListener {
         // 매물 종류 초기화
         val arrayAdapterHouse = ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_dropdown_item)
         arrayAdapterHouse.addAll(*resources.getStringArray(R.array.houseType))
-        binding.houseModify1SpinnerHouseType.adapter = arrayAdapterHouse
-        binding.houseModify1SpinnerHouseType.onItemSelectedListener = object : OnItemSelectedListener {
+        binding.spnHouseType.adapter = arrayAdapterHouse
+        binding.spnHouseType.onItemSelectedListener = object : OnItemSelectedListener {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                if (binding.houseModify1SpinnerHouseType.tag == null) {
+                if (binding.spnHouseType.tag == null) {
                     onHouseTypeItemSelected(p2)
 
                 } else {
-                    binding.houseModify1SpinnerHouseType.tag = null
-                    binding.houseModify1CheckBoxFacility.isEnabled = houseType == "상가, 점포"
+                    binding.spnHouseType.tag = null
+                    binding.cbFacility.isEnabled = houseType == "상가, 점포"
                 }
             }
 
@@ -211,10 +210,10 @@ class InfoFragment1 : Fragment(), OnSaveDataListener {
 
     private fun setCheckBoxes() {
         // 관리비 초기화
-        binding.houseModify1CheckBoxManageFee.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
-            binding.houseModify1EditTextManageFee.setText("")
-            binding.houseModify1EditTextManageFee.isEnabled = !isChecked
-            binding.houseModify1FlowLayoutManageFee.visibility = if (isChecked) View.GONE else View.VISIBLE
+        binding.cbManageFee.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
+            binding.etManageFee.setText("")
+            binding.etManageFee.isEnabled = !isChecked
+            binding.flowLayoutManageFee.visibility = if (isChecked) View.GONE else View.VISIBLE
             toggleButtonGroupManageFeeContains.resetToggleButtonCheckedState()
         }
     }
@@ -224,7 +223,7 @@ class InfoFragment1 : Fragment(), OnSaveDataListener {
         addressDialog = Dialog(requireContext())
         addressDialog.setContentView(R.layout.dialog_address)
 
-        val webView = addressDialog.findViewById<WebView>(R.id.address_dialog_button_webView)
+        val webView = addressDialog.findViewById<WebView>(R.id.webView)
         webView.settings.javaScriptEnabled = true
         webView.addJavascriptInterface(AndroidBridge(), "GREApp")
         webView.loadUrl(Constants.instance.DNS + "/api/daum-address")
@@ -234,7 +233,7 @@ class InfoFragment1 : Fragment(), OnSaveDataListener {
         params?.height = ViewGroup.LayoutParams.MATCH_PARENT
         addressDialog.window?.attributes = params
 
-        val buttonBack = addressDialog.findViewById<Button>(R.id.address_dialog_button_back)
+        val buttonBack = addressDialog.findViewById<Button>(R.id.btn_back)
         buttonBack.setOnClickListener { addressDialog.dismiss() }
         addressDialog.show()
     }
@@ -256,47 +255,49 @@ class InfoFragment1 : Fragment(), OnSaveDataListener {
     }
 
     private fun onPaymentTypeItemSelected() {
-        paymentType = binding.houseModify1SpinnerPaymentType.selectedItem.toString()
+        paymentType = binding.spnPaymentType.selectedItem.toString()
         if (paymentType == "월세" || paymentType == "단기임대" || paymentType == "임대") {
-            binding.houseModify1TableRowPrice.visibility = View.GONE
-            binding.houseModify1TableRowDeposit.visibility = View.VISIBLE
-            binding.houseModify1TableRowMonthlyRent.visibility = View.VISIBLE
+            binding.trPrice.visibility = View.GONE
+            binding.trDeposit.visibility = View.VISIBLE
+            binding.trMonthlyRent.visibility = View.VISIBLE
         } else {
-            binding.houseModify1TableRowPrice.visibility = View.VISIBLE
-            binding.houseModify1TableRowDeposit.visibility = View.GONE
-            binding.houseModify1TableRowMonthlyRent.visibility = View.GONE
+            binding.trPrice.visibility = View.VISIBLE
+            binding.trDeposit.visibility = View.GONE
+            binding.trMonthlyRent.visibility = View.GONE
         }
         if (houseType == "상가, 점포" && paymentType == "임대") {
-            binding.houseModify1TableRowPremium.visibility = View.VISIBLE
+            binding.trPremium.visibility = View.VISIBLE
         } else {
-            binding.houseModify1TableRowPremium.visibility = View.GONE
+            binding.trPremium.visibility = View.GONE
         }
-        binding.houseModify1EditTextPrice.setText("")
-        binding.houseModify1EditTextDeposit.setText("")
-        binding.houseModify1EditTextMonthlyRent.setText("")
-        binding.houseModify1EditTextPremium.setText("")
+        binding.etPrice.setText("")
+        binding.etDeposit.setText("")
+        binding.etMonthlyRent.setText("")
+        binding.etPremium.setText("")
     }
 
     private fun onHouseTypeItemSelected(position: Int) {
-        houseType = binding.houseModify1SpinnerHouseType.selectedItem.toString()
+        houseType = binding.spnHouseType.selectedItem.toString()
 
         // 시설 유무 초기화
-        binding.houseModify1CheckBoxFacility.isEnabled = houseType == "상가, 점포"
+        binding.cbFacility.isEnabled = houseType == "상가, 점포"
         if (position > 0) {
             arrayAdapterPayment.clear()
             arrayAdapterPayment.addAll(Constants.instance.PAYMENT_TYPE[position - 1])
-            binding.houseModify1SpinnerPaymentType.setSelection(0)
+            binding.spnPaymentType.setSelection(0)
+
         } else {
             arrayAdapterPayment.clear()
         }
-        binding.houseModify1CheckBoxFacility.isChecked = false
+
+        binding.cbFacility.isChecked = false
     }
 
     private inner class AndroidBridge {
         @JavascriptInterface
         fun setAddress(arg1: String?, arg2: String?, arg3: String?) {
             handler.post {
-                binding.houseModify1TextViewAddress.text = String.format("(%s) %s %s",
+                binding.tvAddress.text = String.format("(%s) %s %s",
                         arg1 ?: "", arg2 ?: "", arg3 ?: "")
                 addressDialog.dismiss()
             }

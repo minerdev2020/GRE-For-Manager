@@ -5,33 +5,33 @@
     android:orientation="vertical">
 
     <FrameLayout
-        android:id="@+id/imageItem_layout"
+        android:id="@+id/layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp">
 
         <ImageView
-            android:id="@+id/imageItem_imageView"
+            android:id="@+id/imageView"
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:src="@drawable/house" />
 
         <ImageButton
-            android:id="@+id/imageItem_imageButton_delete"
+            android:id="@+id/image_btn_delete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right|top"
             android:src="@drawable/ic_round_delete_24" />
 
         <ImageButton
-            android:id="@+id/imageItem_imageButton_thumbnail"
+            android:id="@+id/image_btn_thumbnail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left|bottom"
             android:src="@drawable/ic_round_photo_24" />
 
         <TextView
-            android:id="@+id/imageItem_textView_thumbnail"
+            android:id="@+id/tv_thumbnail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left|top"
@@ -47,13 +47,13 @@
             android:orientation="vertical">
 
             <ImageButton
-                android:id="@+id/imageItem_imageButton_up"
+                android:id="@+id/image_btn_up"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_round_keyboard_arrow_up_24" />
 
             <ImageButton
-                android:id="@+id/imageItem_imageButton_down"
+                android:id="@+id/image_btn_down"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_round_keyboard_arrow_down_24" />
