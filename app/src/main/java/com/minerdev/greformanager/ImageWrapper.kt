@@ -1,23 +1,16 @@
 package com.minerdev.greformanager
 
 import android.net.Uri
-import java.sql.Date
 
 class ImageWrapper(val data: Image) {
     val id: Int
         get() = data.id
 
     val createdAt: String
-        get() {
-            val date = Date(data.created_at)
-            return date.toString()
-        }
+        get() = data.createdAt
 
     val updatedAt: String
-        get() {
-            val date = Date(data.updated_at)
-            return date.toString()
-        }
+        get() = data.updatedAt
 
     val title: String?
         get() = data.title

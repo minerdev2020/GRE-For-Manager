@@ -144,11 +144,9 @@ class InfoFragment1 : Fragment(), OnSaveDataListener {
             binding.etManageFee.setText(house.manage_fee.toString())
         }
 
-        house.manage_fee_contains?.let {
-            val manageFeeTexts = it.split('|')
-            for (text in manageFeeTexts) {
-                toggleButtonGroupManageFeeContains.setToggleButtonCheckedState(text, true)
-            }
+        val manageFeeTexts = house.manage_fee_contains.split('|')
+        for (text in manageFeeTexts) {
+            toggleButtonGroupManageFeeContains.setToggleButtonCheckedState(text, true)
         }
     }
 

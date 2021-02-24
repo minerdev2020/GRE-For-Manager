@@ -9,8 +9,6 @@ import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import com.android.volley.Request
-import com.google.gson.JsonObject
 import com.minerdev.greformanager.Geocode.OnDataReceiveListener
 import com.minerdev.greformanager.databinding.ActivityHouseDetailBinding
 import com.naver.maps.geometry.LatLng
@@ -18,8 +16,7 @@ import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.MapFragment
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.overlay.Marker
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
+import org.json.JSONObject
 
 class HouseDetailActivity : AppCompatActivity() {
     lateinit var houseWrapper: HouseWrapper
@@ -93,15 +90,9 @@ class HouseDetailActivity : AppCompatActivity() {
 
     override fun finish() {
         if (originalState != houseWrapper.data.state.toInt()) {
-            val data = JsonObject()
-            data.addProperty("state", houseWrapper.data.state)
-            HttpConnection.instance.send(Request.Method.PATCH,
-                    "houses/" + houseWrapper.data.id, data, object : HttpConnection.OnReceiveListener {
-                override fun onReceive(receivedData: String) {
-                    val house = Json.decodeFromString<House>(receivedData)
-                    viewModel.modify(house)
-                }
-            })
+            val data = JSONObject()
+            data.put("state", houseWrapper.data.state)
+            viewModel.modify( houseWrapper.data.id, data)
         }
 
         super.finish()

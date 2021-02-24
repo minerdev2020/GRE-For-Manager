@@ -5,10 +5,10 @@ class HouseWrapper(val data: House) {
         get() = data.id.toString()
 
     val createdAt: String
-        get() = AppHelper.instance.getDiffTimeMsg(data.created_at)
+        get() = data.createdAt
 
     val updatedAt: String
-        get() = AppHelper.instance.getDiffTimeMsg(data.updated_at)
+        get() = data.updatedAt
 
     val address: String
         get() = data.address ?: ""

@@ -53,7 +53,7 @@ class HouseListAdapter(diffCallback: DiffCallback) : ListAdapter<House, HouseLis
             tvPrice.text = houseWrapper.price
             tvHouseInfo.text = houseWrapper.houseInfo
             tvDescription.text = houseWrapper.detailInfo
-            tvUploadTime.text = AppHelper.instance.getDiffTimeMsg(house.created_at)
+            tvUploadTime.text = AppHelper.instance.getDiffTimeMsg(house.createdAt)
 
             val uri = Uri.parse(Constants.instance.DNS + "/storage/images/" + house.id + "/" + house.thumbnail)
             Glide.with(itemView).load(uri).into(ivProfile)

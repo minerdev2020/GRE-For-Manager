@@ -1,19 +1,18 @@
 package com.minerdev.greformanager
 
+import android.app.Activity
 import android.app.Application
 import android.app.ProgressDialog
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.LiveData
 import com.android.volley.Request
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
+import org.json.JSONObject
 
 class Repository(private val application: Application) {
     private val houseDao: HouseDao
     private val imageDao: ImageDao
-    private val lastUpdatedAt: Long
-        get() = houseDao.lastUpdatedAt ?: 0
 
     val allSale: LiveData<MutableList<House>>
     val allSold: LiveData<MutableList<House>>
@@ -35,31 +34,53 @@ class Repository(private val application: Application) {
     }
 
     fun loadHouses() {
-        HttpConnection.instance.receive("houses/last-updated-at",
-                object : HttpConnection.OnReceiveListener {
-                    override fun onReceive(receivedData: String) {
-                        if (receivedData.isEmpty()) {
-                            deleteAll()
+        val sharedPreferences = application.getSharedPreferences("repository", Activity.MODE_PRIVATE)
+        var lastUpdatedAt = "0"
+        if (sharedPreferences.contains("last_updated_at")) {
+            lastUpdatedAt = sharedPreferences.getString("last_updated_at", "0") ?: "0"
+        }
 
-                        } else {
-                            checkHouseUpdate(receivedData)
+        Thread {
+            HttpConnection.instance.receive("houses?last_updated_at=$lastUpdatedAt",
+                    object : HttpConnection.OnReceiveListener {
+                        override fun onReceive(receivedData: String) {
+                            val jsonData = JSONObject(receivedData)
+                            val editor = sharedPreferences.edit()
+                            editor.putString("last_updated_at", jsonData.getString("updated_at"))
+                            editor.apply()
+
+                            val dataList = Json.decodeFromString<List<House>>(jsonData.getString("data"))
+                            for (data in dataList) {
+                                updateOrInsert(data)
+                            }
                         }
-                    }
-                })
+                    })
+        }.start()
     }
 
     fun loadImages(houseId: Int) {
-        HttpConnection.instance.receive("houses/$houseId/images/last-updated-at",
-                object : HttpConnection.OnReceiveListener {
-                    override fun onReceive(receivedData: String) {
-                        if (receivedData.isEmpty()) {
-                            deleteAll(houseId)
+        val sharedPreferences = application.getSharedPreferences("repository", Activity.MODE_PRIVATE)
+        var lastUpdatedAt = "0"
+        if (sharedPreferences.contains("last_updated_at")) {
+            lastUpdatedAt = sharedPreferences.getString("last_updated_at", "0") ?: "0"
+        }
 
-                        } else {
-                            checkImageUpdate(houseId, receivedData)
+        Thread {
+            HttpConnection.instance.receive("houses/$houseId/images?last_updated_at=$lastUpdatedAt",
+                    object : HttpConnection.OnReceiveListener {
+                        override fun onReceive(receivedData: String) {
+                            val jsonData = JSONObject(receivedData)
+                            val editor = sharedPreferences.edit()
+                            editor.putString("last_updated_at", jsonData.getString("updated_at"))
+                            editor.apply()
+
+                            val dataList = Json.decodeFromString<List<Image>>(jsonData.getString("data"))
+                            for (data in dataList) {
+                                updateOrInsert(data)
+                            }
                         }
-                    }
-                })
+                    })
+        }.start()
     }
 
     fun add(house: House, imageUris: List<Uri>, images: List<Image>) {
@@ -72,9 +93,7 @@ class Repository(private val application: Application) {
                 object : HttpConnection.OnReceiveListener {
                     override fun onReceive(receivedData: String) {
                         val data = Json.decodeFromString<House>(receivedData)
-                        insert(data)
                         val id = data.id
-
                         HttpConnection.instance.send(Request.Method.POST, "houses/$id/images", imageUris, images,
                                 object : HttpConnection.OnReceiveListener {
                                     override fun onReceive(receivedData: String) {
@@ -93,20 +112,8 @@ class Repository(private val application: Application) {
                 })
     }
 
-    fun modify(house: House) {
-        val progressDialog = ProgressDialog(application)
-        progressDialog.setMessage("데이터 전송중...")
-        progressDialog.setCancelable(false)
-
-        val houseId = house.id
-        HttpConnection.instance.send(Request.Method.PATCH, "houses/$houseId", house,
-                object : HttpConnection.OnReceiveListener {
-                    override fun onReceive(receivedData: String) {
-                        val data = Json.decodeFromString<House>(receivedData)
-                        update(data)
-                        progressDialog.show()
-                    }
-                })
+    fun modify(id: Int, data: JSONObject) {
+        HttpConnection.instance.send(Request.Method.PATCH, "houses/$id", data, null)
     }
 
     fun modify(house: House, imageUris: List<Uri>, images: List<Image>) {
@@ -152,32 +159,6 @@ class Repository(private val application: Application) {
         GreDatabase.databaseWriteExecutor.execute { imageDao.deleteAll() }
     }
 
-    private fun checkHouseUpdate(receivedData: String) {
-        Thread {
-            val serverTimestamp = receivedData.toLong()
-            val clientTimestamp = lastUpdatedAt
-
-            Log.d("HTTP_DATA", "server last updated time : $serverTimestamp")
-            Log.d("HTTP_DATA", "client last updated time : $clientTimestamp")
-
-            if (serverTimestamp > clientTimestamp) {
-                loadHousesFromWeb(clientTimestamp)
-            }
-        }.start()
-    }
-
-    private fun loadHousesFromWeb(clientLastUpdatedAt: Long?) {
-        HttpConnection.instance.receive("houses", clientLastUpdatedAt,
-                object : HttpConnection.OnReceiveListener {
-                    override fun onReceive(receivedData: String) {
-                        val dataList = Json.decodeFromString<List<House>>(receivedData)
-                        for (data in dataList) {
-                            updateOrInsert(data)
-                        }
-                    }
-                })
-    }
-
     private fun insert(house: House) {
         GreDatabase.databaseWriteExecutor.execute { houseDao.insert(house) }
     }
@@ -213,33 +194,5 @@ class Repository(private val application: Application) {
                 }
             }
         }
-    }
-
-    private fun getLastUpdatedAt(houseId: Int): Long {
-        return imageDao.getLastUpdatedAt(houseId) ?: 0
-    }
-
-    private fun checkImageUpdate(houseId: Int, receivedData: String) {
-        Thread {
-            val serverTimestamp = receivedData.toLong()
-            val clientTimestamp = getLastUpdatedAt(houseId)
-
-            if (serverTimestamp > clientTimestamp) {
-                deleteAll(houseId)
-                loadImagesFromWeb(houseId)
-            }
-        }.start()
-    }
-
-    private fun loadImagesFromWeb(houseId: Int) {
-        HttpConnection.instance.receive("houses/$houseId/images",
-                object : HttpConnection.OnReceiveListener {
-                    override fun onReceive(receivedData: String) {
-                        val dataList = Json.decodeFromString<List<House>>(receivedData)
-                        for (data in dataList) {
-                            updateOrInsert(data)
-                        }
-                    }
-                })
     }
 }

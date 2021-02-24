@@ -11,10 +11,10 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Image(
         @PrimaryKey var id: Int = 0,
-        var created_at: Long = 0,
-        var updated_at: Long = 0,
+        var createdAt: String = "",
+        var updatedAt: String = "",
         var title: String = "",
-        var path: String? = null,
+        var path: String = "",
         var position: Byte = 0,
         var thumbnail: Byte = 0,
         var house_id: Int = 0

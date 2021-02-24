@@ -5,9 +5,9 @@ import android.util.Log
 import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
-import com.google.gson.JsonObject
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import org.json.JSONObject
 import java.nio.charset.StandardCharsets
 
 class HttpConnection private constructor() {
@@ -17,13 +17,7 @@ class HttpConnection private constructor() {
         makeHouseRequest(Request.Method.GET, serverUri, null, listener)
     }
 
-    fun receive(uri: String, clientLastUpdatedAt: Long?, listener: OnReceiveListener?) {
-        val serverUri: String = Constants.instance.DNS + "/api/" + uri
-        Log.d("HTTP_DATA", "receive : $serverUri, $clientLastUpdatedAt")
-        makeHouseRequest(Request.Method.GET, serverUri, clientLastUpdatedAt.toString(), listener)
-    }
-
-    fun send(method: Int, uri: String, data: JsonObject, listener: OnReceiveListener?) {
+    fun send(method: Int, uri: String, data: JSONObject, listener: OnReceiveListener?) {
         val serverUri: String = Constants.instance.DNS + "/api/" + uri
         val json = data.toString()
         Log.d("HTTP_DATA", "send : $json")
@@ -59,12 +53,6 @@ class HttpConnection private constructor() {
                     Log.e("HTTP_DATA", "makeHouseRequest error : " + error.message)
                 }
         ) {
-            override fun getParams(): MutableMap<String, String> {
-                val params = HashMap<String, String>()
-                params["client_last_updated_at"] = json ?: ""
-                return params
-            }
-
             override fun getBody(): ByteArray {
                 return if (json.isNullOrEmpty()) super.getBody() else json.toByteArray(StandardCharsets.UTF_8)
             }

@@ -5,9 +5,6 @@ import androidx.room.*
 
 @Dao
 interface ImageDao {
-    @Query("SELECT updated_at FROM Image WHERE house_id = :house_id ORDER BY updated_at DESC")
-    fun getLastUpdatedAt(house_id: Int): Long?
-
     @get:Query("SELECT * FROM Image")
     val allImages: LiveData<List<Image>>
 

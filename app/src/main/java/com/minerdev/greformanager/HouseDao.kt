@@ -5,9 +5,6 @@ import androidx.room.*
 
 @Dao
 interface HouseDao {
-    @get:Query("SELECT updated_at FROM House ORDER BY updated_at DESC")
-    val lastUpdatedAt: Long?
-
     @get:Query("SELECT * FROM House")
     val all: LiveData<MutableList<House>>
 

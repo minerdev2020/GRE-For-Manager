@@ -4,6 +4,7 @@ import android.app.Application
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import org.json.JSONObject
 
 class HouseModifyViewModel(application: Application) : AndroidViewModel(application) {
     private val repository: Repository = Repository(application)
@@ -20,8 +21,8 @@ class HouseModifyViewModel(application: Application) : AndroidViewModel(applicat
         repository.add(house, imageUris, images)
     }
 
-    fun modify(house: House) {
-        repository.modify(house)
+    fun modify(id: Int, data: JSONObject) {
+        repository.modify(id, data)
     }
 
     fun modify(house: House, imageUris: List<Uri>, images: List<Image>) {

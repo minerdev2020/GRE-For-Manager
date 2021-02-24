@@ -1,11 +1,13 @@
 package com.minerdev.greformanager
 
 import android.content.Context
+import android.icu.text.SimpleDateFormat
 import android.net.Uri
 import com.android.volley.RequestQueue
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileInputStream
+import java.util.*
 
 class AppHelper private constructor() {
     var context: Context? = null
@@ -45,8 +47,9 @@ class AppHelper private constructor() {
         return byteArrayOutputStream.toByteArray()
     }
 
-    fun getDiffTimeMsg(since: Long): String {
-        var diffTime = System.currentTimeMillis() / 1000 - since
+    fun getDiffTimeMsg(since: String): String {
+        val sinceTime = getTime(since)
+        var diffTime = System.currentTimeMillis() / 1000 - sinceTime
 
         val msg: String
         when {
@@ -59,6 +62,12 @@ class AppHelper private constructor() {
         }
 
         return msg
+    }
+
+    private fun getTime(time: String): Long {
+        val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        val date = format.parse(time.replace('T', ' ').substring(0, time.length - 5))
+        return date.time
     }
 
     private object Holder {

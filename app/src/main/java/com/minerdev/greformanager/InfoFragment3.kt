@@ -71,11 +71,9 @@ class InfoFragment3 : Fragment(), OnSaveDataListener {
     }
 
     private fun loadData(house: House) {
-        house.options?.let {
-            val optionsTexts = it.split('|')
-            for (text in optionsTexts) {
-                toggleButtonGroupOptions.setToggleButtonCheckedState(text, true)
-            }
+        val optionsTexts = house.options.split('|')
+        for (text in optionsTexts) {
+            toggleButtonGroupOptions.setToggleButtonCheckedState(text, true)
         }
 
         binding.textInputEtDetailInfo.setText(house.detail_info)
