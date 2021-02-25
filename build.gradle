@@ -21,7 +21,7 @@ allprojects {
         jcenter()
         mavenCentral()
         maven {
-            url 'https://naver.jfrog.io/artifactory/maven/'
+            url "https://naver.jfrog.io/artifactory/maven/"
         }
     }
 }

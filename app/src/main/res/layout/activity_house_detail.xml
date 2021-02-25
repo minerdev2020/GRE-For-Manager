@@ -7,14 +7,14 @@
 
         <variable
             name="activity"
-            type="com.minerdev.greformanager.HouseDetailActivity" />
+            type="com.minerdev.greformanager.activity.HouseDetailActivity" />
     </data>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        tools:context=".HouseDetailActivity">
+        tools:context=".activity.HouseDetailActivity">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
