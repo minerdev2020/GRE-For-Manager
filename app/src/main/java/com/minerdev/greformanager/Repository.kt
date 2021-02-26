@@ -1,144 +1,197 @@
 package com.minerdev.greformanager
 
-import android.app.Activity
-import android.app.Application
-import androidx.lifecycle.LiveData
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.android.volley.Request
-import com.minerdev.greformanager.db.GreDatabase
-import com.minerdev.greformanager.db.HouseDao
+import com.minerdev.greformanager.http.retrofit.RetrofitManager
 import com.minerdev.greformanager.model.House
 import com.minerdev.greformanager.model.Image
+import com.minerdev.greformanager.utils.Constants.CREATE
+import com.minerdev.greformanager.utils.Constants.DELETE
+import com.minerdev.greformanager.utils.Constants.TAG
+import com.minerdev.greformanager.utils.Constants.UPDATE
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import org.json.JSONObject
 
-class Repository(private val application: Application) {
-    val allSale: LiveData<MutableList<House>>
-    val allSold: LiveData<MutableList<House>>
-    val images = MutableLiveData<List<Image>>()
-    private val houseDao: HouseDao
+class Repository {
+    val allSale = MutableLiveData<List<House>>()
+    val allSold = MutableLiveData<List<House>>()
+    val house = MutableLiveData<House>()
 
-    init {
-        val db: GreDatabase? = GreDatabase.getDatabase(application)
-        houseDao = db!!.houseDao()
-        allSale = houseDao.allSale
-        allSold = houseDao.allSold
-    }
+    val allImages = MutableLiveData<List<Image>>()
 
-    operator fun get(id: Int): House? {
-        return houseDao[id]
+    fun loadHouse(id: Int) {
+        RetrofitManager.instance.getHouse(id,
+                { response: String ->
+                    run {
+                        val data = JSONObject(response)
+                        Log.d(TAG, "loadHouse sale response : " + data.getString("message"))
+                        val format = Json { encodeDefaults = true }
+                        house.postValue(format.decodeFromString<House>(data.getString("data")))
+                    }
+                },
+                { error: Throwable ->
+                    run {
+                        Log.d(TAG, "loadHouse sale error : " + error.localizedMessage)
+                    }
+                })
     }
 
     fun loadHouses() {
-        val sharedPreferences = application.getSharedPreferences("repository", Activity.MODE_PRIVATE)
-        var lastUpdatedAt = "0"
-        if (sharedPreferences.contains("last_updated_at")) {
-            lastUpdatedAt = sharedPreferences.getString("last_updated_at", "0") ?: "0"
-        }
+        RetrofitManager.instance.getAllHouse(0,
+                { response: String ->
+                    run {
+                        val data = JSONObject(response)
+                        Log.d(TAG, "loadHouses sale response : " + data.getString("message"))
+                        val format = Json { encodeDefaults = true }
+                        val houses = format.decodeFromString<List<House>>(data.getString("data"))
+                        allSale.postValue(houses)
+                    }
+                },
+                { error: Throwable ->
+                    run {
+                        Log.d(TAG, "loadHouses sale error : " + error.localizedMessage)
+                    }
+                })
 
-        HttpConnection.instance.receive("houses?last_updated_at=$lastUpdatedAt",
-                object : HttpConnection.OnReceiveListener {
-                    override fun onReceive(receivedData: String) {
-                        val jsonData = JSONObject(receivedData)
-                        val serverLastUpdatedAt = jsonData.getString("updated_at")
-                        val editor = sharedPreferences.edit()
-                        editor.putString("last_updated_at", serverLastUpdatedAt)
-                        editor.apply()
-
-                        if (serverLastUpdatedAt == "0") {
-                            deleteAll()
-
-                        } else {
-                            val dataList = Json.decodeFromString<List<House>>(jsonData.getString("data"))
-                            for (data in dataList) {
-                                updateOrInsert(data)
-                            }
-                        }
+        RetrofitManager.instance.getAllHouse(1,
+                { response: String ->
+                    run {
+                        val data = JSONObject(response)
+                        Log.d(TAG, "loadHouses sold response : " + data.getString("message"))
+                        val format = Json { encodeDefaults = true }
+                        val houses = format.decodeFromString<List<House>>(data.getString("data"))
+                        allSold.postValue(houses)
+                    }
+                },
+                { error: Throwable ->
+                    run {
+                        Log.d(TAG, "loadHouses sold error : " + error.localizedMessage)
                     }
                 })
     }
 
     fun loadImages(houseId: Int) {
-        HttpConnection.instance.receive("houses/$houseId/images",
-                object : HttpConnection.OnReceiveListener {
-                    override fun onReceive(receivedData: String) {
-                        val jsonData = JSONObject(receivedData)
-                        images.postValue(Json.decodeFromString(jsonData.getString("data")))
+        RetrofitManager.instance.getAllImage(houseId,
+                { response: String ->
+                    run {
+                        val data = JSONObject(response)
+                        Log.d(TAG, "loadImages response : " + data.getString("message"))
+                        val format = Json { encodeDefaults = true }
+                        val images = format.decodeFromString<List<Image>>(data.getString("data"))
+                        allImages.postValue(images)
+                    }
+                },
+                { error: Throwable ->
+                    run {
+                        Log.d(TAG, "loadImages error : " + error.localizedMessage)
                     }
                 })
     }
 
     fun add(house: House, images: List<Image>) {
-        HttpConnection.instance.send(Request.Method.POST, "houses", house,
-                object : HttpConnection.OnReceiveListener {
-                    override fun onReceive(receivedData: String) {
-                        val jsonData = JSONObject(receivedData)
-                        val data = Json.decodeFromString<House>(jsonData.getString("data"))
-                        val id = data.id
+        RetrofitManager.instance.createHouse(house,
+                { response: String ->
+                    run {
+                        val data = JSONObject(response)
+                        Log.d(TAG, "add response : " + data.getString("message"))
+                        val houseData = Json.decodeFromString<House>(data.getString("data"))
+
                         for (image in images) {
-                            HttpConnection.instance.sendImage(Request.Method.POST,
-                                    "houses/$id/images", image, null)
+                            createImage(houseData.id, image)
                         }
                     }
+                },
+                { error: Throwable ->
+                    run {
+                        Log.d(TAG, "add error : " + error.localizedMessage)
+                    }
                 })
-    }
-
-    fun modify(id: Int, data: JSONObject) {
-        HttpConnection.instance.send(Request.Method.PATCH, "houses/$id", data, null)
     }
 
     fun modify(house: House, images: List<Image>) {
-        val houseId = house.id
-        HttpConnection.instance.send(Request.Method.PATCH, "houses/$houseId", house,
-                object : HttpConnection.OnReceiveListener {
-                    override fun onReceive(receivedData: String) {
+        RetrofitManager.instance.updateHouse(house.id, house,
+                { response: String ->
+                    run {
+                        val data = JSONObject(response)
+                        Log.d(TAG, "modify response : " + data.getString("message"))
+
                         for (image in images) {
                             when (image.state) {
-                                Request.Method.DELETE -> HttpConnection.instance.send(image.state,
-                                        "images/${image.id}", null)
-
-                                Request.Method.PATCH -> HttpConnection.instance.send(image.state,
-                                        "images/${image.id}", image, null)
-
-                                Request.Method.POST -> HttpConnection.instance.sendImage(image.state,
-                                        "houses/$houseId/images", image, null)
-
+                                CREATE -> createImage(house.id, image)
+                                UPDATE -> updateImage(house.id, image)
+                                DELETE -> deleteImage(image.id)
                                 else -> {
                                 }
                             }
-
                         }
+                    }
+                },
+                { error: Throwable ->
+                    run {
+                        Log.d(TAG, "modify error : " + error.localizedMessage)
                     }
                 })
     }
 
-    fun deleteAll() {
-        val sharedPreferences = application.getSharedPreferences("repository", Activity.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.putString("last_updated_at", "0")
-        editor.apply()
-
-        GreDatabase.databaseWriteExecutor.execute { houseDao.deleteAll() }
+    fun modifyHouseState(id: Int, state: Byte) {
+        RetrofitManager.instance.updateHouse(id, state,
+                { response: String ->
+                    run {
+                        val data = JSONObject(response)
+                        Log.d(TAG, "modifyHouseState response : " + data.getString("message"))
+                    }
+                },
+                { error: Throwable ->
+                    run {
+                        Log.d(TAG, "modifyHouseState error : " + error.localizedMessage
+                                ?: "Unknown error!")
+                    }
+                })
     }
 
-    private fun insert(house: House) {
-        GreDatabase.databaseWriteExecutor.execute { houseDao.insert(house) }
+    private fun createImage(houseId: Int, image: Image) {
+        RetrofitManager.instance.createImage(houseId, image,
+                { response: String ->
+                    run {
+                        val data = JSONObject(response)
+                        Log.d(TAG, "createImage response : " + data.getString("message"))
+                    }
+                },
+                { error: Throwable ->
+                    run {
+                        Log.d(TAG, "createImage error : " + error.localizedMessage)
+                    }
+                })
     }
 
-    private fun update(house: House) {
-        GreDatabase.databaseWriteExecutor.execute { houseDao.update(house) }
+    private fun updateImage(houseId: Int, image: Image) {
+        RetrofitManager.instance.updateImage(houseId, image,
+                { response: String ->
+                    run {
+                        val data = JSONObject(response)
+                        Log.d(TAG, "updateImage response : " + data.getString("message"))
+                    }
+                },
+                { error: Throwable ->
+                    run {
+                        Log.d(TAG, "updateImage error : " + error.localizedMessage)
+                    }
+                })
     }
 
-    private fun updateOrInsert(house: House) {
-        GreDatabase.databaseWriteExecutor.execute {
-            val result = houseDao[house.id]
-            if (result == null) {
-                houseDao.insert(house)
-
-            } else {
-                houseDao.update(house)
-            }
-        }
+    private fun deleteImage(id: Int) {
+        RetrofitManager.instance.deleteImage(id,
+                { response: String ->
+                    run {
+                        val data = JSONObject(response)
+                        Log.d(TAG, "deleteImage response : " + data.getString("message"))
+                    }
+                },
+                { error: Throwable ->
+                    run {
+                        Log.d(TAG, "deleteImage error : " + error.localizedMessage)
+                    }
+                })
     }
 }

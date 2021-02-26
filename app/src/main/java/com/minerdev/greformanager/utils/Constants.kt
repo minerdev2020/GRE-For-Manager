@@ -11,12 +11,12 @@ object Constants {
     const val API_HOUSE = "/api/houses"
     const val API_IMAGE = "/api/images"
     lateinit var API_DAUM_ADDRESS: String
-    lateinit var API_NAVER_MAP: String
+    const val API_NAVER_MAP = "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode"
 
     lateinit var NAVER_CLIENT_ID: String
     lateinit var NAVER_CLIENT_SECRET: String
-    lateinit var NAVER_API_KEY_ID_HEADER: String
-    lateinit var NAVER_API_KEY_HEADER: String
+    const val NAVER_API_KEY_ID_HEADER = "X-NCP-APIGW-API-KEY-ID"
+    const val NAVER_API_KEY_HEADER = "X-NCP-APIGW-API-KEY"
 
     const val FINISH_INTERVAL_TIME = 2000
 
@@ -31,11 +31,15 @@ object Constants {
     const val HOUSE_DETAIL_ACTIVITY_REQUEST_CODE = 1
     const val HOUSE_MODIFY_ACTIVITY_REQUEST_CODE = 2
 
-    lateinit var PAYMENT_TYPE: ArrayList<ArrayList<String>>
-    lateinit var HOUSE_TYPE: ArrayList<String>
-    lateinit var STRUCTURE: ArrayList<String>
-    lateinit var DIRECTION: ArrayList<String>
-    lateinit var BATHROOM: ArrayList<String>
+    const val CREATE = 0;
+    const val UPDATE = 1;
+    const val DELETE = 2;
+
+    val PAYMENT_TYPE = ArrayList<ArrayList<String>>()
+    val HOUSE_TYPE = ArrayList<String>()
+    val STRUCTURE = ArrayList<String>()
+    val DIRECTION = ArrayList<String>()
+    val BATHROOM = ArrayList<String>()
 
     private var isInitialized = false
 
@@ -55,12 +59,9 @@ object Constants {
 
             BASE_URL = context.resources.getString(R.string.local_server_dns)
             API_DAUM_ADDRESS = "$BASE_URL/api/daum-address"
-            API_NAVER_MAP = context.getString(R.string.naver_open_api_geocode)
 
             NAVER_CLIENT_ID = context.getString(R.string.client_id)
             NAVER_CLIENT_SECRET = context.getString(R.string.client_secret)
-            NAVER_API_KEY_ID_HEADER = context.getString(R.string.api_key_id_header)
-            NAVER_API_KEY_HEADER = context.getString(R.string.api_key_header)
 
             isInitialized = true
         }

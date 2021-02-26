@@ -1,31 +1,28 @@
 package com.minerdev.greformanager.viewmodel
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.minerdev.greformanager.Repository
 import com.minerdev.greformanager.model.House
 
-class MainViewModel(application: Application) : AndroidViewModel(application) {
-    val allSale: LiveData<MutableList<House>>
-    val allSold: LiveData<MutableList<House>>
+class MainViewModel : ViewModel() {
+    val allSale: MutableLiveData<List<House>>
+    val allSold: MutableLiveData<List<House>>
+    val house: MutableLiveData<House>
 
-    private val repository: Repository = Repository(application)
+    private val repository: Repository = Repository()
 
     init {
         allSale = repository.allSale
         allSold = repository.allSold
+        house = repository.house
     }
 
-    operator fun get(id: Int): House? {
-        return repository[id]
+    fun loadHouse(id: Int) {
+        repository.loadHouse(id)
     }
 
     fun loadHouses() {
         repository.loadHouses()
-    }
-
-    fun deleteAll() {
-        repository.deleteAll()
     }
 }

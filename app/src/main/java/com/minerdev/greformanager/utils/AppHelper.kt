@@ -9,6 +9,18 @@ import java.io.FileInputStream
 import java.util.*
 
 object AppHelper {
+    fun getPathFromUri(context: Context, uri: String): String {
+        val cursor = context.contentResolver.query(Uri.parse(uri), null, null, null, null)
+        cursor?.let {
+            it.moveToNext()
+            val path = it.getString(it.getColumnIndex("_data"))
+            it.close()
+            return path
+        }
+
+        return ""
+    }
+
     fun getPathFromUri(context: Context, uri: Uri): String {
         val cursor = context.contentResolver.query(uri, null, null, null, null)
         cursor?.let {

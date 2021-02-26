@@ -1,6 +1,3 @@
 <resources>
     <string name="app_name">관리자용</string>
-    <string name="naver_open_api_geocode">https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode</string>
-    <string name="api_key_id_header">X-NCP-APIGW-API-KEY-ID</string>
-    <string name="api_key_header">"X-NCP-APIGW-API-KEY"</string>
 </resources>

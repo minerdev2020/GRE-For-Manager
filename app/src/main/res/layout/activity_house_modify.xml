@@ -4,9 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".activity.HouseModifyActivity">
+    tools:context=".view.activity.HouseModifyActivity">
 
-    <com.minerdev.greformanager.customview.NonSwipeViewPager
+    <com.minerdev.greformanager.custom.view.NonSwipeViewPager
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
