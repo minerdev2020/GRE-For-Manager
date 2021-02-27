@@ -173,6 +173,12 @@ class HouseModifyActivity : AppCompatActivity() {
                 progressDialog.setMessage("전송중...")
                 progressDialog.setCancelable(false)
 
+                for (image in sharedViewModel.images) {
+                    if (!image.localUri.isNullOrEmpty()) {
+                        image.localUri = getPathFromUri(this, image.localUri!!)
+                    }
+                }
+
                 if (mode == "add") {
                     viewModel.add(sharedViewModel.house, sharedViewModel.images) {
                         progressDialog.dismiss()
@@ -181,12 +187,6 @@ class HouseModifyActivity : AppCompatActivity() {
 
                 } else if (mode == "modify") {
                     sharedViewModel.images.addAll(sharedViewModel.deletedImages)
-                    for (image in sharedViewModel.images) {
-                        if (!image.localUri.isNullOrEmpty()) {
-                            image.localUri = getPathFromUri(this, image.localUri!!)
-                        }
-                    }
-
                     viewModel.modify(sharedViewModel.house, sharedViewModel.images) {
                         progressDialog.dismiss()
                         super@HouseModifyActivity.finish()
