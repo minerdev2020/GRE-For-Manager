@@ -1,5 +1,6 @@
 package com.minerdev.greformanager.view.activity
 
+import android.app.ProgressDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
@@ -168,8 +169,15 @@ class HouseModifyActivity : AppCompatActivity() {
             builder.setMessage("저장하시겠습니까?")
             builder.setIcon(R.drawable.ic_round_help_24)
             builder.setPositiveButton("확인") { _: DialogInterface, _: Int ->
+                val progressDialog = ProgressDialog(this)
+                progressDialog.setMessage("전송중...")
+                progressDialog.setCancelable(false)
+
                 if (mode == "add") {
-                    viewModel.add(sharedViewModel.house, sharedViewModel.images)
+                    viewModel.add(sharedViewModel.house, sharedViewModel.images) {
+                        progressDialog.dismiss()
+                        super@HouseModifyActivity.finish()
+                    }
 
                 } else if (mode == "modify") {
                     sharedViewModel.images.addAll(sharedViewModel.deletedImages)
@@ -179,10 +187,13 @@ class HouseModifyActivity : AppCompatActivity() {
                         }
                     }
 
-                    viewModel.modify(sharedViewModel.house, sharedViewModel.images)
+                    viewModel.modify(sharedViewModel.house, sharedViewModel.images) {
+                        progressDialog.dismiss()
+                        super@HouseModifyActivity.finish()
+                    }
                 }
 
-                super@HouseModifyActivity.finish()
+                progressDialog.show()
             }
             builder.setNegativeButton("취소") { dialog: DialogInterface, _: Int -> dialog.dismiss() }
             val alertDialog = builder.create()

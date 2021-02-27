@@ -186,7 +186,8 @@ class RetrofitManager {
     fun createImage(houseId: Int, image: Image, onResponse: (response: String) -> Unit, onFailure: (error: Throwable) -> Unit) {
         val file = File(image.localUri!!)
         val requestFile = file.asRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val body = MultipartBody.Part.createFormData("image", file.name, requestFile)
+        val fileName = System.currentTimeMillis().toString() + "." + file.extension
+        val body = MultipartBody.Part.createFormData("image", fileName, requestFile)
 
         val call = iRetrofit?.createImage(houseId, image.position, image.thumbnail, body) ?: return
         call.enqueue(object : Callback<JsonObject> {

@@ -6,8 +6,8 @@
     <data>
 
         <variable
-            name="activity"
-            type="com.minerdev.greformanager.view.activity.HouseDetailActivity" />
+            name="viewModel"
+            type="com.minerdev.greformanager.viewmodel.HouseDetailViewModel" />
     </data>
 
     <LinearLayout
@@ -73,7 +73,7 @@
                                 style="@style/TextAppearance.AppCompat.Title"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@{activity.houseWrapper.paymentType}"
+                                android:text="@{viewModel.houseWrapper.paymentType}"
                                 android:textColor="#FFFF0000" />
 
                             <Space
@@ -84,7 +84,7 @@
                                 style="@style/TextAppearance.AppCompat.Headline"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@{activity.houseWrapper.price}" />
+                                android:text="@{viewModel.houseWrapper.price}" />
                         </LinearLayout>
 
                         <LinearLayout
@@ -97,7 +97,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="매물 번호"
-                                android:textSize="10sp" />
+                                android:textSize="12sp" />
 
                             <Space
                                 android:layout_width="10dp"
@@ -107,15 +107,15 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
-                                android:text="@{activity.houseWrapper.number}"
-                                android:textSize="10sp" />
+                                android:text="@{viewModel.houseWrapper.number}"
+                                android:textSize="12sp" />
                         </LinearLayout>
 
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:text="@{activity.houseWrapper.address}" />
+                            android:text="@{viewModel.houseWrapper.address}" />
                     </LinearLayout>
 
                     <View style="@style/Divider" />
@@ -132,7 +132,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:text="@{activity.houseWrapper.briefInfo}" />
+                            android:text="@{viewModel.houseWrapper.briefInfo}" />
                     </LinearLayout>
 
                     <View style="@style/Divider" />
@@ -143,7 +143,7 @@
                         android:orientation="vertical"
                         android:paddingHorizontal="5dp"
                         android:paddingVertical="10dp"
-                        android:visibility='@{activity.Companion.convertBooleanToVisibility(!activity.houseWrapper.manageFee.equals("0"))}'>
+                        android:visibility='@{viewModel.Companion.convertBooleanToVisibility(!viewModel.houseWrapper.manageFee.equals("0"))}'>
 
                         <TextView
                             style="@style/TextAppearance.AppCompat.Menu"
@@ -161,7 +161,7 @@
                                 style="@style/TextAppearance.AppCompat.Menu"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text='@{"관리비 : " + activity.houseWrapper.manageFee + "만원"}' />
+                                android:text='@{"관리비 : " + viewModel.houseWrapper.manageFee + "만원"}' />
 
                             <LinearLayout
                                 android:layout_width="wrap_content"
@@ -178,7 +178,7 @@
 
                     <View
                         style="@style/Divider"
-                        android:visibility='@{activity.Companion.convertBooleanToVisibility(!activity.houseWrapper.manageFee.equals("0"))}' />
+                        android:visibility='@{viewModel.Companion.convertBooleanToVisibility(!viewModel.houseWrapper.manageFee.equals("0"))}' />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -217,7 +217,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:gravity="center"
-                                    android:text="@{activity.houseWrapper.areaMeter}" />
+                                    android:text="@{viewModel.houseWrapper.areaMeter}" />
                             </TableRow>
 
                             <View style="@style/Divider" />
@@ -238,7 +238,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:gravity="center"
-                                    android:text="@{activity.houseWrapper.rentAreaMeter}" />
+                                    android:text="@{viewModel.houseWrapper.rentAreaMeter}" />
                             </TableRow>
 
                             <View style="@style/Divider" />
@@ -259,7 +259,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:gravity="center"
-                                    android:text="@{activity.houseWrapper.buildingFloor}" />
+                                    android:text="@{viewModel.houseWrapper.buildingFloor}" />
 
                             </TableRow>
 
@@ -281,7 +281,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:gravity="center"
-                                    android:text="@{activity.houseWrapper.floor}" />
+                                    android:text="@{viewModel.houseWrapper.floor}" />
                             </TableRow>
 
                             <View style="@style/Divider" />
@@ -289,7 +289,7 @@
                             <TableRow
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:visibility='@{activity.Companion.convertBooleanToVisibility(activity.houseWrapper.houseType.equals("주택") || activity.houseWrapper.houseType.equals("오피스텔"))}'>
+                                android:visibility='@{viewModel.Companion.convertBooleanToVisibility(viewModel.houseWrapper.houseType.equals("주택") || viewModel.houseWrapper.houseType.equals("오피스텔"))}'>
 
                                 <TextView
                                     style="@style/TextAppearance.AppCompat.Body1"
@@ -303,12 +303,12 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:gravity="center"
-                                    android:text="@{activity.houseWrapper.structure}" />
+                                    android:text="@{viewModel.houseWrapper.structure}" />
                             </TableRow>
 
                             <View
                                 style="@style/Divider"
-                                android:visibility='@{activity.Companion.convertBooleanToVisibility(activity.houseWrapper.houseType.equals("주택") || activity.houseWrapper.houseType.equals("오피스텔"))}' />
+                                android:visibility='@{viewModel.Companion.convertBooleanToVisibility(viewModel.houseWrapper.houseType.equals("주택") || viewModel.houseWrapper.houseType.equals("오피스텔"))}' />
 
                             <TableRow
                                 android:layout_width="match_parent"
@@ -326,7 +326,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:gravity="center"
-                                    android:text="@{activity.houseWrapper.bathroom}" />
+                                    android:text="@{viewModel.houseWrapper.bathroom}" />
                             </TableRow>
 
                             <View style="@style/Divider" />
@@ -334,7 +334,7 @@
                             <TableRow
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:visibility='@{activity.Companion.convertBooleanToVisibility(activity.houseWrapper.houseType.equals("사무실") || activity.houseWrapper.houseType.equals("상가, 점포"))}'>
+                                android:visibility='@{viewModel.Companion.convertBooleanToVisibility(viewModel.houseWrapper.houseType.equals("사무실") || viewModel.houseWrapper.houseType.equals("상가, 점포"))}'>
 
                                 <TextView
                                     style="@style/TextAppearance.AppCompat.Body1"
@@ -348,12 +348,12 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:gravity="center"
-                                    android:text="@{activity.houseWrapper.bathroomLocation}" />
+                                    android:text="@{viewModel.houseWrapper.bathroomLocation}" />
                             </TableRow>
 
                             <View
                                 style="@style/Divider"
-                                android:visibility='@{activity.Companion.convertBooleanToVisibility(activity.houseWrapper.houseType.equals("사무실") || activity.houseWrapper.houseType.equals("상가, 점포"))}' />
+                                android:visibility='@{viewModel.Companion.convertBooleanToVisibility(viewModel.houseWrapper.houseType.equals("사무실") || viewModel.houseWrapper.houseType.equals("상가, 점포"))}' />
 
                             <TableRow
                                 android:layout_width="match_parent"
@@ -371,7 +371,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:gravity="center"
-                                    android:text="@{activity.houseWrapper.direction}" />
+                                    android:text="@{viewModel.houseWrapper.direction}" />
                             </TableRow>
 
                             <View style="@style/Divider" />
@@ -393,7 +393,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:gravity="center"
-                                    android:text="@{activity.houseWrapper.builtDate}" />
+                                    android:text="@{viewModel.houseWrapper.builtDate}" />
                             </TableRow>
 
                             <View style="@style/Divider" />
@@ -414,7 +414,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:gravity="center"
-                                    android:text="@{activity.houseWrapper.moveDate}" />
+                                    android:text="@{viewModel.houseWrapper.moveDate}" />
                             </TableRow>
 
                             <View style="@style/Divider" />
@@ -466,7 +466,7 @@
                             android:layout_height="wrap_content"
                             android:text="매물 위치" />
 
-                        <fragment
+                        <androidx.fragment.app.FragmentContainerView
                             android:id="@+id/map"
                             android:name="com.naver.maps.map.MapFragment"
                             android:layout_width="match_parent"
@@ -493,9 +493,9 @@
                             style="@style/TextAppearance.AppCompat.Body1"
                             android:layout_width="match_parent"
                             android:layout_height="200dp"
-                            android:gravity="left|top"
+                            android:gravity="start|top"
                             android:padding="10dp"
-                            android:text="@{activity.houseWrapper.detailInfo}" />
+                            android:text="@{viewModel.houseWrapper.detailInfo}" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
@@ -506,7 +506,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="#FFEEEEEE"
-            android:checked="@={activity.houseWrapper.state}"
+            android:checked="@={viewModel.houseWrapper.state}"
             android:elevation="10dp"
             android:paddingHorizontal="20dp"
             android:text="판매 완료"

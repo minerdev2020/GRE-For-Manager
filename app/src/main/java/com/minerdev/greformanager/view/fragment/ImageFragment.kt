@@ -130,6 +130,11 @@ class ImageFragment : Fragment(), OnSaveDataListener {
     }
 
     override fun saveData() {
+        for ((index, image) in viewModel.images.withIndex()) {
+            image.position = index.toByte()
+            image.thumbnail = if (image.position == imageListAdapter.thumbnail.toByte()) 1 else 0
+        }
+
         viewModel.thumbnail = imageListAdapter.thumbnail
     }
 

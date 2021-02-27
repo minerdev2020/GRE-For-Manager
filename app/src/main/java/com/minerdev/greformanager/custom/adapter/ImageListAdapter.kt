@@ -1,6 +1,7 @@
 package com.minerdev.greformanager.custom.adapter
 
 import android.net.Uri
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.minerdev.greformanager.R
 import com.minerdev.greformanager.model.Image
+import com.minerdev.greformanager.utils.Constants
 import com.minerdev.greformanager.utils.Constants.BASE_URL
 import com.minerdev.greformanager.utils.Constants.CREATE
 import com.minerdev.greformanager.utils.Constants.DELETE
@@ -127,6 +129,8 @@ class ImageListAdapter : RecyclerView.Adapter<ImageListAdapter.ViewHolder>() {
         fun onUpButtonClick(viewHolder: ViewHolder?, view: View?, position: Int) {
             if (position > 0) {
                 Collections.swap(images, position - 1, position)
+                Log.d(Constants.TAG, "onUpButtonClick : $images")
+
                 notifyItemRangeChanged(position - 1, 2)
 
                 if (thumbnail == position) {
@@ -141,6 +145,8 @@ class ImageListAdapter : RecyclerView.Adapter<ImageListAdapter.ViewHolder>() {
         fun onDownButtonClick(viewHolder: ViewHolder?, view: View?, position: Int) {
             if (position < images.size - 1) {
                 Collections.swap(images, position, position + 1)
+                Log.d(Constants.TAG, "onDownButtonClick : $images")
+
                 notifyItemRangeChanged(position, 2)
 
                 if (thumbnail == position) {

@@ -1,11 +1,9 @@
 package com.minerdev.greformanager.view.activity
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -19,7 +17,6 @@ import com.minerdev.greformanager.http.geocode.GeocodeResult
 import com.minerdev.greformanager.model.House
 import com.minerdev.greformanager.model.Image
 import com.minerdev.greformanager.model.wrapper.HouseWrapper
-import com.minerdev.greformanager.utils.Constants.HOUSE_MODIFY_ACTIVITY_REQUEST_CODE
 import com.minerdev.greformanager.viewmodel.HouseDetailViewModel
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraUpdate
@@ -31,8 +28,6 @@ class HouseDetailActivity : AppCompatActivity() {
     private val adapter = ImageSliderAdapter()
     private val viewModel: HouseDetailViewModel by viewModels()
 
-    // 데이터 바인딩을 위해 공개함
-    var houseWrapper = HouseWrapper()
     private lateinit var binding: ActivityHouseDetailBinding
     private var originalState: Byte = 0
     private var houseId = 0
@@ -40,7 +35,8 @@ class HouseDetailActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_house_detail)
-        binding.activity = this
+        binding.viewModel = viewModel
+        binding.lifecycleOwner = this
 
         val intent = intent
         houseId = intent.getIntExtra("house_id", 0)
@@ -50,8 +46,8 @@ class HouseDetailActivity : AppCompatActivity() {
 
         viewModel.house.observe(this, { house ->
             originalState = house.state
-            houseWrapper = HouseWrapper(house)
-            initialize()
+            viewModel.houseWrapper.value = HouseWrapper(house)
+            refreshUI(house)
         })
 
         viewModel.images.observe(this, { images: List<Image> ->
@@ -75,8 +71,8 @@ class HouseDetailActivity : AppCompatActivity() {
             R.id.house_detail_menu_modify -> {
                 val intent = Intent(this, HouseModifyActivity::class.java)
                 intent.putExtra("mode", "modify")
-                intent.putExtra("house_value", houseWrapper.data)
-                startActivityForResult(intent, HOUSE_MODIFY_ACTIVITY_REQUEST_CODE)
+                intent.putExtra("house_value", viewModel.house.value)
+                startActivity(intent)
             }
 
             else -> {
@@ -87,69 +83,42 @@ class HouseDetailActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        binding.viewPager2.currentItem = 0
         viewModel.loadHouse(houseId)
         viewModel.loadImages(houseId)
     }
 
     override fun finish() {
-        if (originalState != houseWrapper.data.state) {
-            viewModel.modifyHouseState(houseWrapper.data.id, houseWrapper.data.state)
+        viewModel.house.value?.let {
+            if (originalState != it.state) {
+                viewModel.modifyHouseState(it.id, it.state)
+            }
         }
 
         super.finish()
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == HOUSE_MODIFY_ACTIVITY_REQUEST_CODE) {
-            if (resultCode == Activity.RESULT_OK) {
-                data?.let {
-                    val house: House? = data.getParcelableExtra("house_value")
-                    val houseWrapper = HouseWrapper(house!!)
-                    this.houseWrapper = houseWrapper
-                    refreshUI()
-                }
-            }
-        }
-    }
+    private fun refreshUI(house: House) {
+        setMapFragment(house)
 
-    private fun initialize() {
-        setMapFragment()
-
-        val toggleButtonGroupManageFee = ToggleButtonGroup(this, "ManageFee")
-        toggleButtonGroupManageFee.addToggleButtonsFromText(houseWrapper.manageFeeContains)
-        for (toggleButton in toggleButtonGroupManageFee.toggleButtons) {
-            binding.flowLayoutManageFee.addView(toggleButton)
-        }
-
-        val toggleButtonGroupOptions = ToggleButtonGroup(this, "Options")
-        toggleButtonGroupOptions.addToggleButtonsFromText(houseWrapper.options)
-        for (toggleButton in toggleButtonGroupOptions.toggleButtons) {
-            binding.flowLayoutOptions.addView(toggleButton)
-        }
-    }
-
-    private fun refreshUI() {
         binding.invalidateAll()
         binding.flowLayoutManageFee.removeAllViews()
         binding.flowLayoutOptions.removeAllViews()
 
         val toggleButtonGroupManageFee = ToggleButtonGroup(this, "ManageFee")
-        toggleButtonGroupManageFee.addToggleButtons(houseWrapper.manageFeeContains.split('|'))
+        toggleButtonGroupManageFee.addToggleButtonsFromText(house.manage_fee_contains)
         for (toggleButton in toggleButtonGroupManageFee.toggleButtons) {
             binding.flowLayoutManageFee.addView(toggleButton)
         }
 
         val toggleButtonGroupOptions = ToggleButtonGroup(this, "Options")
-        toggleButtonGroupOptions.addToggleButtons(houseWrapper.options.split('|'))
+        toggleButtonGroupOptions.addToggleButtonsFromText(house.options)
         for (toggleButton in toggleButtonGroupOptions.toggleButtons) {
             binding.flowLayoutOptions.addView(toggleButton)
         }
-
-        setMapFragment()
     }
 
-    private fun setMapFragment() {
+    private fun setMapFragment(house: House) {
         var mapFragment = supportFragmentManager.findFragmentById(R.id.map) as MapFragment?
 
         if (mapFragment == null) {
@@ -164,7 +133,7 @@ class HouseDetailActivity : AppCompatActivity() {
             uiSettings.isZoomControlEnabled = false
             uiSettings.setAllGesturesEnabled(false)
 
-            Geocode.getQueryResponseFromNaver(houseWrapper.address.substring(8), object : OnDataReceiveListener {
+            Geocode.getQueryResponseFromNaver(house.address.substring(8), object : OnDataReceiveListener {
                 override fun parseData(result: GeocodeResult?) {
                     val addresses = result?.addresses ?: return
                     val latLng = LatLng(addresses[0].y.toDouble(), addresses[0].x.toDouble())
@@ -174,12 +143,6 @@ class HouseDetailActivity : AppCompatActivity() {
                     marker.map = naverMap
                 }
             })
-        }
-    }
-
-    companion object {
-        fun convertBooleanToVisibility(visible: Boolean): Int {
-            return if (visible) View.VISIBLE else View.GONE
         }
     }
 }

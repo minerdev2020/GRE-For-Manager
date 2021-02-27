@@ -18,11 +18,11 @@ class HouseModifyViewModel : ViewModel() {
         repository.loadImages(houseId)
     }
 
-    fun add(house: House, images: List<Image>) {
-        repository.add(house, images)
+    fun add(house: House, images: List<Image>, onResponse: () -> Unit) {
+        repository.add(house, images, onResponse)
     }
 
-    fun modify(house: House, images: List<Image>) {
-        repository.modify(house, images)
+    fun modify(house: House, images: List<Image>, onResponse: () -> Unit) {
+        repository.modify(house, images, onResponse)
     }
 }

@@ -20,12 +20,17 @@ class Repository {
 
     val allImages = MutableLiveData<List<Image>>()
 
+    private var size = 0
+    private var count = 0
+
     fun loadHouse(id: Int) {
         RetrofitManager.instance.getHouse(id,
                 { response: String ->
                     run {
                         val data = JSONObject(response)
-                        Log.d(TAG, "loadHouse sale response : " + data.getString("message"))
+                        Log.d(TAG, "loadHouse response : " + data.getString("message"))
+                        Log.d(TAG, "loadHouse response : " + data.getString("data"))
+
                         val format = Json { encodeDefaults = true }
                         house.postValue(format.decodeFromString<House>(data.getString("data")))
                     }
@@ -43,6 +48,8 @@ class Repository {
                     run {
                         val data = JSONObject(response)
                         Log.d(TAG, "loadHouses sale response : " + data.getString("message"))
+                        Log.d(TAG, "loadHouses sale response : " + data.getString("data"))
+
                         val format = Json { encodeDefaults = true }
                         val houses = format.decodeFromString<List<House>>(data.getString("data"))
                         allSale.postValue(houses)
@@ -59,6 +66,8 @@ class Repository {
                     run {
                         val data = JSONObject(response)
                         Log.d(TAG, "loadHouses sold response : " + data.getString("message"))
+                        Log.d(TAG, "loadHouses sold response : " + data.getString("data"))
+
                         val format = Json { encodeDefaults = true }
                         val houses = format.decodeFromString<List<House>>(data.getString("data"))
                         allSold.postValue(houses)
@@ -77,6 +86,8 @@ class Repository {
                     run {
                         val data = JSONObject(response)
                         Log.d(TAG, "loadImages response : " + data.getString("message"))
+                        Log.d(TAG, "loadImages response : " + data.getString("data"))
+
                         val format = Json { encodeDefaults = true }
                         val images = format.decodeFromString<List<Image>>(data.getString("data"))
                         allImages.postValue(images)
@@ -89,16 +100,20 @@ class Repository {
                 })
     }
 
-    fun add(house: House, images: List<Image>) {
+    fun add(house: House, images: List<Image>, onResponse: () -> Unit) {
+        size = images.size
+        count = 0
         RetrofitManager.instance.createHouse(house,
                 { response: String ->
                     run {
                         val data = JSONObject(response)
                         Log.d(TAG, "add response : " + data.getString("message"))
+                        Log.d(TAG, "add response : " + data.getString("data"))
+
                         val houseData = Json.decodeFromString<House>(data.getString("data"))
 
                         for (image in images) {
-                            createImage(houseData.id, image)
+                            createImage(houseData.id, image, onResponse)
                         }
                     }
                 },
@@ -109,7 +124,9 @@ class Repository {
                 })
     }
 
-    fun modify(house: House, images: List<Image>) {
+    fun modify(house: House, images: List<Image>, onResponse: () -> Unit) {
+        size = images.size
+        count = 0
         RetrofitManager.instance.updateHouse(house.id, house,
                 { response: String ->
                     run {
@@ -118,9 +135,9 @@ class Repository {
 
                         for (image in images) {
                             when (image.state) {
-                                CREATE -> createImage(house.id, image)
-                                UPDATE -> updateImage(house.id, image)
-                                DELETE -> deleteImage(image.id)
+                                CREATE -> createImage(house.id, image, onResponse)
+                                UPDATE -> updateImage(image.id, image, onResponse)
+                                DELETE -> deleteImage(image.id, onResponse)
                                 else -> {
                                 }
                             }
@@ -144,53 +161,78 @@ class Repository {
                 },
                 { error: Throwable ->
                     run {
-                        Log.d(TAG, "modifyHouseState error : " + error.localizedMessage
-                                ?: "Unknown error!")
+                        Log.d(TAG, "modifyHouseState error : " + error.localizedMessage)
                     }
                 })
     }
 
-    private fun createImage(houseId: Int, image: Image) {
+    private fun createImage(houseId: Int, image: Image, onResponse: () -> Unit) {
         RetrofitManager.instance.createImage(houseId, image,
                 { response: String ->
                     run {
                         val data = JSONObject(response)
                         Log.d(TAG, "createImage response : " + data.getString("message"))
+                        Log.d(TAG, "createImage response : " + data.getString("data"))
+                        count++
+                        if (count == size) {
+                            onResponse()
+                        }
                     }
                 },
                 { error: Throwable ->
                     run {
                         Log.d(TAG, "createImage error : " + error.localizedMessage)
+                        count++
+                        if (count == size) {
+                            onResponse()
+                        }
                     }
                 })
     }
 
-    private fun updateImage(houseId: Int, image: Image) {
-        RetrofitManager.instance.updateImage(houseId, image,
+    private fun updateImage(id: Int, image: Image, onResponse: () -> Unit) {
+        RetrofitManager.instance.updateImage(id, image,
                 { response: String ->
                     run {
                         val data = JSONObject(response)
                         Log.d(TAG, "updateImage response : " + data.getString("message"))
+                        count++
+                        if (count == size) {
+                            onResponse()
+                        }
                     }
                 },
                 { error: Throwable ->
                     run {
                         Log.d(TAG, "updateImage error : " + error.localizedMessage)
+                        count++
+                        if (count == size) {
+                            onResponse()
+                        }
                     }
                 })
     }
 
-    private fun deleteImage(id: Int) {
+    private fun deleteImage(id: Int, onResponse: () -> Unit) {
         RetrofitManager.instance.deleteImage(id,
                 { response: String ->
                     run {
                         val data = JSONObject(response)
                         Log.d(TAG, "deleteImage response : " + data.getString("message"))
+                        count++
+
+                        if (count == size) {
+                            onResponse()
+                        }
                     }
                 },
                 { error: Throwable ->
                     run {
                         Log.d(TAG, "deleteImage error : " + error.localizedMessage)
+                        count++
+                        if (count == size) {
+                            onResponse()
+                        }
                     }
                 })
     }
