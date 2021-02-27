@@ -57,7 +57,7 @@ object Constants {
             DIRECTION.addAll(context.resources.getStringArray(R.array.direction))
             BATHROOM.addAll(context.resources.getStringArray(R.array.bathroom))
 
-            BASE_URL = context.resources.getString(R.string.local_server_dns)
+            BASE_URL = context.resources.getString(R.string.web_server_dns)
             API_DAUM_ADDRESS = "$BASE_URL/api/daum-address"
 
             NAVER_CLIENT_ID = context.getString(R.string.client_id)
