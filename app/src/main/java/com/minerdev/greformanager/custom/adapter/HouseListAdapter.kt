@@ -4,72 +4,64 @@ import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.minerdev.greformanager.R
+import com.minerdev.greformanager.databinding.ItemHouseBinding
 import com.minerdev.greformanager.model.House
 import com.minerdev.greformanager.model.wrapper.HouseWrapper
 import com.minerdev.greformanager.utils.AppHelper.getDiffTimeMsg
 import com.minerdev.greformanager.utils.Constants.BASE_URL
 
-class HouseListAdapter(diffCallback: DiffCallback) : ListAdapter<House, HouseListAdapter.ViewHolder>(diffCallback) {
-    private var listener: OnItemClickListener? = null
+class HouseListAdapter(diffCallback: DiffCallback) :
+    ListAdapter<House, HouseListAdapter.ViewHolder>(diffCallback) {
+    lateinit var clickListener: OnItemClickListener
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val inflater = LayoutInflater.from(parent.context)
-        val itemView = inflater.inflate(R.layout.item_house, parent, false)
-        return ViewHolder(itemView, listener)
+        val binding = ItemHouseBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
+        return ViewHolder(binding, clickListener)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = getItem(position)
-        holder.bind(item!!)
+        holder.bind(item)
     }
 
-    operator fun get(position: Int): House? {
+    operator fun get(position: Int): House {
         return getItem(position)
-    }
-
-    fun setOnItemClickListener(clickListener: OnItemClickListener) {
-        listener = clickListener
     }
 
     interface OnItemClickListener {
         fun onItemClick(viewHolder: ViewHolder, view: View, position: Int)
     }
 
-    class ViewHolder(itemView: View, clickListener: OnItemClickListener?) : RecyclerView.ViewHolder(itemView) {
-        private val tvPaymentType: TextView = itemView.findViewById(R.id.tv_payment_type)
-        private val tvPrice: TextView = itemView.findViewById(R.id.tv_price)
-        private val tvHouseInfo: TextView = itemView.findViewById(R.id.tv_house_info)
-        private val tvDescription: TextView = itemView.findViewById(R.id.tv_description)
-        private val tvUploadTime: TextView = itemView.findViewById(R.id.tv_upload_time)
-        private val ivProfile: ImageView = itemView.findViewById(R.id.iv_profile)
+    class ViewHolder(private val binding: ItemHouseBinding, listener: OnItemClickListener) :
+        RecyclerView.ViewHolder(binding.root) {
+        init {
+            binding.houseItemLayout.setOnClickListener {
+                listener.onItemClick(this@ViewHolder, binding.root, bindingAdapterPosition)
+            }
+        }
 
         fun bind(house: House) {
             val houseWrapper = HouseWrapper(house)
 
-            tvPaymentType.text = houseWrapper.paymentType
-            tvPrice.text = houseWrapper.price
-            tvHouseInfo.text = houseWrapper.houseInfo
-            tvDescription.text = houseWrapper.detailInfo
-            tvUploadTime.text = getDiffTimeMsg(house.createdAt)
+            binding.tvPaymentType.text = houseWrapper.paymentType
+            binding.tvPrice.text = houseWrapper.price
+            binding.tvHouseInfo.text = houseWrapper.houseInfo
+            binding.tvDescription.text = houseWrapper.detailInfo
+            binding.tvUploadTime.text = getDiffTimeMsg(house.createdAt)
 
             val uri = Uri.parse(BASE_URL + "/" + house.thumbnail)
-            Glide.with(itemView).load(uri).into(ivProfile)
+            Glide.with(binding.root).load(uri).into(binding.ivProfile)
         }
 
-        init {
-            val linearLayout = itemView.findViewById<LinearLayout>(R.id.houseItem_layout)
-            linearLayout.setOnClickListener {
-                clickListener?.onItemClick(this@ViewHolder, itemView, bindingAdapterPosition)
-            }
-        }
+
     }
 
     class DiffCallback : DiffUtil.ItemCallback<House>() {

@@ -14,6 +14,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -38,18 +40,34 @@ class ImageFragment : Fragment(), OnSaveDataListener {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View {
+    private lateinit var getAlbum: ActivityResultLauncher<Intent>
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         val manager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         binding.recyclerView.layoutManager = manager
         binding.recyclerView.adapter = imageListAdapter
-        binding.recyclerView.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
+        binding.recyclerView.addItemDecoration(
+            DividerItemDecoration(
+                context,
+                DividerItemDecoration.VERTICAL
+            )
+        )
 
         binding.imageBtnAdd.setOnClickListener {
-            val permissionChecked = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+            val permissionChecked = ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            )
 
             if (permissionChecked != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 101)
+                ActivityCompat.requestPermissions(
+                    requireActivity(),
+                    arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                    101
+                )
 
             } else {
                 if (imageListAdapter.itemCount < 9) {
@@ -62,6 +80,32 @@ class ImageFragment : Fragment(), OnSaveDataListener {
             }
         }
 
+        getAlbum = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val selectedImageUri = result.data?.data
+                selectedImageUri?.let { uri ->
+                    val path: String = getPathFromUri(requireContext(), uri)
+                    val file = File(path)
+
+                    if (!file.exists() || !file.canRead()) {
+                        Toast.makeText(context, "사진이 존재 하지않거나 읽을 수 없습니다!", Toast.LENGTH_SHORT)
+                            .show()
+
+                    } else if (file.length() > FILE_MAX_SIZE) {
+                        Toast.makeText(context, "사진의 크기는 10MB 보다 작아야 합니다!", Toast.LENGTH_SHORT)
+                            .show()
+
+                    } else {
+                        imageListAdapter.addItem(uri)
+                        imageListAdapter.notifyItemInserted(imageListAdapter.itemCount - 1)
+                    }
+                }
+
+            }
+        }
+
         return binding.root
     }
 
@@ -70,30 +114,11 @@ class ImageFragment : Fragment(), OnSaveDataListener {
         initData()
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == GALLERY_REQUEST_CODE) {
-            if (resultCode == Activity.RESULT_OK) {
-                val selectedImageUri = data?.data ?: return
-                val path: String = getPathFromUri(requireContext(), selectedImageUri)
-                val file = File(path)
-
-                if (!file.exists() || !file.canRead()) {
-                    Toast.makeText(context, "사진이 존재 하지않거나 읽을 수 없습니다!", Toast.LENGTH_SHORT).show()
-
-                } else if (file.length() > FILE_MAX_SIZE) {
-                    Toast.makeText(context, "사진의 크기는 10MB 보다 작아야 합니다!", Toast.LENGTH_SHORT).show()
-
-                } else {
-                    imageListAdapter.addItem(selectedImageUri)
-                    imageListAdapter.notifyItemInserted(imageListAdapter.itemCount - 1)
-                }
-            }
-        }
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
         when (requestCode) {
             101 ->
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -105,7 +130,8 @@ class ImageFragment : Fragment(), OnSaveDataListener {
                     alertDialog.setTitle("앱 권한")
                     alertDialog.setMessage("해당 앱의 원활한 기능을 이용하시려면 애플리케이션 정보>권한에서 '저장공간' 권한을 허용해 주십시오.")
                     alertDialog.setPositiveButton("권한설정") { dialog: DialogInterface, _: Int ->
-                        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).setData(Uri.parse("package:" + requireContext().packageName))
+                        val intent =
+                            Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).setData(Uri.parse("package:" + requireContext().packageName))
                         startActivity(intent)
                         dialog.cancel()
                     }
@@ -142,10 +168,6 @@ class ImageFragment : Fragment(), OnSaveDataListener {
         val intent = Intent()
         intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
         intent.action = Intent.ACTION_PICK
-        startActivityForResult(intent, GALLERY_REQUEST_CODE)
-    }
-
-    companion object {
-        private const val GALLERY_REQUEST_CODE = 1
+        getAlbum.launch(intent)
     }
 }

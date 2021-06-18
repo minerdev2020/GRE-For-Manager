@@ -8,7 +8,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.minerdev.greformanager.R
-import com.minerdev.greformanager.custom.ToggleButtonGroup
+import com.minerdev.greformanager.custom.view.ToggleButtonGroup
 import com.minerdev.greformanager.custom.adapter.ImageSliderAdapter
 import com.minerdev.greformanager.databinding.ActivityHouseDetailBinding
 import com.minerdev.greformanager.http.geocode.Geocode
@@ -55,7 +55,7 @@ class HouseDetailActivity : AppCompatActivity() {
             adapter.notifyDataSetChanged()
         })
 
-        binding.viewPager2.adapter = adapter
+        binding.viewPager.adapter = adapter
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -83,7 +83,7 @@ class HouseDetailActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        binding.viewPager2.currentItem = 0
+        binding.viewPager.currentItem = 0
         viewModel.loadHouse(houseId)
         viewModel.loadImages(houseId)
     }

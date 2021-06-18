@@ -11,8 +11,7 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.FragmentPagerAdapter
-import androidx.viewpager.widget.ViewPager.OnPageChangeListener
+import androidx.viewpager2.widget.ViewPager2
 import com.minerdev.greformanager.*
 import com.minerdev.greformanager.custom.adapter.SectionPageAdapter
 import com.minerdev.greformanager.databinding.ActivityHouseModifyBinding
@@ -27,30 +26,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 class HouseModifyActivity : AppCompatActivity() {
-    private val adapter = SectionPageAdapter(supportFragmentManager,
-            FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT)
-    private val onPageChangeListener: OnPageChangeListener = object : OnPageChangeListener {
-        override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
-
-        override fun onPageSelected(position: Int) {
-            when (position) {
-                0 -> binding.btnPrevious.isEnabled = false
-                1, 2 -> {
-                    binding.btnPrevious.isEnabled = true
-                    binding.btnNext.visibility = View.VISIBLE
-                    binding.btnSave.visibility = View.GONE
-                }
-                3 -> {
-                    binding.btnNext.visibility = View.GONE
-                    binding.btnSave.visibility = View.VISIBLE
-                }
-                else -> {
-                }
-            }
-        }
-
-        override fun onPageScrollStateChanged(state: Int) {}
-    }
+    private val adapter = SectionPageAdapter(this)
     private val sharedViewModel: SharedViewModel by viewModels()
     private val viewModel: HouseModifyViewModel by viewModels()
     private val binding by lazy { ActivityHouseModifyBinding.inflate(layoutInflater) }
@@ -125,13 +101,37 @@ class HouseModifyActivity : AppCompatActivity() {
         alertDialog.show()
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        adapter.getItem(binding.viewPager.currentItem).onRequestPermissionsResult(requestCode, permissions, grantResults)
+        adapter.getItem(binding.viewPager.currentItem)
+            .onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
     private fun setViewPager() {
-        binding.viewPager.addOnPageChangeListener(onPageChangeListener)
+        binding.viewPager.isUserInputEnabled = false
+        binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                when (position) {
+                    0 -> binding.btnPrevious.isEnabled = false
+                    1, 2 -> {
+                        binding.btnPrevious.isEnabled = true
+                        binding.btnNext.visibility = View.VISIBLE
+                        binding.btnSave.visibility = View.GONE
+                    }
+                    3 -> {
+                        binding.btnNext.visibility = View.GONE
+                        binding.btnSave.visibility = View.VISIBLE
+                    }
+                    else -> {
+                    }
+                }
+            }
+        })
         adapter.addFragment(InfoFragment1(), "매물 정보 입력")
         adapter.addFragment(InfoFragment2(), "매물 정보 입력")
         adapter.addFragment(InfoFragment3(), "매물 정보 입력")
@@ -142,7 +142,10 @@ class HouseModifyActivity : AppCompatActivity() {
     private fun hideKeyboard() {
         if (currentFocus != null) {
             val manager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            manager.hideSoftInputFromWindow(currentFocus!!.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
+            manager.hideSoftInputFromWindow(
+                currentFocus!!.windowToken,
+                InputMethodManager.HIDE_NOT_ALWAYS
+            )
         }
     }
 

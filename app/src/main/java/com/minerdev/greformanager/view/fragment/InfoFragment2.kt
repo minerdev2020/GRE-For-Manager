@@ -85,14 +85,14 @@ class InfoFragment2 : Fragment(), OnSaveDataListener {
         house = viewModel.house
         houseType = HOUSE_TYPE[house.house_type.toInt()]
 
-        // 구조 초기화 ('매물 종류'가 '주택'이나 '오피스텔'일때만 '구조' 항목이 보임)
+        // 구조 초기화 ('매물 종류' 가 '주택' 이나 '오피스텔' 일때만 '구조' 항목이 보임)
         val visibility = if (houseType == "주택" || houseType == "오피스텔") View.VISIBLE else View.GONE
         binding.trStructure.visibility = visibility
         binding.view.visibility = visibility
         binding.spnStructure.setSelection(0)
 
 
-        // 화장실 위치 초기화 ('매물 종류'가 '사무실'이나 '상가, 점포'일때만 '화장실 위치' 항목이 보임)
+        // 화장실 위치 초기화 ('매물 종류' 가 '사무실' 이나 '상가, 점포' 일때만 '화장실 위치' 항목이 보임)
         binding.trLocation.visibility = if (houseType == "사무실" || houseType == "상가, 점포") View.VISIBLE else View.GONE
         binding.radioGroup.clearCheck()
 

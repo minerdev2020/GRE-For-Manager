@@ -11,9 +11,14 @@ class OneSideDrawerLayout : DrawerLayout {
 
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
-    constructor(context: Context, attrs: AttributeSet?, defStyle: Int) : super(context, attrs, defStyle)
+    constructor(context: Context, attrs: AttributeSet?, defStyle: Int) : super(
+        context,
+        attrs,
+        defStyle
+    )
 
     override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
+        // 잠겨있으면서 보이지 않을때 작동하지않는다, 반대의 경우 정상작동
         return if (!isSwipeOpenEnabled && !isDrawerVisible(drawerGravity)) {
             false
         } else
@@ -21,10 +26,19 @@ class OneSideDrawerLayout : DrawerLayout {
     }
 
     override fun onTouchEvent(ev: MotionEvent?): Boolean {
+        // 잠겨있으면서 보이지 않을때 작동하지않는다, 반대의 경우 정상작동
         return if (!isSwipeOpenEnabled && !isDrawerVisible(drawerGravity)) {
             false
         } else
             super.onTouchEvent(ev)
+    }
+
+    override fun performClick(): Boolean {
+        // 잠겨있으면서 보이지 않을때 작동하지않는다, 반대의 경우 정상작동
+        return if (!isSwipeOpenEnabled && !isDrawerVisible(drawerGravity)) {
+            false
+        } else
+            super.performClick()
     }
 
     fun lockSwipe(drawerGravity: Int) {

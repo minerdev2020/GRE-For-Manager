@@ -1,4 +1,4 @@
-package com.minerdev.greformanager.custom
+package com.minerdev.greformanager.custom.view
 
 import android.content.Context
 import android.view.ViewGroup
@@ -71,6 +71,7 @@ class ToggleButtonGroup(private val context: Context?, var title: String) {
         if (text.isNotEmpty()) {
             val toggleButton = ToggleButton(context)
 
+            toggleButton.isEnabled = false
             toggleButton.layoutParams = ViewGroup.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
 

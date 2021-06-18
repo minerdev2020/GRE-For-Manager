@@ -5,12 +5,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.minerdev.greformanager.R
+import com.minerdev.greformanager.databinding.ItemImageBinding
 import com.minerdev.greformanager.model.Image
 import com.minerdev.greformanager.utils.Constants
 import com.minerdev.greformanager.utils.Constants.BASE_URL
@@ -24,12 +21,13 @@ class ImageListAdapter : RecyclerView.Adapter<ImageListAdapter.ViewHolder>() {
     var deletedImages = ArrayList<Image>()
     var thumbnail = 0
 
-    private var listener = OnItemClickListener()
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val inflater = LayoutInflater.from(parent.context)
-        val itemView = inflater.inflate(R.layout.item_image, parent, false)
-        return ViewHolder(itemView, listener)
+        val binding = ItemImageBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
+        return ViewHolder(binding, OnItemClickListener())
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -63,49 +61,52 @@ class ImageListAdapter : RecyclerView.Adapter<ImageListAdapter.ViewHolder>() {
         return image
     }
 
-    class ViewHolder(itemView: View, clickListener: OnItemClickListener?) : RecyclerView.ViewHolder(itemView) {
-        private val imageView: ImageView = itemView.findViewById(R.id.imageView)
-        private val textView: TextView = itemView.findViewById(R.id.tv_thumbnail)
+    class ViewHolder(private val binding: ItemImageBinding, listener: OnItemClickListener) :
+        RecyclerView.ViewHolder(binding.root) {
+        init {
+            binding.imageBtnDelete.setOnClickListener {
+                listener.onDeleteButtonClick(
+                    this@ViewHolder,
+                    binding.root,
+                    bindingAdapterPosition
+                )
+            }
+
+            binding.imageBtnThumbnail.setOnClickListener {
+                listener.onThumbnailButtonClick(
+                    this@ViewHolder,
+                    binding.root,
+                    bindingAdapterPosition
+                )
+            }
+
+            binding.imageBtnUp.setOnClickListener {
+                listener.onUpButtonClick(this@ViewHolder, binding.root, bindingAdapterPosition)
+            }
+
+            binding.imageBtnDown.setOnClickListener {
+                listener.onDownButtonClick(this@ViewHolder, binding.root, bindingAdapterPosition)
+            }
+        }
 
         fun bind(image: Image, thumbnailPos: Int) {
             if (image.id != 0) {
-                Glide.with(itemView).load(BASE_URL + "/" + image.url).into(imageView)
+                Glide.with(binding.root).load(BASE_URL + "/" + image.url).into(binding.imageView)
 
             } else {
-                Glide.with(itemView).load(Uri.parse(image.localUri)).into(imageView)
+                Glide.with(binding.root).load(Uri.parse(image.localUri)).into(binding.imageView)
             }
 
             if (bindingAdapterPosition == thumbnailPos) {
                 image.thumbnail = 1
-                textView.visibility = View.VISIBLE
+                binding.tvThumbnail.visibility = View.VISIBLE
 
             } else {
                 image.thumbnail = 0
-                textView.visibility = View.GONE
+                binding.tvThumbnail.visibility = View.GONE
             }
         }
 
-        init {
-            val imageBtnDelete = itemView.findViewById<ImageButton>(R.id.image_btn_delete)
-            imageBtnDelete.setOnClickListener {
-                clickListener?.onDeleteButtonClick(this@ViewHolder, itemView, bindingAdapterPosition)
-            }
-
-            val imageBtnThumbnail = itemView.findViewById<ImageButton>(R.id.image_btn_thumbnail)
-            imageBtnThumbnail.setOnClickListener {
-                clickListener?.onThumbnailButtonClick(this@ViewHolder, itemView, bindingAdapterPosition)
-            }
-
-            val imageBtnUp = itemView.findViewById<ImageButton>(R.id.image_btn_up)
-            imageBtnUp.setOnClickListener {
-                clickListener?.onUpButtonClick(this@ViewHolder, itemView, bindingAdapterPosition)
-            }
-
-            val imageBtnDown = itemView.findViewById<ImageButton>(R.id.image_btn_down)
-            imageBtnDown.setOnClickListener {
-                clickListener?.onDownButtonClick(this@ViewHolder, itemView, bindingAdapterPosition)
-            }
-        }
     }
 
     inner class OnItemClickListener {

@@ -11,7 +11,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.minerdev.greformanager.R
-import com.minerdev.greformanager.custom.ToggleButtonGroup
+import com.minerdev.greformanager.custom.view.ToggleButtonGroup
 import com.minerdev.greformanager.databinding.FragmentInfo3Binding
 import com.minerdev.greformanager.model.House
 import com.minerdev.greformanager.viewmodel.SharedViewModel
