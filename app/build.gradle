@@ -49,22 +49,21 @@ android {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation "androidx.appcompat:appcompat:1.2.0"
-    implementation "androidx.core:core-ktx:1.3.2"
+    implementation "androidx.appcompat:appcompat:1.3.0"
+    implementation "androidx.core:core-ktx:1.5.0"
     implementation "androidx.constraintlayout:constraintlayout:2.0.4"
     testImplementation "junit:junit:4.13.2"
     androidTestImplementation "androidx.test.ext:junit:1.1.2"
     androidTestImplementation "androidx.test.espresso:espresso-core:3.3.0"
 
-    implementation "androidx.fragment:fragment-ktx:1.3.0"
-    implementation "androidx.activity:activity-ktx:1.2.0"
+    implementation "androidx.fragment:fragment-ktx:1.3.5"
+    implementation "androidx.activity:activity-ktx:1.2.3"
 
     // 머테리얼 라이브러리
     implementation "com.google.android.material:material:1.3.0"
 
     // 지도 라이브러리
-    implementation "com.naver.maps:map-sdk:3.10.2"
+    implementation "com.naver.maps:map-sdk:3.12.0"
 
     // Retrofit2 라이브러리
     implementation "com.squareup.retrofit2:retrofit:2.9.0"
@@ -73,8 +72,8 @@ dependencies {
     implementation "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.8.0"
 
     // ViewModel과 LiveData 라이브러리
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0"
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.3.0"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.3.1"
 
     // DB 관리 라이브러리
     implementation "androidx.room:room-runtime:$room_version"
@@ -85,13 +84,12 @@ dependencies {
     implementation "com.github.bumptech.glide:glide:4.12.0"
     kapt "com.github.bumptech.glide:compiler:4.12.0"
 
-
     // 페이징을 위한 라이브러리
-    implementation "androidx.paging:paging-runtime-ktx:3.0.0-beta01"
+    implementation "androidx.paging:paging-runtime-ktx:3.1.0-alpha01"
 
     // json 처리를 위한 라이브러리
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.1.0"
 
     // 코루틴 라이브러리
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.2"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.3"
 }
