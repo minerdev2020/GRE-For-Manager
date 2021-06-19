@@ -51,6 +51,8 @@ class MainActivity : AppCompatActivity() {
         // NavigationView 초기화
         setNavigationView()
 
+    override fun onResume() {
+        super.onResume()
         viewModel.loadHouses()
     }
 
@@ -94,6 +96,7 @@ class MainActivity : AppCompatActivity() {
                 intent.putExtra("mode", "add")
                 startActivity(intent)
             }
+            R.id.main_menu_refresh -> viewModel.loadHouses()
             R.id.main_menu_my_menu -> binding.drawerLayout.openDrawer(GravityCompat.END)
             else -> {
             }

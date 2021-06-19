@@ -5,7 +5,13 @@
     <item
         android:id="@+id/main_menu_add"
         android:icon="@drawable/ic_round_add_24"
-        android:title="추가"
+        android:title="매물 추가"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/main_menu_refresh"
+        android:icon="@drawable/ic_round_refresh_24"
+        android:title="리스트 갱신"
         app:showAsAction="always" />
 
     <item
