@@ -111,15 +111,16 @@ class ImageListAdapter : RecyclerView.Adapter<ImageListAdapter.ViewHolder>() {
 
     inner class OnItemClickListener {
         fun onDeleteButtonClick(viewHolder: ViewHolder?, view: View?, position: Int) {
+            removeItem(position)
+            notifyItemRemoved(position)
+
             if (thumbnail == position) {
                 thumbnail = 0
+                notifyItemChanged(0)
 
             } else if (thumbnail > position) {
                 thumbnail--
             }
-
-            removeItem(position)
-            notifyItemRemoved(position)
         }
 
         fun onThumbnailButtonClick(viewHolder: ViewHolder?, view: View?, position: Int) {
