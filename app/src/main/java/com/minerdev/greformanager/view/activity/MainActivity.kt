@@ -8,6 +8,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -50,6 +51,7 @@ class MainActivity : AppCompatActivity() {
 
         // NavigationView 초기화
         setNavigationView()
+    }
 
     override fun onResume() {
         super.onResume()
@@ -59,7 +61,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main_toolbar, menu)
 
-        binding.searchView.visibility = View.VISIBLE
+        binding.searchView.setOnSearchClickListener {
+            menu.findItem(R.id.main_menu_add).isVisible = false
+            menu.findItem(R.id.main_menu_refresh).isVisible = false
+        }
 
         binding.searchView.setOnQueryTextListener(object :
             android.widget.SearchView.OnQueryTextListener {
@@ -83,6 +88,8 @@ class MainActivity : AppCompatActivity() {
 
         binding.searchView.setOnCloseListener {
             binding.searchView.onActionViewCollapsed()
+            menu.findItem(R.id.main_menu_add).isVisible = true
+            menu.findItem(R.id.main_menu_refresh).isVisible = true
             true
         }
 
@@ -112,7 +119,13 @@ class MainActivity : AppCompatActivity() {
         }
 
         if (binding.searchView.hasFocus()) {
-            binding.searchView.onActionViewCollapsed()
+            val closeBtnId = binding.searchView.context.resources.getIdentifier(
+                "android:id/search_close_btn",
+                null,
+                null
+            )
+            val closeBtn = binding.searchView.findViewById<ImageView>(closeBtnId)
+            closeBtn.performClick()
             return
         }
 
@@ -152,7 +165,6 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
             }
         }
-
 
         binding.imageBtnSaleExpand.setOnClickListener {
             binding.recyclerViewSale.visibility =
